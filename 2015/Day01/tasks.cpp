@@ -3,10 +3,10 @@
 #include <iostream>
 #include <algorithm>
 
-#include "../../readInput.h"
+#include "../../readFile.h"
 
 int main(){
-    auto input = readInput::string("input.txt");
+    auto input = readFile::string("input.txt");
 
     //Task 1
     int lastFloor = input.size() - 2*std::ranges::count(input, ')');
