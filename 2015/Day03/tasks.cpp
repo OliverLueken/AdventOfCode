@@ -14,59 +14,56 @@ struct positionHash{
 };
 
 int main(){
-    auto input = readFile::string("input.txt");
+    const auto input = readFile::string("input.txt");
 
-    Position position = std::make_pair(0,0);
     std::unordered_set<Position, positionHash> housesWithPresents;
 
-    auto move = [&](char direction){
-        switch(direction){
-            case '>':
-                position.first++;
-                break;
-            case '<':
-                position.first--;
-                break;
-            case '^':
-                position.second++;
-                break;
-            case 'v':
-                position.second--;
-                break;
-        }
+    auto deliverPresents = [&housesWithPresents](auto&& range) {
+        auto position = std::make_pair(0,0);
+
+        auto move = [&position](char direction){
+            switch(direction){
+                case '>':
+                    position.first++;
+                    break;
+                case '<':
+                    position.first--;
+                    break;
+                case '^':
+                    position.second++;
+                    break;
+                case 'v':
+                    position.second--;
+                    break;
+            }
+        };
+
+        auto moveAndDeliver = [&position, &housesWithPresents, &move](char direction){
+            move(direction);
+            housesWithPresents.insert(position);
+        };
+
+        housesWithPresents.insert(position); //Deliver to first house (0,0) before moving
+        std::ranges::for_each(range, moveAndDeliver);
     };
 
-    auto deliver = [&](const Position& position){
-        housesWithPresents.insert(position);
-    };
-
-    auto moveAndDeliver = [&](char direction){
-        move(direction);
-        deliver(position);
-    };
 
     //Task 1
-    deliver(position); //Deliver before moving
-    std::ranges::for_each(input, moveAndDeliver);
-
+    deliverPresents(input);
     std::cout << housesWithPresents.size() << " houses receive at least one present.\n";
 
+
     //Task 2
-    int i=0;
-    auto even = [&](const auto&){return 0 == i++%2;};
-    auto odd = [&](const auto&){return 0 == ++i%2;};
+    auto even = [i=0](const auto&) mutable {return 0 == i++%2;};
+    auto odd  = [i=1](const auto&) mutable {return 0 == i++%2;};
 
     housesWithPresents.clear();
 
     //Deliver with Santa
-    position = std::make_pair(0,0);
-    deliver(position);
-    std::ranges::for_each(input | std::views::filter(even), moveAndDeliver);
+    deliverPresents(input | std::views::filter(even));
 
     //Deliver with Robo-Santa
-    i=0;
-    position = std::make_pair(0,0);
-    std::ranges::for_each(input | std::views::filter(odd), moveAndDeliver);
+    deliverPresents(input | std::views::filter(odd));
 
     std::cout << "With the help of Robo-Santa, " << housesWithPresents.size() << " houses receive at least one present.\n";
 
