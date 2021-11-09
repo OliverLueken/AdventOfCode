@@ -6,7 +6,6 @@
 #include <vector>
 #include <algorithm>
 #include <ctype.h>
-#include <iomanip>
 #include <numeric>
 
 struct instruction{
