@@ -26,9 +26,9 @@ auto fillDistanceMatrix = [](const auto& strings, const auto citiesCount){
 auto tsp = [](const auto& matrix, const auto citiesCount, const auto cmp){
 
     auto sumDistances = [&matrix, &citiesCount, &cmp](const auto& path){
-        auto distance = matrix[path[citiesCount-2]][citiesCount-1]; //completes the loop from the second to last to last city
+        auto distance = matrix[path[citiesCount-2]][citiesCount-1]; //completes the loop from the last city in path to end/start city
         auto max = distance; //keep track of the longest distance in the loop to remove later
-        size_t lastCity = citiesCount-1;
+        size_t lastCity = citiesCount-1; //start loop at end/start city
         for(auto nextCity : path){
             distance+=matrix[lastCity][nextCity];
             if(cmp(max,matrix[lastCity][nextCity])) max = matrix[lastCity][nextCity];
