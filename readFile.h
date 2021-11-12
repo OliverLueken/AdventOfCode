@@ -74,7 +74,7 @@ namespace readFile{
     auto vectorOfInts(const std::string& filename, char del = '\n'){
         auto wholeFile{getStream(filename).str()};
 
-        std::vector<std::string> v{};
+        std::vector<int> v{};
 
         auto left = std::begin(wholeFile);
         const auto right = std::end(wholeFile);
