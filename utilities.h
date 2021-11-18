@@ -60,6 +60,11 @@ namespace Utilities{
     };
     inline constexpr search_all searchAll{};
 
+
+    auto printVec = [](const auto& vec, const auto delimiter=", "){
+        std::ranges::for_each(vec, [](const auto& i){std::cout << i << delimiter;});
+        std::cout << '\n';
+    };
 }
 
 #endif
