@@ -62,7 +62,7 @@ namespace Utilities{
 
 
     auto printVec = [](const auto& vec, const auto delimiter=", "){
-        std::ranges::for_each(vec, [](const auto& i){std::cout << i << delimiter;});
+        std::ranges::for_each(vec, [&delimiter](const auto& i){std::cout << i << delimiter;});
         std::cout << '\n';
     };
 }
