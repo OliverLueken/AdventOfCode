@@ -1,10 +1,11 @@
-#ifndef HELPER_H
-#define HELPER_H
+#ifndef UTILITIES_H
+#define UTILITIES_H
 
 #include <string>
 #include <vector>
 #include <ranges>
 #include <algorithm>
+#include <iostream>
 
 namespace Utilities{
     auto split = [](std::string s, char delim = ' '){
