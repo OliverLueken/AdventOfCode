@@ -62,7 +62,7 @@ namespace Utilities{
     inline constexpr search_all searchAll{};
 
 
-    auto printVec = [](const auto& vec, const auto delimiter=", "){
+    auto printVec = [](const auto& vec, const std::string delimiter=", "){
         std::ranges::for_each(vec, [&delimiter](const auto& i){std::cout << i << delimiter;});
         std::cout << '\n';
     };
