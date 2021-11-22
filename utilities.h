@@ -8,22 +8,50 @@
 #include <iostream>
 
 namespace Utilities{
-    auto split = [](std::string s, char delim = ' '){
-        std::vector<std::string> parts;
-
-        size_t pos1=0, pos2=0;
-        while(pos2 != s.npos){
-            pos2 = s.find(delim, pos1);
-            if(pos1 < pos2) parts.push_back(s.substr(pos1, pos2-pos1));
-            pos1=pos2+1;
+    /*
+    A function that splits a string by delimiter and returns a vector of the parts
+    */
+    struct split_{
+        auto operator()(auto first, auto last, char delimiter = ' ') const{
+            std::vector<std::string> parts{};
+            std::string part{};
+            while(first != last){
+                if(*first == delimiter){
+                    parts.emplace_back(std::move(part));
+                    part = std::string{};
+                }
+                else{
+                    part.push_back(*first);
+                }
+                first++;
+            }
+            if(!part.empty()){
+                parts.emplace_back(std::move(part));
+            }
+            return parts;
         }
-        return parts;
-    };
 
-    //A function that searches in the range {I1, S1} for the range {I2,S2} and
-    //returns a vector of subranges of every occurance it found
-    //while using the usual comparator pred
-    //and projectinos proj1 and proj2 that is common in the algorithms library
+        auto operator()(const std::string& r, char delimiter = ' ') const {
+            std::vector<std::string> parts;
+
+            size_t pos1=0, pos2=0;
+            while(pos2 != r.npos){
+                pos2 = r.find(delimiter, pos1);
+                if(pos1 < pos2) parts.emplace_back(r.substr(pos1, pos2-pos1));
+                pos1=pos2+1;
+            }
+            return parts;
+        }
+    };
+    inline constexpr split_ split{};
+
+
+    /*
+    A function that searches in the range {I1, S1} for the range {I2,S2} and
+    returns a vector of subranges of every occurance it found
+    while using the usual comparator pred
+    and projectinos proj1 and proj2 that is common in the algorithms library
+    */
     struct search_all{
         template<std::forward_iterator I1, std::sentinel_for<I1> S1,
                  std::forward_iterator I2, std::sentinel_for<I2> S2,
