@@ -90,9 +90,11 @@ auto getNorthPoleObjectStorageID = [](const auto& rooms){
 int main(){
     const std::vector<Room> rooms = parseInput(readFile::vectorOfStrings("input.txt"));
 
+    //Task 1
     const auto sumOfValidRoomIDs = sumValidroomIDs(rooms);
     std::cout << "The sum of all valid room IDs is " << sumOfValidRoomIDs << ".\n";
 
+    //Task 2
     const auto storageID = getNorthPoleObjectStorageID(rooms);
     std::cout << "The ID of the northpole object storage is " << storageID << ".\n";
 }
