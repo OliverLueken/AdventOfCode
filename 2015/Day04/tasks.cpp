@@ -10,7 +10,7 @@
 #include <string>
 #include <sstream>
 
-// clear && g++ tasks.cpp -std=c++20 -Wpedantic -Wall -Wextra -Wconversion -L../../cryptopp/ -lcryptopp
+// clear && g++ tasks.cpp -std=c++20 -Wpedantic -Wall -Wextra -Wconversion -L/usr/lib/cryptopp/ -lcryptopp
 
 auto getMD5Hash(std::string message){
     using namespace CryptoPP;
