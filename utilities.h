@@ -79,8 +79,10 @@ namespace Utilities{
             std::string part{};
             while(first != last){
                 if(*first == delimiter){
-                    parts.emplace_back(std::move(part));
-                    part = std::string{};
+                    if(!part.empty()){
+                        parts.emplace_back(std::move(part));
+                        part = std::string{};
+                    }
                 }
                 else{
                     part.push_back(*first);
@@ -119,8 +121,10 @@ namespace Utilities{
             std::string part{};
             while(first != last){
                 if(contains(delimiter, *first)){
-                    parts.emplace_back(std::move(part));
-                    part = std::string{};
+                    if(!part.empty()){
+                        parts.emplace_back(std::move(part));
+                        part = std::string{};
+                    }
                 }
                 else{
                     part.push_back(*first);
