@@ -46,8 +46,8 @@ int main(){
     const auto presents = 34000000u;
 
     const auto houseNumber = getLowestHouseNumberWithAtLeast(presents);
-    std::cout << "The lowest houseNumber that gets at least " << presents << " presents is " <<houseNumber <<".\n";
+    std::cout << "The lowest house number that gets at least " << presents << " presents is " <<houseNumber <<".\n";
 
     const auto houseNumber2 = getLowestHouseNumberWithAtLeast2(presents);
-    std::cout << "With the new rules the lowest houseNumber that gets at least " << presents << " presents is now" <<houseNumber2 <<".\n";
+    std::cout << "With the new rules the lowest house number that gets at least " << presents << " presents is now " <<houseNumber2 <<".\n";
 }
