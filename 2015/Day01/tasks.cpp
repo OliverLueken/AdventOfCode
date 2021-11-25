@@ -9,11 +9,11 @@ int main(){
     auto input = readFile::string("input.txt");
 
     //Task 1
-    int lastFloor = input.size() - 2*std::ranges::count(input, ')');
+    auto lastFloor = input.size() - 2*std::ranges::count(input, ')');
     std::cout << "Task 1: The right floor is #" << lastFloor << ".\n";
 
     //Task 2
-    int currentFloor = 0;
+    auto currentFloor = 0;
     auto enteredBasement = [&currentFloor](auto c){
         c == ')' ? currentFloor-- : currentFloor++;
         return currentFloor < 0;
