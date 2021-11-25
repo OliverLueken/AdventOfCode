@@ -28,20 +28,13 @@ auto getMD5Hash(std::string message){
     return stream.str();
 }
 
-auto hasNLeadingZeros(const auto& s, unsigned int n){
-    bool hasNLeadingZeros = true;
-    for(auto i=0u; i<n; i++){
-        hasNLeadingZeros &= s[i]=='0';
-    }
-    return hasNLeadingZeros;
-}
 
-auto getLowestNumber(const auto& input, unsigned int n, unsigned int start = 1u){
+auto getLowestNumber(const auto& input, const auto& s, unsigned int start = 1u){
     for(unsigned int i=start; ; i++){
         auto msg = input + std::to_string(i);
 
         auto hash = getMD5Hash(msg);
-        if(hasNLeadingZeros(hash, n)){
+        if(hash.starts_with(s)){
             return i;
         }
     }
@@ -52,11 +45,11 @@ int main() {
     const std::string input = "yzbqklnj";
 
     //Task 1
-    auto number = getLowestNumber(input, 5u);
+    auto number = getLowestNumber(input, "00000");
     std::cout << number << " is the lowest positive number producing 5 leading zeros.\n";
 
     //Task 2
-    number = getLowestNumber(input, 6u, number);
+    number = getLowestNumber(input, "000000", number);
     std::cout << number << " is the lowest positive number producing 6 leading zeros.\n";
  }
 
