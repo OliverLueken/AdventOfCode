@@ -1,9 +1,10 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-struct Battleground;
+class Battleground;
 
-struct Enemy{
+class Enemy{
+public:
     Battleground* battlegroundPtr{nullptr};
 
     const int maxHP{0};

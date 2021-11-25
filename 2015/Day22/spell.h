@@ -3,7 +3,7 @@
 
 #include "effect.h"
 
-struct Battleground;
+class Battleground;
 
 class Spell{
 public:

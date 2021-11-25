@@ -1,7 +1,7 @@
 #ifndef EFFECT_H
 #define EFFECT_H
 
-struct Battleground;
+class Battleground;
 
 class Effect{
 public:

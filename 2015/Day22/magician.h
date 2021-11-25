@@ -6,9 +6,10 @@
 
 #include "spell.h"
 
-struct Battleground;
+class Battleground;
 
-struct Magician{
+class Magician{
+public:
     Battleground* battlegroundPtr{nullptr};
 
     int hp   {50};

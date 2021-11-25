@@ -7,7 +7,8 @@
 #include "enemy.h"
 #include "effect.h"
 
-struct Battleground{
+class Battleground{
+public:
     bool hardDifficulty{false};
     Enemy enemy;
     Magician magician{this};
