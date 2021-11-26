@@ -1,6 +1,6 @@
 
-#include "../../readFile.h"
-#include "../../utilities.h"
+#include "../../lib/readFile.hpp"
+#include "../../lib/utilities.hpp"
 
 #include <iostream>
 #include <vector>

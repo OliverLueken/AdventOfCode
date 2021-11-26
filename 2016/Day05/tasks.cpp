@@ -1,6 +1,6 @@
 
-#include "../../readFile.h"
-#include "../../utilities.h"
+#include "../../lib/readFile.hpp"
+#include "../../lib/utilities.hpp"
 
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 #include "/usr/lib/cryptopp/md5.h"

@@ -1,5 +1,5 @@
 
-#include "../../readFile.h"
+#include "../../lib/readFile.hpp"
 #include "lightShow.h"
 
 #include <iostream>

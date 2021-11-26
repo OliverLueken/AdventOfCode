@@ -1,5 +1,5 @@
 
-#include "../../readFile.h"
+#include "../../lib/readFile.hpp"
 
 #include <iostream>
 #include <string>

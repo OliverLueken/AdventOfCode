@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <numeric>
 
-#include "../../readFile.h"
+#include "../../lib/readFile.hpp"
 
 int main(){
     auto input = readFile::vectorOfVectorOfInts("input.txt", '\n', 'x');

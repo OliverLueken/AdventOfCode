@@ -3,7 +3,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "../../readFile.h"
+#include "../../lib/readFile.hpp"
 
 int main(){
     auto input = readFile::string("input.txt");
