@@ -1,11 +1,7 @@
 
 #include "../../lib/readFile.hpp"
 #include "../../lib/utilities.hpp"
-
-#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
-#include "/usr/lib/cryptopp/md5.h"
-#include "/usr/lib/cryptopp/hex.h"
-#include "/usr/lib/cryptopp/files.h"
+#include "../../lib/md5.hpp"
 
 #include <iostream>
 #include <string>
@@ -13,22 +9,6 @@
 #include <algorithm>
 
 // clear && g++ tasks.cpp -std=c++20 -Wpedantic -Wall -Wextra -Wconversion -L/usr/lib/cryptopp/ -lcryptopp
-
-auto getMD5Hash(std::string message){
-    using namespace CryptoPP;
-
-    static Weak::MD5 hash;
-    static std::string digest;
-
-    std::stringstream stream;
-    hash.Update((const byte*) &message[0], message.size());
-    digest.resize(hash.DigestSize());
-    hash.TruncatedFinal((byte*)&digest[0], digest.size());
-
-    HexEncoder encoder(new FileSink(stream));
-    StringSource(digest, true, new Redirector(encoder));
-    return stream.str();
-}
 
 auto hasNLeadingZeros(const auto& s, const unsigned int n){
     bool hasNLeadingZeros = true;
@@ -46,7 +26,7 @@ public:
         std::string msg{};
         while(true){
             msg = input + std::to_string(i++);
-            const auto hash = getMD5Hash(std::move(msg));
+            const auto hash = MD5::getMD5Hash(std::move(msg));
             if(hasNLeadingZeros(hash, 5u)){
                 std::cout << i << ' ' << hash << '\n';
                 return hash;
