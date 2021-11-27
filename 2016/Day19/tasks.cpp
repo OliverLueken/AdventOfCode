@@ -10,17 +10,15 @@ auto getFirstGameWinner(const auto n){
 }
 
 auto getSecondGameWinner(const auto n){
-    const auto i = (int) (log(n)/log(3));
+    const auto i = (int) (log(n-1)/log(3));
     const auto x = (int) std::pow(3,i);
-    if(n==x){
-        return n;
+    if(n>2*x+1){
+        return 2*n-3*x;
     }
-    else if(n<2*x+1){
-        return n-x;
-    } if(n == 2*x+1){
+    else if(n == 2*x+1){
         return n-x+1;
     }
-    return 2*n-3*x;
+    return n-x;
 }
 
 int main(){
