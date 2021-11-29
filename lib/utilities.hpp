@@ -203,6 +203,26 @@ namespace Utilities{
         std::ranges::for_each(vec, [&delimiter](const auto& i){std::cout << i << delimiter;});
         std::cout << '\n';
     };
+
+    /*
+    left rotation of a range by shift elements
+    */
+    struct rotate_{
+        template<std::forward_iterator I, std::sentinel_for<I> S, std::integral T>
+        constexpr auto
+        operator()(I first, S last, const T shift) const {
+            const auto dis = std::distance(first, last);
+            return std::rotate(first, first+(dis+shift)%dis, last );
+        }
+
+        template<std::ranges::forward_range R, std::integral T>
+        constexpr auto
+        operator()(R&& r, const T shift) const {
+            return std::ranges::rotate(r, std::begin(r)+(r.size()+shift)%r.size());
+        }
+
+    };
+    inline constexpr rotate_ rotate;
 }
 
 #endif
