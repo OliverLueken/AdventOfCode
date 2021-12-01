@@ -48,7 +48,6 @@ auto addMicrochip = [](const auto& split, auto& floor, auto& typeID, auto& id){
 auto parseRow = [](const auto& s, auto& typeID, auto& id){
     std::vector<int> floor{};
     const auto split = Utilities::splitOnEach(s, " ,.-");
-    Utilities::printVec(split);
     addGenerator(split, floor, typeID, id);
     addMicrochip(split, floor, typeID, id);
 
@@ -81,10 +80,6 @@ auto getMinSteps = [](const auto& building){
 
 int main(){
     auto building = parseInput(readFile::vectorOfStrings("input.txt"));
-
-    for(const auto& floor : building.floors){
-        Utilities::printVec(floor);
-    }
 
     //Task 1
     const auto minSteps = getMinSteps(building);
