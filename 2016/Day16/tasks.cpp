@@ -27,7 +27,7 @@ auto shrink = [](std::string& s){
 
 auto getChecksum = [](std::string s, unsigned int size){
     const auto i = (unsigned int) std::ceil(std::log2(( (double)size+1 )/( (double)s.size()+1 ) ));
-    const auto c = (unsigned int) std::pow(2, i)*(s.size()+1)-1;
+    const auto c = (unsigned int) (1<<i)*(s.size()+1)-1;
     s.reserve(c);
 
     while(s.size() < size){
