@@ -70,12 +70,13 @@ namespace Utilities{
     };
     inline constexpr contains_ contains;
 
-    /*
-    A function that splits a string [first, last) by delimiter and
-    returns a std::vector<std::string> containing parts
-    */
+
     struct split_{
-        auto operator()(auto first, const auto last, const char delimiter = ' ') const{
+        /*
+        A function that splits a string [first, last) by delimiter and
+        returns a std::vector<std::string> containing the parts
+        */
+        auto operator()(auto first, const auto last, const char delimiter = ' ') const {
             std::vector<std::string> parts{};
             std::string part{};
             while(first != last){
@@ -96,6 +97,10 @@ namespace Utilities{
             return parts;
         }
 
+        /*
+        A function that splits a string r by delimiter and
+        returns a std::vector<std::string> containing the parts
+        */
         auto operator()(const std::string& r, const char delimiter = ' ') const {
             std::vector<std::string> parts;
 
@@ -111,13 +116,14 @@ namespace Utilities{
     inline constexpr split_ split{};
 
 
-    /*
-    A function that splits a string [first, last) on each character contained in delimiter and
-    returns a std::vector<std::string> containing parts
-    */
+
     struct split_on_each{
+        /*
+        A function that splits a string [first, last) on each character contained in delimiter and
+        returns a std::vector<std::string> containing parts
+        */
         template<std::forward_iterator I, std::sentinel_for<I> S>
-        auto operator()(I first, const S last, const std::string& delimiter = " ") const{
+        auto operator()(I first, const S last, const std::string& delimiter = " ") const {
             std::vector<std::string> parts{};
             std::string part{};
             while(first != last){
@@ -205,17 +211,25 @@ namespace Utilities{
         std::cout << '\n';
     };
 
+
     /*
-    left rotation of a range by shift elements
+    An std::ranges::rotation interface that takes the number of left shifts to be performed
+    instead of an iterator pointing at the first element of the rotated range of a range by shift elements
     */
     struct rotate_{
+        /*
+        A rotate function that takes a range [first, last) and performs a left rotation by shift elements
+        */
         template<std::forward_iterator I, std::sentinel_for<I> S, std::integral T>
         constexpr auto
         operator()(I first, S last, const T shift) const {
             const auto dis = std::distance(first, last);
-            return std::rotate(first, first+(dis+shift)%dis, last );
+            return std::ranges::rotate(first, first+(dis+shift)%dis, last );
         }
 
+        /*
+        A rotate function that takes a range r and performs a left rotation by shift elements
+        */
         template<std::ranges::forward_range R, std::integral T>
         constexpr auto
         operator()(R&& r, const T shift) const {
@@ -229,19 +243,21 @@ namespace Utilities{
         /*
         Sums up all the elements in the range [first, last) and the value init.
         */
-        template<std::forward_iterator I, std::sentinel_for<I> S, std::integral T = unsigned int>
+        template<std::forward_iterator I, std::sentinel_for<I> S, std::integral T = unsigned int, class Proj = std::identity >
+        requires std::indirect_binary_predicate<std::ranges::equal_to, std::projected<I, Proj>, const T*>
         constexpr auto
-        operator()(I first, S last, T init) const {
-            return std::accumulate(first, last, init = 0u );
+        operator()(I first, S last, T init = 0u, Proj proj = {}) const {
+            return std::transform_reduce(first, last, init, std::plus<>(), proj);
         }
 
         /*
         Sums up all the elements in the range r and the value init.
         */
-        template<std::ranges::forward_range R, std::integral T = unsigned int>
+        template<std::ranges::forward_range R, std::integral T = unsigned int, class Proj = std::identity >
+        requires std::indirect_binary_predicate<std::ranges::equal_to, std::projected<std::ranges::iterator_t<R>, Proj>, const T*>
         constexpr auto
-        operator()(R&& r, T init = 0u ) const {
-            return std::accumulate(std::begin(r), std::end(r), init);
+        operator()(R&& r, T init = 0u, Proj proj = {} ) const {
+            return std::transform_reduce(std::begin(r), std::end(r), init, std::plus<>(), proj);
         }
 
     };
