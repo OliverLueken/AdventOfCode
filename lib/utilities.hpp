@@ -117,7 +117,7 @@ namespace Utilities{
 
 
 
-    struct split_on_each{
+    struct splitOnEach_{
         /*
         A function that splits a string [first, last) on each character contained in delimiter and
         returns a std::vector<std::string> containing parts
@@ -152,11 +152,11 @@ namespace Utilities{
             return (*this)(std::begin(r), std::end(r), delimiter);
         }
     };
-    inline constexpr split_on_each splitOnEach{};
+    inline constexpr splitOnEach_ splitOnEach{};
 
 
 
-    struct search_all{
+    struct searchAll_{
         /*
         A function that searches in the range [I1, S1) for the range [I2,S2) and
         returns a vector of subranges of every occurance it found
@@ -203,11 +203,11 @@ namespace Utilities{
                          std::move(pred), std::move(proj1), std::move(proj2));
         }
     };
-    inline constexpr search_all searchAll{};
+    inline constexpr searchAll_ searchAll{};
 
 
     auto printVec = [](const auto& vec, const std::string delimiter=", "){
-        std::ranges::for_each(vec, [&delimiter](const auto& i){std::cout << i << delimiter;});
+        std::ranges::for_each(vec, [&delimiter](const auto& val){std::cout << val << delimiter;});
         std::cout << '\n';
     };
 
