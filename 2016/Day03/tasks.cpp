@@ -8,31 +8,32 @@
 #include <algorithm>
 #include <ranges>
 #include <cassert>
+#include <array>
 
 auto parseInput = [](const auto&& input){
-    std::vector<std::vector<int>> triangles{};
+    std::vector<std::array<unsigned int, 3>> triangles{};
     for(const auto& row : input){
-        auto split = Utilities::split(row);
-        std::vector<int> triangle{};
-        std::ranges::transform(split, std::back_inserter(triangle),
+        const auto split = Utilities::split(row);
+        std::array<unsigned int, 3> triangle{};
+        std::ranges::transform(split, std::begin(triangle),
             [](const auto& s){return std::stoi(s);});
         triangles.push_back(triangle);
     }
     return triangles;
 };
 
-auto isValidTriangle = [](auto triangle){
-    std::ranges::sort(triangle);
-    return triangle[0]+triangle[1] > triangle[2];
+auto isValidTriangle = [](const auto& triangle){
+    const auto max = std::ranges::max(triangle);
+    return Utilities::sum(triangle) > 2*max;
 };
 
 auto countValidColTriangles = [](const auto& triangles){
     assert(((void)"Input file length must be divisible by 3.", triangles.size()%3==0));
     auto count = 0u;
-    for(auto it=std::begin(triangles); it!=std::end(triangles); it+=3){
-        for(auto i : std::views::iota(0,3)){
-            if(isValidTriangle( std::vector<int>{it->at(i), (it+1)->at(i), (it+2)->at(i)} )) count++;
-        }
+    for(auto i=0u; i<triangles.size()/3; i++){
+        if( isValidTriangle( triangles | std::views::drop(3*i) | std::views::take(3) | std::views::elements<0> ) ) count++;
+        if( isValidTriangle( triangles | std::views::drop(3*i) | std::views::take(3) | std::views::elements<1> ) ) count++;
+        if( isValidTriangle( triangles | std::views::drop(3*i) | std::views::take(3) | std::views::elements<2> ) ) count++;
     }
     return count;
 };
