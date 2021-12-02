@@ -1,6 +1,5 @@
 
 #include "../../lib/readFile.hpp"
-#include "../../lib/utilities.hpp"
 
 #include <iostream>
 #include <string>
@@ -13,6 +12,9 @@ protected:
     int x{0}, y{0};
 
 public:
+    Keypad() = default;
+    Keypad(int x, int y) : x{x}, y{y}{}
+
     virtual std::string getCurrentButton() const = 0;
     virtual void moveRight()=0;
     virtual void moveLeft()=0;
@@ -35,6 +37,7 @@ public:
                 break;
         }
     }
+
     void followInstructions(const std::string instructionSet){
         for(const auto instruction : instructionSet){
             updatePosition(instruction);
@@ -58,29 +61,30 @@ public:
     }
 
     std::string getCurrentButton() const override {
-        return std::to_string(x+2 + 3*(y+1));
+        return std::to_string(x+3*y+5);
     };
 };
 
 
 class DiamondKeypad : public Keypad{
 public:
+    DiamondKeypad() : Keypad{-2, 0}{}
     void moveRight() override {
-        x = std::clamp(x+1 , 0+std::abs(y), 4-std::abs(y));
+        x = std::clamp(x+1 , -2+std::abs(y), 2-std::abs(y));
     }
     void moveLeft() override {
-        x = std::clamp(x-1 , 0+std::abs(y), 4-std::abs(y));
+        x = std::clamp(x-1 , -2+std::abs(y), 2-std::abs(y));
     }
     void moveDown() override {
-        y = std::clamp(y+1 , -2+std::abs(x-2), 2-std::abs(x-2));
+        y = std::clamp(y+1 , -2+std::abs(x), 2-std::abs(x));
     }
     void moveUp() override {
-        y = std::clamp(y-1 , -2+std::abs(x-2), 2-std::abs(x-2));
+        y = std::clamp(y-1 , -2+std::abs(x), 2-std::abs(x));
     }
 
     std::string getCurrentButton() const override {
-        std::stringstream stream;
-        stream << std::hex << 7+(x-2)+(13-y*y)*y/3;
+        std::stringstream stream{};
+        stream << std::hex << 7+x+(13-y*y)*y/3;
         return stream.str();
     };
 };
