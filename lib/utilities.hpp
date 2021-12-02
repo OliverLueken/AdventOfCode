@@ -6,6 +6,7 @@
 #include <ranges>
 #include <algorithm>
 #include <iostream>
+#include <numeric>
 
 namespace Utilities{
     struct contains_{
@@ -223,6 +224,28 @@ namespace Utilities{
 
     };
     inline constexpr rotate_ rotate;
+
+    struct sum_{
+        /*
+        Sums up all the elements in the range [first, last) and the value init.
+        */
+        template<std::forward_iterator I, std::sentinel_for<I> S, std::integral T = unsigned int>
+        constexpr auto
+        operator()(I first, S last, T init) const {
+            return std::accumulate(first, last, init = 0u );
+        }
+
+        /*
+        Sums up all the elements in the range r and the value init.
+        */
+        template<std::ranges::forward_range R, std::integral T = unsigned int>
+        constexpr auto
+        operator()(R&& r, T init = 0u ) const {
+            return std::accumulate(std::begin(r), std::end(r), init);
+        }
+
+    };
+    inline constexpr sum_ sum;
 }
 
 #endif
