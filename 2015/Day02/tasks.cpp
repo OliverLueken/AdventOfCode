@@ -5,34 +5,37 @@
 #include <numeric>
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/utilities.hpp"
 
-int main(){
-    auto input = readFile::vectorOfVectorOfInts("input.txt", '\n', 'x');
+auto getAmountOfPaperNeeded(const auto& input){
 
-    //Task 1
-    auto getArea = [](std::vector<int>& sideLengths){
-        std::ranges::sort(sideLengths);
-        unsigned int area = sideLengths[0]*sideLengths[1]
-                          + 2*( sideLengths[0]*sideLengths[1]
-                              + sideLengths[1]*sideLengths[2]
-                              + sideLengths[2]*sideLengths[0]
-                              );
-        return area;
+    auto getArea = [](const std::vector<int>& sideLengths){
+        return sideLengths[0]*sideLengths[1]
+                + 2*( sideLengths[0]*sideLengths[1]
+                    + sideLengths[1]*sideLengths[2]
+                    + sideLengths[2]*sideLengths[0]
+        );
     };
 
-    unsigned int paperNeeded = std::transform_reduce(std::begin(input), std::end(input),
-                                                     0,
-                                                     std::plus<>(),
-                                                     getArea);
-    std::cout << "The elves need " << paperNeeded << " square feet of wrapping paper.\n";
+    return Utilities::sum(input, 0, getArea);
+}
 
-    //Task 2
+auto getAmountOfRibbonNeeded(const auto& input){
     auto getRibbonLength = [](const std::vector<int>& sideLengths){
         return 2*(sideLengths[0]+sideLengths[1]) + sideLengths[0]*sideLengths[1]*sideLengths[2];
     };
-    unsigned int ribbonNeeded = std::transform_reduce(std::begin(input), std::end(input),
-                                                      0,
-                                                      std::plus<>(),
-                                                      getRibbonLength);
+    return Utilities::sum(input, 0u, getRibbonLength);
+}
+
+int main(){
+    auto input = readFile::vectorOfVectorOfInts("input.txt", '\n', 'x');
+    std::ranges::for_each(input, [](auto& sideLengths){ std::ranges::sort(sideLengths);});
+
+    //Task 1
+    const auto paperNeeded = getAmountOfPaperNeeded(input);
+    std::cout << "The elves need " << paperNeeded << " square feet of wrapping paper.\n";
+
+    //Task 2
+    const auto ribbonNeeded = getAmountOfRibbonNeeded(input);
     std::cout << "The elves need " << ribbonNeeded << " feet of ribbon.\n";
 }
