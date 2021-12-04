@@ -50,18 +50,7 @@ namespace readFile{
 
     auto vectorOfStrings(const std::string& filename, char del = '\n'){
         auto wholeFile{getStream(filename).str()};
-
-        std::vector<std::string> v{};
-
-        auto left = std::begin(wholeFile);
-        const auto right = std::end(wholeFile);
-        while(left < right){
-            auto delimiterIt = std::find(left, right, del);
-            std::string temp{left, delimiterIt};
-            v.push_back(temp);
-            left = delimiterIt+1;
-        }
-        return v;
+        return Utilities::split(wholeFile, del);
     }
 
 
