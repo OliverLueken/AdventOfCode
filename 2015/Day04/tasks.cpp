@@ -5,9 +5,10 @@
 #include <iostream>
 #include <string>
 
-// clear && g++ tasks.cpp -std=c++20 -Wpedantic -Wall -Wextra -Wconversion -L/usr/lib/cryptopp/ -lcryptopp
+// compile with
+// g++ tasks.cpp -std=c++20 -O3 -Wpedantic -Wall -Wextra -Wconversion -L/usr/lib/cryptopp/ -lcryptopp
 
-auto getLowestNumber(const auto& input, const auto& s, unsigned int num = 1u){
+auto getLowestNumber = [](const auto& input, const auto& s, unsigned int num = 1u){
     while(true){
         const auto msg = input + std::to_string(num);
         const auto hash = MD5::getMD5Hash(msg);
@@ -17,7 +18,7 @@ auto getLowestNumber(const auto& input, const auto& s, unsigned int num = 1u){
         }
         num++;
     }
-}
+};
 
 int main() {
 
