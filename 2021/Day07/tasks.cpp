@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <climits>
 #include <ranges>
+#include <cmath>
 
 template<class Proj = std::identity>
 auto getFuelCost(const auto alignPos, const auto& crabPositions, Proj proj = {}){
@@ -23,7 +24,8 @@ auto getCheapestFuelCost1 = [](auto& crabPositions){
 
 auto getCheapestFuelCost2 = [](const auto& crabPositions){
     auto leastFuel=UINT_MAX;
-    for(auto alignPos = 0; alignPos < std::ranges::max(crabPositions); alignPos++){
+    const int mean = Utilities::sum(crabPositions)/(int)crabPositions.size();
+    for(auto alignPos = mean-1; alignPos <= mean+1; alignPos++){
         const auto fuel = getFuelCost(alignPos, crabPositions, [](const auto n){return n*(n+1)/2;});
         if(fuel < leastFuel) leastFuel = fuel;
     }
