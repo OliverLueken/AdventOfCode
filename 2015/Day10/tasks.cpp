@@ -1,5 +1,4 @@
 
-
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -16,7 +15,7 @@ auto playLookAndSay = [](auto& number, const size_t n){
             newNumber += *it1;
             it1=it2;
         }while(it2 != std::end(number));
-        number = newNumber;
+        std::swap(number, newNumber);
     };
 
     for(auto i = 0u; i < n; i++){
