@@ -22,14 +22,11 @@ auto getCheapestFuelCost1 = [](auto& crabPositions){
     return getFuelCost(median, crabPositions);
 };
 
-auto getCheapestFuelCost2 = [](const auto& crabPositions){
-    auto leastFuel=UINT_MAX;
-    const int mean = Utilities::sum(crabPositions)/(int)crabPositions.size();
-    for(auto alignPos = mean-1; alignPos <= mean+1; alignPos++){
-        const auto fuel = getFuelCost(alignPos, crabPositions, [](const auto n){return n*(n+1)/2;});
-        if(fuel < leastFuel) leastFuel = fuel;
-    }
-    return leastFuel;
+auto getCheapestFuelCost2 = []( auto crabPositions){
+    const auto mean = Utilities::sum(crabPositions, 0.)/(double)crabPositions.size();
+    const auto fuelFloor = getFuelCost((int) std::floor(mean), crabPositions, [](const auto n){return n*(n+1)/2;});
+    const auto fuelCeil  = getFuelCost((int) std::ceil (mean), crabPositions, [](const auto n){return n*(n+1)/2;});
+    return std::min(fuelFloor, fuelCeil);
 };
 
 int main(){
