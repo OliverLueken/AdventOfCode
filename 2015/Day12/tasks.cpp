@@ -5,8 +5,8 @@
 #include <string>
 #include <regex>
 
-auto sumNumbers = [](const auto& string){
-    std::regex number(R"(-?\d+)");
+auto sumNumbers = [](const auto& string) ->int {
+    static const std::regex number(R"(-?\d+)");
     int sum = 0;
     for(auto i = std::sregex_iterator(std::begin(string), std::end(string), number); i!=std::sregex_iterator(); i++){
         sum+=std::stoi(i->str());
@@ -14,19 +14,19 @@ auto sumNumbers = [](const auto& string){
     return sum;
 };
 
-auto sumWithRedIgnored = [](std::string& string){
-    std::regex curlyWithRed(R"(\{[^\{\}\[\]]*red[^\{\}\[\]]*\})");
-    std::regex curlyOrSquare("(\\\{[^\\\{\\\}\\\[\\\]]*\\\})|(\\\[[^\\\{\\\}\\\[\\\]]*\\\])");
+auto sumWithRedIgnored = [](std::string& string) -> int {
+    const std::regex curlyWithRed (R"(\{[^\{\}\[\]]*red[^\{\}\[\]]*\})");
+    const std::regex curlyOrSquare(R"((?:\{|\[)[^\{\}\[\]]*(?:\}|\]))");
 
     while(true){
         std::smatch matchResult;
         while(std::regex_search(string, matchResult, curlyWithRed)){
-            string = string.replace(matchResult[0].first, matchResult[0].second, "");
+            string.erase(matchResult[0].first, matchResult[0].second);
         }
 
-        auto foundMatch = std::regex_search(string, matchResult, curlyOrSquare);
+        const auto foundMatch = std::regex_search(string, matchResult, curlyOrSquare);
         if(!foundMatch) break;
-        auto sum = std::to_string(sumNumbers(matchResult.str()));
+        const auto sum = std::to_string(sumNumbers(matchResult.str()));
         string = string.replace(matchResult[0].first, matchResult[0].second, sum);
     }
 
@@ -36,10 +36,10 @@ auto sumWithRedIgnored = [](std::string& string){
 int main(){
     auto input = readFile::string("input.txt");
 
-    auto sum = sumNumbers(input);
+    const auto sum = sumNumbers(input);
     std::cout << "The sum of all numbers is " << sum << ".\n";
 
-    sum = sumWithRedIgnored(input);
-    std::cout << "The sum of all numbers without red is " << sum << ".\n";
+    const auto sumNoRed = sumWithRedIgnored(input);
+    std::cout << "The sum of all numbers without red is " << sumNoRed << ".\n";
 
 }
