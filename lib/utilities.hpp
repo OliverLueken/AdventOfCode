@@ -239,11 +239,14 @@ namespace Utilities{
     };
     inline constexpr rotate_ rotate;
 
+    template<typename T>
+    concept isNumber = std::integral<T> || std::floating_point<T>;
+
     struct sum_{
         /*
         Sums up all the elements in the range [first, last) and the value init.
         */
-        template<std::forward_iterator I, std::sentinel_for<I> S, std::integral T = unsigned int, class Proj = std::identity >
+        template<std::forward_iterator I, std::sentinel_for<I> S, isNumber T = unsigned int, class Proj = std::identity >
         requires std::indirect_binary_predicate<std::ranges::equal_to, std::projected<I, Proj>, const T*>
         constexpr auto
         operator()(I first, S last, T init = 0u, Proj proj = {}) const {
@@ -253,7 +256,7 @@ namespace Utilities{
         /*
         Sums up all the elements in the range r and the value init.
         */
-        template<std::ranges::forward_range R, std::integral T = unsigned int, class Proj = std::identity >
+        template<std::ranges::forward_range R, isNumber T = unsigned int, class Proj = std::identity >
         requires std::indirect_binary_predicate<std::ranges::equal_to, std::projected<std::ranges::iterator_t<R>, Proj>, const T*>
         constexpr auto
         operator()(R&& r, T init = 0u, Proj proj = {} ) const {
