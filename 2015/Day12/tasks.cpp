@@ -5,11 +5,11 @@
 #include <string>
 #include <regex>
 
-auto sumNumbers = [](const auto& string) ->int {
+auto sumNumbers = [](const auto& string) -> int {
     static const std::regex number(R"(-?\d+)");
-    int sum = 0;
-    for(auto i = std::sregex_iterator(std::begin(string), std::end(string), number); i!=std::sregex_iterator(); i++){
-        sum+=std::stoi(i->str());
+    auto sum = 0;
+    for(auto foundIt = std::sregex_iterator(std::begin(string), std::end(string), number); foundIt!=std::sregex_iterator(); foundIt++){
+        sum+=std::stoi(foundIt->str());
     }
     return sum;
 };
@@ -39,7 +39,7 @@ int main(){
     const auto sum = sumNumbers(input);
     std::cout << "The sum of all numbers is " << sum << ".\n";
 
-    const auto sumNoRed = sumWithRedIgnored(input);
-    std::cout << "The sum of all numbers without red is " << sumNoRed << ".\n";
+    const auto sumWithoutRed = sumWithRedIgnored(input);
+    std::cout << "The sum of all numbers without red is " << sumWithoutRed << ".\n";
 
 }
