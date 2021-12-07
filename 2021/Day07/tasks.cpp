@@ -22,7 +22,11 @@ auto getCheapestFuelCost1 = [](auto& crabPositions){
     return getFuelCost(median, crabPositions);
 };
 
+<<<<<<< HEAD
 auto getCheapestFuelCost2 = [](const auto& crabPositions){
+=======
+auto getCheapestFuelCost2 = []( auto crabPositions){
+>>>>>>> 7f30c3d80f476a1fec2e7fd17ad730fa21953f46
     const auto mean = Utilities::sum(crabPositions, 0.)/(double)crabPositions.size();
     const auto fuelFloor = getFuelCost((int) std::floor(mean), crabPositions, [](const auto n){return n*(n+1)/2;});
     const auto fuelCeil  = getFuelCost((int) std::ceil (mean), crabPositions, [](const auto n){return n*(n+1)/2;});
