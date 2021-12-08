@@ -1,3 +1,6 @@
+#ifndef MATRIX_HPP
+#define MATRIX_HPP
+
 #include <iostream>
 #include <vector>
 #include <ranges>
@@ -194,3 +197,5 @@ namespace Matrix{
     }
 
 }
+
+#endif 
