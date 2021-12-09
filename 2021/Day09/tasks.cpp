@@ -16,40 +16,43 @@ auto parseInput = [](const auto& input){
     return matrix;
 };
 
-auto isLowPoint(const auto& heightmap, const auto longIndex){
+auto isLowPoint = [](const auto& heightmap, const auto longIndex){
     auto isHigher = [myHeight=heightmap[longIndex], &heightmap](const auto& neighborIndex){
         return myHeight < heightmap[neighborIndex];
     };
     return std::ranges::all_of(getNeighbors(heightmap, longIndex), isHigher);
-}
-
-auto getSumOfRiskLevel = [](auto& heightmap){
-    auto riskLevel=0;
-    for(auto longIndex=0u; longIndex<heightmap.data().size(); longIndex++){
-        if( isLowPoint(heightmap, longIndex) ){
-            riskLevel+=1+ heightmap[longIndex];
-        }
-    }
-    return riskLevel;
 };
 
+auto getLowpoints = [](const auto& heightmap){
+    std::vector<unsigned int> lowpoints{};
+    for(auto longIndex=0u; longIndex<heightmap.data().size(); longIndex++){
+        if( isLowPoint(heightmap, longIndex) ){
+            lowpoints.push_back(longIndex);
+        }
+    }
+    return lowpoints;
+};
+
+auto getSumOfRiskLevels = [](const auto& heightmap, const auto& lowpoints){
+    return Utilities::sum(lowpoints, 0u, [&heightmap](const auto& lowpoint){
+        return 1+heightmap[lowpoint];
+    });
+};
 
 auto getBasinSize(auto& heightmap, const auto longIndex){
     if( heightmap[longIndex] == 9) return 0u;
-     heightmap[longIndex] = 9;
+    heightmap[longIndex] = 9;
     auto neighborsBasin = [&heightmap](const auto& neighborIndex){
         return getBasinSize(heightmap, neighborIndex);
     };
     return Utilities::sum( getNeighbors(heightmap, longIndex), 1u, neighborsBasin );
 }
 
-auto getLargestBasinsProduct = [](auto& heightmap){
+auto getLargestBasinsProduct = [](auto& heightmap, const auto& lowpoints){
     std::vector<unsigned int> basinSizes{};
 
-    for(auto longIndex=0u; longIndex<heightmap.data().size(); longIndex++){
-        if(  heightmap[longIndex]!=9 ){
-            basinSizes.push_back( getBasinSize(heightmap, longIndex) );
-        }
+    for(const auto longIndex : lowpoints){
+        basinSizes.push_back( getBasinSize(heightmap, longIndex) );
     }
     std::ranges::partial_sort(basinSizes, std::begin(basinSizes)+3, std::greater<>());
     return basinSizes[0]*basinSizes[1]*basinSizes[2];
@@ -57,12 +60,13 @@ auto getLargestBasinsProduct = [](auto& heightmap){
 
 int main(){
     auto heightmap = parseInput(readFile::vectorOfStrings("input.txt"));
+    const auto lowpoints = getLowpoints(heightmap);
 
     //Task 1
-    const auto riskLevelSum = getSumOfRiskLevel(heightmap);
+    const auto riskLevelSum = getSumOfRiskLevels(heightmap, lowpoints);
     std::cout << "The sum of the risk levels is " << riskLevelSum << ".\n";
 
     //Task 2
-    const auto largestBasinsProduct = getLargestBasinsProduct(heightmap);
+    const auto largestBasinsProduct = getLargestBasinsProduct(heightmap, lowpoints);
     std::cout << "The product of the three largest basins is " << largestBasinsProduct << ".\n";
 }
