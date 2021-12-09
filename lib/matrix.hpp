@@ -99,6 +99,10 @@ namespace Matrix{
             return matrix;
         }
 
+        const std::vector<T>& data() const {
+            return matrix;
+        }
+
         constexpr T& operator()(const size_t i, const size_t j){
             checkBounds(i,j);
             return matrix[i*m+j];
@@ -107,6 +111,14 @@ namespace Matrix{
         constexpr const T& operator()(const size_t i, const size_t j) const {
             checkBounds(i,j);
             return matrix[i*m+j];
+        }
+
+        constexpr T& operator[](const size_t longIndex){
+            return matrix.at(longIndex);
+        }
+
+        constexpr const T& operator[](const size_t longIndex) const {
+            return matrix.at(longIndex);
         }
 
         [[nodiscard]] constexpr auto   begin()       noexcept{ return matrix.  begin(); }
@@ -173,7 +185,7 @@ namespace Matrix{
         }
     };
 
-
+    
 
     template<class T>
     void swap(Matrix<T>& rhs, Matrix<T>& lhs) noexcept {
@@ -198,4 +210,4 @@ namespace Matrix{
 
 }
 
-#endif 
+#endif
