@@ -13,19 +13,17 @@
 
 
 auto fillHappinessMatrix = [](const auto& input){
-
     const auto N = (size_t)(1+std::sqrt(4*input.size()+1))/2;
-    // std::vector<std::vector<int>> happinessMatrix(N, std::vector<int>(N));
     Matrix::Matrix<int> happinessMatrix(N, N);
 
-    for(size_t i : std::views::iota(0u,N)){
-        for(size_t j=0; j<i; j++){
-            auto split = Utilities::split(input[i*(N-1)+j]);
+    for(const auto i : std::views::iota(0u,N)){
+        for(const auto j : std::views::iota(0u,i)){
+            const auto split = Utilities::split(input[i*(N-1)+j]);
             happinessMatrix(i,j) = std::stoi(split[3]);
             if(split[2] == "lose") happinessMatrix(i,j)*=-1;
         }
-        for(size_t j=i+1; j<N; j++){
-            auto split = Utilities::split(input[i*(N-1)+j-1]);
+        for(const auto j : std::views::iota(i+1, N)){
+            const auto split = Utilities::split(input[i*(N-1)+j-1]);
             happinessMatrix(i,j) = std::stoi(split[3]);
             if(split[2] == "lose") happinessMatrix(i,j)*=-1;
         }
@@ -34,14 +32,14 @@ auto fillHappinessMatrix = [](const auto& input){
 };
 
 auto makeEveryoneHappy = [](const auto& happinessMatrix){
-    auto N =happinessMatrix.rows();
+    const auto N = happinessMatrix.rows();
     std::vector<size_t> order(N-1);
     std::iota(std::begin(order), std::end(order), 0u);
     int maxHappiness = 0;
     do{
-        int happiness = happinessMatrix(order[N-2], N-1) + happinessMatrix(N-1, order[N-2]);
-        size_t lastPerson = N-1;
-        for(size_t nextPerson : order){
+        auto happiness = happinessMatrix(order[N-2], N-1) + happinessMatrix(N-1, order[N-2]);
+        auto lastPerson = N-1;
+        for(const auto nextPerson : order){
             happiness+=happinessMatrix(lastPerson,nextPerson);
             happiness+=happinessMatrix(nextPerson,lastPerson);
             lastPerson=nextPerson;
@@ -54,20 +52,17 @@ auto makeEveryoneHappy = [](const auto& happinessMatrix){
 auto addMyself = [](auto& happinessMatrix){
     const auto N = happinessMatrix.rows();
     happinessMatrix.resize(N+1, N+1);
-
-    // for(auto& v : happinessMatrix) v.push_back(0);
-    // happinessMatrix.push_back(std::vector<int>(N+1, 0));
 };
 
 int main(){
     auto happinessMatrix = fillHappinessMatrix(readFile::vectorOfStrings("input.txt"));
 
     //Task 1
-    auto happiness = makeEveryoneHappy(happinessMatrix);
+    const auto happiness = makeEveryoneHappy(happinessMatrix);
     std::cout << "Optimal change in happiness amounts to " << happiness << ".\n";
 
     //Task 2
     addMyself(happinessMatrix);
-    happiness = makeEveryoneHappy(happinessMatrix);
-    std::cout << "Myself included the optimal change in happiness amounts to " << happiness << ".\n";
+    const auto happinessWithMe = makeEveryoneHappy(happinessMatrix);
+    std::cout << "Myself included the optimal change in happiness amounts to " << happinessWithMe << ".\n";
 }
