@@ -185,7 +185,96 @@ namespace Matrix{
         }
     };
 
-    
+
+    template<class T = uint32_t>
+    using Position = std::pair<T, T>;
+
+    // template<class T>
+    struct positionHash{
+        uint64_t operator()(const Position<>& position) const noexcept{
+            return (uint64_t) position.first << 32 | position.second;
+        }
+    };
+
+
+    /*
+    for row and column index (i,j), returns it's valid adjacent neighbor indeces, not including diagonals
+    */
+    template<class T, std::unsigned_integral S = uint32_t>
+    auto getNeighbors(const Matrix<T>& matrix, const S i, const S j){
+        std::vector<Position<S>> neighbors{};
+        if(i>0)               neighbors.emplace_back(Position{i-1, j  });
+        if(i<matrix.rows()-1) neighbors.emplace_back(Position{i+1, j  });
+        if(j>0)               neighbors.emplace_back(Position{i  , j-1});
+        if(j<matrix.cols()-1) neighbors.emplace_back(Position{i  , j+1});
+        return neighbors;
+    }
+
+    /*
+    for row and column index n = i*matrix.columns+j, returns it's valid adjacent neighbor indeces, not including diagonals
+    */
+    template<class T, std::unsigned_integral S = uint32_t>
+    auto getNeighbors(const Matrix<T>& matrix, const S longIndex){
+        const auto m = matrix.cols();
+        const auto i = longIndex/m;
+        const auto j = longIndex%m;
+        std::vector<S> neighbors{};
+        if(i>0)               neighbors.emplace_back((i-1)*m+j  );
+        if(i<matrix.rows()-1) neighbors.emplace_back((i+1)*m+j  );
+        if(j>0)               neighbors.emplace_back((i  )*m+j-1);
+        if(j<matrix.cols()-1) neighbors.emplace_back((i  )*m+j+1);
+        return neighbors;
+    }
+
+    /*
+    for row and column index pos(i,j), returns it's valid adjacent neighbor indeces, not including diagonals
+    */
+    template<class T, class S>
+    auto getNeighbors(const Matrix<T>& matrix, const Position<S>& pos){
+        const auto i = pos.first;
+        const auto j = pos.second;
+        return getNeighbors(matrix, i, j);
+    }
+
+    /*
+    for row and column index (i,j), returns it's valid adjacent neighbor indeces, including diagonals
+    */
+    template<class T, std::unsigned_integral S = uint32_t>
+    auto getExtendedNeighbors(const Matrix<T>& matrix, const S i, const S j){
+        std::vector<Position<S>> neighbors{getNeighbors(matrix, i, j)};
+        if(i>0 && j>0)                             neighbors.emplace_back(Position{i-1, j-1});
+        if(i<matrix.rows()-1 && j>0)               neighbors.emplace_back(Position{i+1, j-1});
+        if(i>0               && j<matrix.cols()-1) neighbors.emplace_back(Position{i-1, j+1});
+        if(i<matrix.rows()-1 && j<matrix.cols()-1) neighbors.emplace_back(Position{i+1, j+1});
+        return neighbors;
+    }
+
+    /*
+    for row and column index n = i*matrix.columns+j, returns it's valid adjacent neighbor indeces, including diagonals
+    */
+    template<class T, std::unsigned_integral S = uint32_t>
+    auto getExtendedNeighbors(const Matrix<T>& matrix, const S longIndex){
+        const auto m = matrix.cols();
+        const auto i = longIndex/m;
+        const auto j = longIndex%m;
+        std::vector<S> neighbors{getNeighbors(matrix, longIndex)};
+        if(i>0 && j>0)                             neighbors.emplace_back((i-1)*m+j-1);
+        if(i<matrix.rows()-1 && j>0)               neighbors.emplace_back((i+1)*m+j-1);
+        if(i>0               && j<matrix.cols()-1) neighbors.emplace_back((i-1)*m+j+1);
+        if(i<matrix.rows()-1 && j<matrix.cols()-1) neighbors.emplace_back((i+1)*m+j+1);
+        return neighbors;
+    }
+
+    /*
+    for row and column index pos=(i,j), returns it's valid adjacent neighbor indeces, including diagonals
+    */
+    template<class T, class S>
+    auto getExtendedNeighbors(const Matrix<T>& matrix, const Position<S>& pos){
+        const auto i = pos.first;
+        const auto j = pos.second;
+        return getExtendedNeighbors(matrix, i, j);
+    }
+
 
     template<class T>
     void swap(Matrix<T>& rhs, Matrix<T>& lhs) noexcept {
