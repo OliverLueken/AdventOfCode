@@ -6,10 +6,8 @@
 #include <algorithm>
 
 
-std::function<void(const std::vector<int>&, const size_t, const size_t, const size_t, size_t&,
-                   std::vector<size_t>&, size_t)> sumCombinationsRec //damn you recursion
-    = [](const auto& containers, const auto currentSize, const auto goalSize, const auto level, auto& sum,
-         auto& containerAmount, auto currentContainerAmount){
+auto sumCombinationsRec(const auto& containers, const auto currentSize, const auto goalSize, const auto level, auto& sum,
+         auto& containerAmount, auto currentContainerAmount) -> void {
 
     if(currentSize == goalSize){
         sum++;
@@ -22,11 +20,14 @@ std::function<void(const std::vector<int>&, const size_t, const size_t, const si
                        containerAmount, currentContainerAmount);
     sumCombinationsRec(containers, currentSize+containers[level], goalSize, level+1, sum, //branch in wich container is used
                        containerAmount, currentContainerAmount+1);
-};
+}
 
 auto getAmountOfCombinations = [](const auto& containers, const auto size){
-    size_t sum = 0u, currentSize = 0u, level = 0u, currentContainerAmount=0u;
+    const auto currentSize = 0u;
+    const auto level = 0u;
+    auto sum = 0u;
     std::vector<size_t> containerAmount(containers.size());
+    const auto currentContainerAmount = 0u;
     sumCombinationsRec(containers, currentSize, size, level, sum,
                        containerAmount, currentContainerAmount); //information for task 2
 
@@ -40,7 +41,7 @@ auto getAmountOfCombinations = [](const auto& containers, const auto size){
 int main(){
     const auto containers = readFile::vectorOfInts("input.txt");
 
-    auto [combinations, minContainerAmount] = getAmountOfCombinations(containers, 150);
+    const auto [combinations, minContainerAmount] = getAmountOfCombinations(containers, 150u);
     std::cout << "There are a total of " << combinations << " combinations to fit the eggnog.\n";
     std::cout << "There are a total of " << minContainerAmount << " combinations with the minimal numbers of containers to fit the eggnog.\n";
 }
