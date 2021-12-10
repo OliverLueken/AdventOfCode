@@ -21,11 +21,11 @@ auto animateWithCornersStuckOn(auto& lightshow, const auto N){
 
 int main(){
     lightShow lightshow(readFile::vectorOfStrings("input.txt"));
-    auto onLights = animate(lightshow, 100);
+    const auto onLights = animate(lightshow, 100);
     std::cout << "There are a total of " << onLights << " lights on.\n";
 
-    lightShow lightshow2(readFile::vectorOfStrings("input.txt"));
-    onLights = animateWithCornersStuckOn(lightshow2, 100);
-    std::cout << "There are a total of " << onLights << " lights on with the corner lights stuck on on.\n";
+    lightShow lightshowWithStuckCorners(readFile::vectorOfStrings("input.txt"));
+    const auto onLightsWithStuckCorners = animateWithCornersStuckOn(lightshowWithStuckCorners, 100);
+    std::cout << "There are a total of " << onLightsWithStuckCorners << " lights on with the corner lights stuck on on.\n";
 
 }

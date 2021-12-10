@@ -10,9 +10,8 @@ using grid = std::vector<std::vector<bool>>;
 class lightShow{
 
     grid lights;
-    
-    std::vector<coordinate> getNeighbors(const unsigned int, const unsigned int) const;
-    size_t getOn(const std::vector<coordinate>) const;
+
+    unsigned int getNeighborLights(const unsigned int, const unsigned int) const;
 
 public:
     lightShow(std::vector<std::string>);
