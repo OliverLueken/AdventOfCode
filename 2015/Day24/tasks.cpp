@@ -5,18 +5,17 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <numeric>
 #include <climits>
 
 
 auto solveRec(const auto first, const auto last, const auto desiredWeight,
            const auto elementCount, const auto weight, const auto qe,
-           auto& minElements, auto& minQE){
-    if(weight > desiredWeight || elementCount > minElements) return;
+           auto& maxElements, auto& minQE){
+    if(weight > desiredWeight || elementCount > maxElements) return;
 
     if(weight == desiredWeight){
-        if(elementCount < minElements){
-            minElements = elementCount;
+        if(elementCount < maxElements){
+            maxElements = elementCount;
             minQE = qe;
         }
         else if(qe < minQE){
@@ -26,24 +25,22 @@ auto solveRec(const auto first, const auto last, const auto desiredWeight,
     }
 
     for(auto next=first+1; next!=last; next++){
-        solveRec(next, last, desiredWeight, elementCount+1, weight+(*next), qe*(*next), minElements, minQE);
+        solveRec(next, last, desiredWeight, elementCount+1, weight+(*next), qe*(*next), maxElements, minQE);
     }
 }
 
-auto getMinQuantumEntanglement = [](auto& weights, int groups){
-    std::ranges::reverse(weights);
-
-    const auto sum = std::accumulate(std::begin(weights), std::end(weights), 0u);
+auto getMinQuantumEntanglement = [](const auto& weights, int groups){
+    const auto sum           = Utilities::sum(weights);
     const auto desiredWeight = sum/groups;
-    auto minElements = weights.size();
-    auto minQE = ULONG_MAX;
+    const auto elementCount  = 1u;
+    auto maxElements         = weights.size();
+    auto minQE               = ULONG_MAX;
 
     for(auto first=std::begin(weights); first!=std::end(weights); first++){
-        const auto elementCount = 1u;
-        const auto weight = (unsigned int) *first;
-        const auto qe = (unsigned long) *first;
+        const auto weight = (unsigned int)  *first;
+        const auto qe     = (unsigned long) *first;
         solveRec(first, std::end(weights), desiredWeight,
-                 elementCount, weight, qe, minElements, minQE);
+                 elementCount, weight, qe, maxElements, minQE);
     }
 
     return minQE;
@@ -51,12 +48,13 @@ auto getMinQuantumEntanglement = [](auto& weights, int groups){
 
 int main(){
     auto weights = readFile::vectorOfInts("input.txt");
+    std::ranges::reverse(weights);
 
     //Task 1
-    auto minimalQuantumEntaglement = getMinQuantumEntanglement(weights, 3);
+    const auto minimalQuantumEntaglement = getMinQuantumEntanglement(weights, 3);
     std::cout << "The minimal quantum entanglement is " << minimalQuantumEntaglement << ".\n";
 
     //Task 2
-    minimalQuantumEntaglement = getMinQuantumEntanglement(weights, 4);
-    std::cout << "With four trunks, the minimal quantum entanglement is " << minimalQuantumEntaglement << ".\n";
+    const auto minimalQuantumEntaglementWithFourGroups = getMinQuantumEntanglement(weights, 4);
+    std::cout << "With four trunks, the minimal quantum entanglement is " << minimalQuantumEntaglementWithFourGroups << ".\n";
 }
