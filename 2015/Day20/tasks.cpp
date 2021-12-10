@@ -1,11 +1,13 @@
 
+#include "../../lib/utilities.hpp"
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <numeric>
 #include <cmath>
 
-auto getFactors = [](const auto n){
+constexpr auto getFactors = [](const auto n){
     std::vector<unsigned int> factors{};
     unsigned int i=1u;
     while(i*i < n){
@@ -19,25 +21,25 @@ auto getFactors = [](const auto n){
     return factors;
 };
 
-auto getLowestHouseNumberWithAtLeast = [](auto minPresents){
+constexpr auto getLowestHouseNumberWithAtLeast = [](auto minPresents){
     minPresents/=10;
     for(auto houseNumber=1u;;houseNumber++){
 
-        auto factors = getFactors(houseNumber);
+        const auto factors = getFactors(houseNumber);
 
-        auto presents = std::accumulate(std::begin(factors), std::end(factors), 0u);
+        const auto presents = Utilities::sum(factors);
         if(presents>minPresents) return houseNumber;
     }
 };
 
-auto getLowestHouseNumberWithAtLeast2 = [](auto minPresents){
-    minPresents=(unsigned int) std::ceil(minPresents/11);
+constexpr auto getLowestHouseNumberWithAtLeast2 = [](auto minPresents){
+    minPresents = minPresents%11==0 ? minPresents/11 : minPresents/11+1;
     for(auto houseNumber=1u;;houseNumber++){
 
         auto factors = getFactors(houseNumber);
         std::erase_if(factors, [houseNumber](const auto n){return houseNumber/n > 50;});
 
-        auto presents = std::accumulate(std::begin(factors), std::end(factors), 0u);
+        const auto presents = Utilities::sum(factors);
         if(presents>minPresents) return houseNumber;
     }
 };
