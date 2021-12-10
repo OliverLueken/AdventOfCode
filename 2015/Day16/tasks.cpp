@@ -9,86 +9,80 @@
 #include <unordered_map>
 #include <iomanip>
 
-using auntDetails=std::unordered_map<std::string, unsigned int>;
+using auntDetails = std::unordered_map<std::string, unsigned int>;
 
-auto removeLastChar = [](const auto& s){
-    return s.substr(0, s.size()-1);
-};
 
 auto parseAuntdata = [](const auto& input){
-    std::unordered_map<int, auntDetails> auntData;
+    std::unordered_map<int, auntDetails> auntData{};
     for(const auto& s : input){
-        const auto split = Utilities::split(s);
-        auntDetails temp{};
+        const auto split = Utilities::splitOnEach(s, " :");
+        auntDetails thisAuntDetails{};
         for(auto pos=2u; pos < split.size()-1; pos+=2){
-            temp[removeLastChar(split[pos])] = std::stoi(split[pos+1]);
+            const auto object = split[pos];
+            const auto amount = std::stoi(split[pos+1]);
+            thisAuntDetails[object] = amount;
         }
-        auntData[std::stoi(split[1])] = temp;
+        const auto auntID = std::stoi(split[1]);
+        auntData[auntID] = thisAuntDetails;
     }
     return auntData;
 };
 
 auto parseSpecialAuntData = [](const auto& input){
-    auntDetails details;
+    auntDetails specialAuntDetails{};
     for(const auto s : input){
-        const auto split = Utilities::split(s);
-        details[removeLastChar(split[0])] = std::stoi(split[1]);
+        const auto split = Utilities::splitOnEach(s, " :");
+        const auto object = split[0];
+        const auto amount = std::stoi(split[1]);
+        specialAuntDetails[object] = amount;
     }
-    return details;
+    return specialAuntDetails;
 };
 
-auto isTaskOneSpecial = [](const auto& aunt, const auto& specialAunt){
-    for(const auto& [key, value] : aunt){
-        if(value != specialAunt.at(key)){
-            return false;
-        }
-    }
-    return true;
+auto isTaskOneSpecial = [](const auto& auntObjects, const auto& specialAuntObjects){
+    auto sameAmountAsSpecialAuntObject = [&specialAuntObjects](const auto& auntObject){
+        const auto& [object, amount] = auntObject;
+        return amount == specialAuntObjects.at(object);
+    };
+
+    return std::ranges::all_of(auntObjects, sameAmountAsSpecialAuntObject);
 };
 
-auto isTaskTwoSpecial = [](const auto& aunt, const auto& specialAunt){
-    for(const auto& [key, value] : aunt){
-        if(key == "cats" || key == "trees"){
-            if(value <= specialAunt.at(key)){
-                return false;
-            }
+auto isTaskTwoSpecial = [](const auto& auntObjects, const auto& specialAuntObjects){
+    auto sameAmountAsSpecialAuntObject = [&specialAuntObjects](const auto& auntObject){
+        const auto& [object, amount] = auntObject;
+        if(object == "cats" || object == "trees"){
+            return amount > specialAuntObjects.at(object);
         }
-        else if(key =="pomeranians" || key == "goldfish"){
-            if(value >= specialAunt.at(key)){
-                return false;
-            }
+        else if(object =="pomeranians" || object == "goldfish"){
+            return amount < specialAuntObjects.at(object);
         }
-        else{
-            if(value != specialAunt.at(key)){
-                return false;
-            }
-        }
-    }
-    return true;
+        return amount == specialAuntObjects.at(object);
+    };
+
+    return std::ranges::all_of(auntObjects, sameAmountAsSpecialAuntObject);
 };
 
-auto findSpecialAunt = [](const auto& auntData, const auto& specialAunt, const auto& isSpecial){
-    for(const auto& [auntNumber, aunt] : auntData ){
-        if(isSpecial(aunt, specialAunt)){
-            return auntNumber;
-        }
-    }
-    return 0;
+auto findSpecialAunt = [](const auto& allAuntsObjectData, const auto& specialAuntObjects, const auto& isSpecial){
+    auto isSpecialAunt = [&specialAuntObjects, &isSpecial](const auto& auntData){
+        const auto& auntObjects = auntData.second;
+        return isSpecial(auntObjects, specialAuntObjects);
+    };
+
+    const auto specialAuntIt = std::ranges::find_if(allAuntsObjectData, isSpecialAunt);
+    return specialAuntIt->first;
 };
 
 
 int main(){
-    const auto input1 = readFile::vectorOfStrings("input1.txt");
-    const auto input2 = readFile::vectorOfStrings("input2.txt");
-
-    auto auntData = parseAuntdata(input1);
-    const auto specialAunt = parseSpecialAuntData(input2);
+    const auto allAuntsObjectData = parseAuntdata(readFile::vectorOfStrings("input1.txt"));
+    const auto specialAuntData = parseSpecialAuntData(readFile::vectorOfStrings("input2.txt"));
 
     //Task 1
-    auto aunt = findSpecialAunt(auntData, specialAunt, isTaskOneSpecial);
-    std::cout << "The aunt Sue that got you the gift is aunt #" << aunt << ".\n";
+    const auto actuallyNotSpecialAuntID = findSpecialAunt(allAuntsObjectData, specialAuntData, isTaskOneSpecial);
+    std::cout << "The aunt Sue that got you the gift is aunt #" << actuallyNotSpecialAuntID << ".\n";
 
     //Task 2
-    aunt = findSpecialAunt(auntData, specialAunt, isTaskTwoSpecial);
-    std::cout << "The aunt Sue that got you the gift is aunt #" << aunt << ".\n";
+    const auto specialAuntID = findSpecialAunt(allAuntsObjectData, specialAuntData, isTaskTwoSpecial);
+    std::cout << "The aunt Sue that got you the gift is aunt #" << specialAuntID << ".\n";
 }
