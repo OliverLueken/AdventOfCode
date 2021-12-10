@@ -10,10 +10,10 @@
 #include <numeric>
 
 auto parseInput = [](const auto& input){
-    std::vector<std::pair<std::string, std::string>> replacements;
+    std::vector<std::pair<std::string, std::string>> replacements{};
     for(const auto& s : input){
-        if(s.empty()) break;
         auto split = Utilities::split(s);
+        if(split.size()==1) break;
         replacements.emplace_back(std::move(split[0]), std::move(split[2]));
     }
 
@@ -59,16 +59,14 @@ auto countStepsToCreateMolecule = [](auto& goalMolecule, auto& replacements){
         return Utilities::searchAll(goalMolecule, element).size();
     };
 
-    auto countElements = std::transform_reduce(std::begin(elements), std::end(elements),
+    const auto countElements = std::transform_reduce(std::begin(elements), std::end(elements),
                                                0u, std::plus<>(), getElementCount);
-    auto countY = std::ranges::count(goalMolecule, 'Y');
+    const auto countY = std::ranges::count(goalMolecule, 'Y');
     return countElements-countY-1;
 };
 
 int main(){
-    const auto input = readFile::vectorOfStrings("input.txt");
-
-    auto [replacements, molecule] = parseInput(input);
+    auto [replacements, molecule] = parseInput(readFile::vectorOfStrings("input.txt"));
 
     const auto distinctMolecules = countDistinctMolecules(molecule, replacements);
     std::cout << "There are " << distinctMolecules << " distinct molecules that can be created.\n";
