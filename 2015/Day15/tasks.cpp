@@ -27,38 +27,43 @@ auto getOptimalScore = [](const auto& ingredients){
     auto maxScore = 0l;
 
     std::vector<int> ingrAmount(4);
-    for(ingrAmount[0]=0u; ingrAmount[0] < 100; ingrAmount[0]++){
-        for(ingrAmount[1]=0u; ingrAmount[1] < 100-ingrAmount[0]; ingrAmount[1]++){
-            for(ingrAmount[2]=0u; ingrAmount[2] <100-ingrAmount[0]-ingrAmount[1]; ingrAmount[2]++){
-                ingrAmount[3] = 100-ingrAmount[0]-ingrAmount[1]-ingrAmount[2];
-                std::vector<long> total(5,0); //task 1 only needs total(4,0) but extra if constexpr not worth it
-                for(auto j=0u; j<5; j++){     //as it would have to change here too
-                    for(auto i=0u; i<4; i++){ //j iterates over the properties of the ingredient, i over the ingredients
-                        total[j] += ingrAmount[i]*ingredients[i][j];
-                    }
-                    total[j] = std::max(0l, total[j]);
-                }
-                auto score = total[0]*total[1]*total[2]*total[3];
-                if constexpr (withCals){ //tasks fork here
-                    if(score > maxScore && total[4] == 500){
-                        maxScore=score;
-                    }
-                }
-                else{
-                    if(score > maxScore)
-                        maxScore=score;
-                }
+    for(ingrAmount[0] = 0u; ingrAmount[0] < 100                            ; ingrAmount[0]++){
+    for(ingrAmount[1] = 0u; ingrAmount[1] < 100-ingrAmount[0]              ; ingrAmount[1]++){
+    for(ingrAmount[2] = 0u; ingrAmount[2] < 100-ingrAmount[0]-ingrAmount[1]; ingrAmount[2]++){
+        ingrAmount[3] = 100-ingrAmount[0]-ingrAmount[1]-ingrAmount[2];
+
+        auto totalSize = 4u;
+        if constexpr (withCals){
+            totalSize = 5u;
+        }
+        std::vector<long> total(totalSize, 0);
+        for(auto j=0u; j<total.size(); j++){
+            for(auto i=0u; i<ingrAmount.size(); i++){ //j iterates over the properties of the ingredient, i over the ingredients
+                total[j] += ingrAmount[i]*ingredients[i][j];
+            }
+            total[j] = std::max(0l, total[j]);
+        }
+
+        const auto score = total[0]*total[1]*total[2]*total[3];
+        if constexpr (withCals){ //tasks fork here
+            if(score > maxScore && total[4] == 500){
+                maxScore=score;
             }
         }
+        else{
+            if(score > maxScore){
+                maxScore=score;
+            }
+        }
+    }
+    }
     }
 
     return maxScore;
 };
 
 int main(){
-    const auto input = readFile::vectorOfStrings("input.txt");
-
-    const auto ingredients = getIngredients(input);
+    const auto ingredients = getIngredients(readFile::vectorOfStrings("input.txt"));
 
     //Task 1
     auto score = getOptimalScore<false>(ingredients);
