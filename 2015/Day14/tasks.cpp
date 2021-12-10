@@ -26,12 +26,12 @@ auto getReindeerData = [](const auto& input){
     return data;
 };
 
-auto getFurthestDistance = [](const auto& data, const unsigned int seconds){
+auto getFurthestDistance = [](const auto& data, const auto seconds){
     auto maxDistance = 0ul;
     for(const auto& reindeer : data){
-        auto segmentDuration = reindeer.maxSpeedDuration+reindeer.restDuration;
-        auto segments = seconds/segmentDuration;
-        auto distance = segments*reindeer.maxSpeed*reindeer.maxSpeedDuration;
+        const auto segmentDuration = reindeer.maxSpeedDuration+reindeer.restDuration;
+        const auto segments        = seconds/segmentDuration;
+              auto distance        = segments*reindeer.maxSpeed*reindeer.maxSpeedDuration;
         if(segments*segmentDuration + reindeer.maxSpeedDuration <= seconds)
             distance+=reindeer.maxSpeed*reindeer.maxSpeedDuration;
         else
@@ -41,8 +41,7 @@ auto getFurthestDistance = [](const auto& data, const unsigned int seconds){
     return maxDistance;
 };
 
-auto getMostStars = [](const auto& data, const unsigned int seconds){
-
+auto getMostStars = [](const auto& data, const auto seconds){
     auto move = [](auto& distanceTraveled, auto& second, const auto& reindeer){
         distanceTraveled[second] = distanceTraveled[second-1]+reindeer.maxSpeed;
         second++;
@@ -58,7 +57,7 @@ auto getMostStars = [](const auto& data, const unsigned int seconds){
         auto segments = seconds/segmentDuration;
         auto second = 1u;
 
-        //run unhindered the first segments
+        //run the first segments unhindered
         for(auto i=0u; i<segments; i++){
             for(auto j=0u; j<reindeer.maxSpeedDuration; j++)
                 move(distanceTraveled, second, reindeer);
