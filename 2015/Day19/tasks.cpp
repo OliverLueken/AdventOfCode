@@ -24,8 +24,8 @@ auto iterateMolecules = [](auto& molecules, const auto& replacements){
     auto addNewMolecules = [](const auto& molecule, auto& newMolecules, const auto& fromReplacement, const auto& toReplacement){
         const auto toReplaceRanges = Utilities::searchAll(molecule, fromReplacement);
         for(const auto& subrange : toReplaceRanges){
-            auto first = std::distance(std::begin(molecule), subrange.begin());
-            auto last = std::distance(std::begin(molecule), subrange.end());
+            const auto first = std::distance(std::begin(molecule), subrange.begin());
+            const auto last  = std::distance(std::begin(molecule), subrange.end());
             newMolecules.emplace(molecule.substr(0, first) + toReplacement + molecule.substr(last));
         }
     };
