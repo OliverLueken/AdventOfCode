@@ -34,25 +34,23 @@ auto parseEnemyInput = [](const auto&& input){
 };
 
 auto parseStoreInput = [](const auto&& input){
-    auto stockItems = [row=0u](const auto& input) mutable{
+    auto stockItems = [](const auto& input) mutable{
         std::vector<item> items{};
-        do{
-            row+=1;
-            const auto split = Utilities::split(input[row]);
-            auto n=split.size();
+        for(const auto row : input){
+            const auto split = Utilities::split(row);
+            const auto n = split.size();
             items.emplace_back(std::stoi(split[n-3]), std::stoi(split[n-2]), std::stoi(split[n-1]));
-        }while(input[row+1]!="");
-        row+=2;
+        }
         return items;
     };
 
     store store{};
-    store.weapons = stockItems(input);
+    store.weapons = stockItems(input | std::views::drop(1) | std::views::take(5));
 
-    store.armor = stockItems(input);
+    store.armor = stockItems(input | std::views::drop(7) | std::views::take(5));
     store.armor.insert(std::begin(store.armor), item{}); //armor is optional
 
-    store.rings = stockItems(input);
+    store.rings = stockItems(input | std::views::drop(13));
     store.rings.insert(std::begin(store.rings), item{}); //we need two optional rings
     store.rings.insert(std::begin(store.rings), item{});
 
