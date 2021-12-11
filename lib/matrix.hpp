@@ -79,7 +79,7 @@ namespace Matrix{
 
         template<std::forward_iterator I, std::sentinel_for<I> S>
         requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>&>
-        constexpr void assign( I first, S last, const size_t offset = 0){
+        constexpr void assign( I first, S last, const size_t offset = 0u ){
             auto matrixIt = std::begin(matrix)+offset;
             while( first != last && matrixIt < std::end(matrix)){
                 *matrixIt++ = *first++;
@@ -87,11 +87,11 @@ namespace Matrix{
         }
 
         template< std::ranges::forward_range R>
-        constexpr void assign ( R&& range, const size_t offset = 0 ){
+        constexpr void assign ( R&& range, const size_t offset = 0u ){
             assign(std::begin(range), std::end(range), offset);
         }
 
-        constexpr void assign( std::initializer_list<T> ilist, const size_t offset = 0 ){
+        constexpr void assign( std::initializer_list<T> ilist, const size_t offset = 0u ){
             assign(std::begin(ilist), std::end(ilist), offset);
         }
 
@@ -237,6 +237,16 @@ namespace Matrix{
     }
 
     /*
+    for row and column index *it=(i,j), returns it's valid adjacent neighbor indeces, including diagonals
+    */
+    template<class T, std::forward_iterator I>
+    requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
+    auto getNeighbors(const Matrix<T>& matrix, I it){
+        auto longIndex = std::ranges::distance(std::begin(matrix), it);
+        return getNeighbors(matrix, longIndex);
+    }
+
+    /*
     for row and column index (i,j), returns it's valid adjacent neighbor indeces, including diagonals
     */
     template<class T, std::unsigned_integral S = uint32_t>
@@ -275,6 +285,15 @@ namespace Matrix{
         return getExtendedNeighbors(matrix, i, j);
     }
 
+    /*
+    for row and column index *it=(i,j), returns it's valid adjacent neighbor indeces, including diagonals
+    */
+    template<class T, std::forward_iterator I>
+    requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
+    auto getExtendedNeighbors(const Matrix<T>& matrix, I it){
+        const auto longIndex = (size_t) std::ranges::distance(std::begin(matrix), it);
+        return getExtendedNeighbors(matrix, longIndex);
+    }
 
     template<class T>
     void swap(Matrix<T>& rhs, Matrix<T>& lhs) noexcept {
