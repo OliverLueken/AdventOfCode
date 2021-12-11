@@ -42,10 +42,10 @@ int main(){
     const auto triangles = parseInput(readFile::vectorOfStrings("input.txt"));
 
     //Task 1
-    auto validTriangles = std::ranges::count_if(triangles, isValidTriangle);
+    const auto validTriangles = std::ranges::count_if(triangles, isValidTriangle);
     std::cout << "There are " << validTriangles << " possible triangles.\n";
 
     //Task 2
-    validTriangles = countValidColTriangles(triangles);
-    std::cout << "There are " << validTriangles << " possible triangles by column.\n";
+    const auto validColumnTriangles = countValidColTriangles(triangles);
+    std::cout << "There are " << validColumnTriangles << " possible triangles by column.\n";
 }
