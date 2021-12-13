@@ -35,23 +35,18 @@ auto parseInput = [](const auto& input){
 };
 
 auto foldHorizontal(auto& paper, auto iFoldingLine){
-    for(auto j=0u; j<paper.cols(); j++){
-        for(auto i=1; 0<=iFoldingLine-i && iFoldingLine+i<paper.rows(); i++){
-            paper(iFoldingLine-i, j) += paper(iFoldingLine+i, j);
-        }
-
-        // works but very inefficient for now
-        // auto range1 = paper.col(j) | std::views::take(iFoldingLine) | std::views::reverse;
-        // auto range2 = paper.col(j) | std::views::drop(iFoldingLine+1);
-        // std::ranges::transform( range1, range2, std::begin(range1), std::plus<>() );
+    for(auto i=1; 0<=iFoldingLine-i && iFoldingLine+i<paper.rows(); i++){
+        const auto range1 = paper.row(iFoldingLine-i);
+        const auto range2 = paper.row(iFoldingLine+i);
+        std::ranges::transform( range1, range2, std::begin(range1), std::plus<>() );
     }
     paper.resize(iFoldingLine, paper.cols());
 }
 
 auto foldVertical(auto& paper, auto jFoldingLine){
     for(auto i=0u; i<paper.rows(); i++){
-        auto range1 = paper.row(i) | std::views::take(jFoldingLine) | std::views::reverse;
-        auto range2 = paper.row(i) | std::views::drop(jFoldingLine+1);
+        const auto range1 = paper.row(i) | std::views::take(jFoldingLine) | std::views::reverse;
+        const auto range2 = paper.row(i) | std::views::drop(jFoldingLine+1);
         std::ranges::transform( range1, range2, std::begin(range1), std::plus<>() );
     }
     paper.resize(paper.rows(), jFoldingLine);
