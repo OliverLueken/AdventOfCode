@@ -6,53 +6,41 @@
 #include <iostream>
 #include <algorithm>
 #include <ranges>
+#include <vector>
+#include <unordered_set>
 
+using Position = Matrix::Position<size_t>;
+using positionHash = Matrix::positionHash;
 
 auto parseInput = [](const auto& input){
     std::vector<std::pair<char, size_t>> instructions;
-    std::vector<std::pair<size_t, size_t>> coords{};
+    std::vector<Position> points{};
 
     for(const auto& row : input){
         const auto split = Utilities::splitOnEach(row, " ,=");
         if(split[0]!= "fold"){
             const auto j = std::stoul(split[0]);
             const auto i = std::stoul(split[1]);
-            coords.emplace_back(i, j);
+            points.emplace_back(i, j);
         }
         else{
             instructions.emplace_back( split[2][0], std::stoul(split[3]) );
         }
     }
-    auto max_i=std::ranges::max(coords | std::views::elements<0>);
-    auto max_j=std::ranges::max(coords | std::views::elements<1>);
+
+    return std::make_pair(points, instructions);
+};
+
+auto printPaper(const auto& points){
+
+    auto max_i=std::ranges::max(points | std::views::elements<0>);
+    auto max_j=std::ranges::max(points | std::views::elements<1>);
 
     Matrix::Matrix<int> paper{max_i+1,max_j+1};
-    for(const auto& [i,j] : coords){
+    for(const auto& [i,j] : points){
         paper(i,j) = 1;
     }
 
-    return std::make_pair(paper, instructions);
-};
-
-auto foldHorizontal(auto& paper, auto iFoldingLine){
-    for(auto i=1; 0<=iFoldingLine-i && iFoldingLine+i<paper.rows(); i++){
-        const auto range1 = paper.row(iFoldingLine-i);
-        const auto range2 = paper.row(iFoldingLine+i);
-        std::ranges::transform( range1, range2, std::begin(range1), std::plus<>() );
-    }
-    paper.resize(iFoldingLine, paper.cols());
-}
-
-auto foldVertical(auto& paper, auto jFoldingLine){
-    for(auto i=0u; i<paper.rows(); i++){
-        const auto range1 = paper.row(i) | std::views::take(jFoldingLine) | std::views::reverse;
-        const auto range2 = paper.row(i) | std::views::drop(jFoldingLine+1);
-        std::ranges::transform( range1, range2, std::begin(range1), std::plus<>() );
-    }
-    paper.resize(paper.rows(), jFoldingLine);
-}
-
-auto printPaper(const auto& paper){
     for(auto i=0u; i<paper.rows(); i++){
         const auto row = paper.row(i);
         for(const auto i : row){
@@ -62,35 +50,56 @@ auto printPaper(const auto& paper){
     }
 }
 
-auto fold(auto& paper, const auto& instructions){
-    if(instructions.first=='y'){
-        foldHorizontal(paper, instructions.second);
-    }
-    else{
-        foldVertical(paper, instructions.second);
-    }
+auto foldNumber(auto i, auto b){
+    return i<b ? i : 2*b-i;
 }
 
-auto getVisibleDotsAfterOneFold = [](auto& paper, const auto& instruction){
-    fold(paper, instruction);
-    return Utilities::sum(paper.data());
+auto fold(auto& points, const auto& instruction){
+    std::vector<Position> foldedPoints{};
+    if(instruction.first=='y'){ //horizontal folding (first coordinate needs folding)
+        std::ranges::transform(points, std::back_inserter(foldedPoints),
+            [&instruction](const auto& point){
+                const auto& [i,j] = point;
+                return Position{ foldNumber(i, instruction.second), j };
+            }
+        );
+    }
+    else{ //vertical folding
+        std::ranges::transform(points, std::back_inserter(foldedPoints),
+            [&instruction](const auto& point){
+                const auto& [i,j] = point;
+                return Position{ i, foldNumber(j, instruction.second) };
+            }
+        );
+    }
+    std::swap(points, foldedPoints);
+}
+
+auto getVisibleDotsAfterOneFold = [](auto& points, const auto& instruction){
+    fold(points, instruction);
+    std::unordered_set<Position, positionHash> pointSet{};
+    for(const auto& point : points){
+        pointSet.insert(point);
+    }
+    return pointSet.size();
 };
 
 
-auto finishFolding = [](auto& paper, const auto& instructions){
+auto finishFolding = [](auto& points, const auto& instructions){
     for(const auto& i : instructions){
-        fold(paper, i);
+        fold(points, i);
     }
 };
 
 int main(){
-    auto [paper, instructions] = parseInput(readFile::vectorOfStrings("input.txt"));
+    auto [points, instructions] = parseInput(readFile::vectorOfStrings("input.txt"));
 
-    const auto visibleDotsAfterOneFold = getVisibleDotsAfterOneFold(paper, instructions[0]);
+    //Task 1
+    const auto visibleDotsAfterOneFold = getVisibleDotsAfterOneFold(points, instructions[0]);
     std::cout << "After one fold, there are " << visibleDotsAfterOneFold << " dots visible.\n";
 
-
-    finishFolding(paper, instructions | std::views::drop(1));
+    //Task 2
+    finishFolding(points, instructions | std::views::drop(1));
     std::cout << "After finishing folding, the following letters are readable:\n";
-    printPaper(paper);
+    printPaper(points);
 }
