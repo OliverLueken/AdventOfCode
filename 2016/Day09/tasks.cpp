@@ -24,11 +24,11 @@ auto getDecompressedLength = [](const auto& string){
         count+=std::distance(first, match[0].first);
         first = match[0].first;
         last  = match[0].second;
-        auto split = Utilities::split(first+1, last-1, 'x');
+        const auto split = Utilities::split(first+1, last-1, 'x');
         const auto length = std::stoi(split[0]);
         const auto repeat = std::stoi(split[1]);
-        count+=length*repeat;
         first=last+length;
+        count+=repeat*length;
         match = getNextMarker(first, std::end(string));
     }
     return count + std::distance(first, std::end(string));
@@ -43,7 +43,7 @@ auto getDecompressedLengthV2(auto first, const auto end) -> long int{
         count+=std::distance(first, match[0].first);
         first = match[0].first;
         last  = match[0].second;
-        auto split = Utilities::split(first+1, last-1, 'x');
+        const auto split = Utilities::split(first+1, last-1, 'x');
         const auto length = std::stoi(split[0]);
         const auto repeat = std::stoi(split[1]);
         first=last+length;
