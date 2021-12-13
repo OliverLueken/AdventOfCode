@@ -1,20 +1,10 @@
 
 #include "../../lib/readFile.hpp"
 #include "../../lib/utilities.hpp"
-#include "../../lib/md5.hpp"
 
 #include <iostream>
-#include <string>
 #include <vector>
-#include <array>
-#include <unordered_map>
-#include <unordered_set>
-#include <deque>
-#include <algorithm>
-#include <numeric>
-#include <climits>
-#include <memory>
-#include <ranges>
+#include <cmath>
 
 using Position = std::pair<int,int>;
 struct positionHash{
