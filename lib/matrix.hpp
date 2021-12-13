@@ -108,7 +108,7 @@ namespace Matrix{
             return matrix[i*m+j];
         }
 
-        constexpr const std::vector<T>::reference operator()(const size_t i, const size_t j) const {
+        constexpr const std::vector<T>::const_reference operator()(const size_t i, const size_t j) const {
             checkBounds(i,j);
             return matrix[i*m+j];
         }
@@ -117,7 +117,7 @@ namespace Matrix{
             return matrix.at(longIndex);
         }
 
-        constexpr const std::vector<T>::reference operator[](const size_t longIndex) const {
+        constexpr const std::vector<T>::const_reference operator[](const size_t longIndex) const {
             return matrix.at(longIndex);
         }
 
@@ -146,9 +146,21 @@ namespace Matrix{
             return m;
         }
 
+        [[nodiscard]] constexpr auto row(const size_t i) {
+            checkRowBound(i);
+            return matrix | std::views::drop(i*m) | std::views::take(m);
+        }
+
         [[nodiscard]] constexpr auto row(const size_t i) const {
             checkRowBound(i);
             return matrix | std::views::drop(i*m) | std::views::take(m);
+        }
+
+        [[nodiscard]] constexpr auto col(const size_t j) {
+            checkColBound(j);
+            const auto m = this->m;
+            auto mthElement = [m, i=0](const auto&) mutable { return i++%m==0; };
+            return matrix | std::views::drop(j) | std::views::filter(mthElement);
         }
 
         [[nodiscard]] constexpr auto col(const size_t j) const {
