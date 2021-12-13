@@ -103,21 +103,21 @@ namespace Matrix{
             return matrix;
         }
 
-        constexpr T& operator()(const size_t i, const size_t j){
+        constexpr std::vector<T>::reference operator()(const size_t i, const size_t j){
             checkBounds(i,j);
             return matrix[i*m+j];
         }
 
-        constexpr const T& operator()(const size_t i, const size_t j) const {
+        constexpr const std::vector<T>::reference operator()(const size_t i, const size_t j) const {
             checkBounds(i,j);
             return matrix[i*m+j];
         }
 
-        constexpr T& operator[](const size_t longIndex){
+        constexpr std::vector<T>::reference operator[](const size_t longIndex){
             return matrix.at(longIndex);
         }
 
-        constexpr const T& operator[](const size_t longIndex) const {
+        constexpr const std::vector<T>::reference operator[](const size_t longIndex) const {
             return matrix.at(longIndex);
         }
 
