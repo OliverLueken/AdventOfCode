@@ -10,22 +10,16 @@
 #include <unordered_map>
 
 
-auto adjacent_n = [](auto it, unsigned int n){
-    bool allTheSame = true;
-    while(n>1){
-        allTheSame &= *it == *(it-1);
-        it--;
-        n--;
-    }
-    return allTheSame;
-};
-
 auto adjacent_find_n = [](const auto& r, const unsigned int n){
-    auto it = std::begin(r)+n-1;
-    while( !adjacent_n(it, n) && it!=std::end(r) ){
-        it++;
+    auto first = std::begin(r);
+    while(first != std::end(r)-n+1){
+        const auto nSameAdjacent = std::ranges::all_of( first+1, first+n,
+            [first](const auto& val){ return val == *first;}
+        );
+        if( nSameAdjacent ) break;
+        first++;
     }
-    return std::make_pair(it!=std::end(r), it-n+1);
+    return std::make_pair(first!=std::end(r)-n+1, first);
 };
 
 auto toLower = [](std::string& s){
@@ -45,15 +39,15 @@ auto hash2017Times(std::string s){
 auto lookForKey = [](const auto& input, auto& i, auto& letterToIDs, auto& keys, const auto hashFunc){
     const auto hash = hashFunc(input + std::to_string(i));
 
-    auto [hasThreeAdjacentLetters, it3] = adjacent_find_n(hash, 3);
+    const auto [hasThreeAdjacentLetters, it3] = adjacent_find_n(hash, 3);
     if(hasThreeAdjacentLetters){
-        auto character = *it3;
+        const auto character = *it3;
         letterToIDs[character].emplace_back(i);
     }
 
-    auto [hasFiveAdjacentLetters, it5] = adjacent_find_n(hash, 5);
+    const auto [hasFiveAdjacentLetters, it5] = adjacent_find_n(hash, 5);
     if(hasFiveAdjacentLetters){
-        auto character = *it5;
+        const auto character = *it5;
         std::erase_if(letterToIDs[character],
             [i, &keys](const auto id){
                 if( id+1000 >= i && id < i ){
