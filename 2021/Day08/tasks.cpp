@@ -19,77 +19,87 @@ auto parseInput = [](const auto& input){
     return parsed;
 };
 
-class PatternToDigitMap{
-public:
-    std::unordered_map<std::string, int> patternToDigitMap{};
-
-    PatternToDigitMap(){
-        patternToDigitMap["abcefg"]  = 0;
-        patternToDigitMap["cf"]      = 1;
-        patternToDigitMap["acdeg"]   = 2;
-        patternToDigitMap["acdfg"]   = 3;
-        patternToDigitMap["bcdf"]    = 4;
-        patternToDigitMap["abdfg"]   = 5;
-        patternToDigitMap["abdefg"]  = 6;
-        patternToDigitMap["acf"]     = 7;
-        patternToDigitMap["abcdefg"] = 8;
-        patternToDigitMap["abcdfg"]  = 9;
-    }
-};
-
-auto& getPatternToDigitMap(){
-    static const PatternToDigitMap wrapper{};
-    return wrapper.patternToDigitMap;
-}
-
-auto getOutputPatterns = [](const auto& patterns){
-    return patterns | std::views::reverse | std::views::take(4) | std::views::reverse;
-};
 
 auto getNumberOfObviousDigitsInOutputPatterns = [](const auto& input){
+    auto getOutputPatterns = [](const auto& patterns){
+        return patterns | std::views::drop(10);
+    };
     auto patternIsObviousDigit = [](const auto& pattern){
         return pattern.size() == 2 || pattern.size() == 3 || pattern.size() == 4 || pattern.size() == 7;
     };
-    return std::ranges::count_if(input | std::views::transform( getOutputPatterns ) | std::views::join, patternIsObviousDigit);
+    return std::ranges::count_if(input | std::views::transform(getOutputPatterns) | std::views::join, patternIsObviousDigit);
 };
 
 
-auto decode = [](const std::string& pattern, const auto& decoder){
-    std::string decoded{};
-    for( const auto signal : pattern){
-        decoded+=decoder[signal-'a'];
-    }
-    std::ranges::sort(decoded);
-    return decoded;
-};
-
-
-auto getDecoder = [](const auto& patterns){
-    const auto patternToDigitMap = getPatternToDigitMap();
-    std::string decoder = "abcdefg";
-
-    auto notDecodableByDecoder = [&patternToDigitMap, &decoder](const auto& pattern){
-        const auto decodedPattern = decode(pattern, decoder);
-        return !patternToDigitMap.contains(decodedPattern);
-    };
-
-    while(std::ranges::any_of(patterns, notDecodableByDecoder)){
-        std::ranges::next_permutation(decoder);
+auto getDecoder(const auto& signalPatterns){
+    std::unordered_map<char, size_t> decoder{};
+    for(const auto pattern : signalPatterns){
+        for(const auto signal : pattern){
+            decoder[signal]+=2*pattern.size()%7;
+        }
     }
     return decoder;
+}
+
+auto decodePattern(const auto& s, const auto& decoder){
+    return Utilities::sum(s, 0u,
+        [&decoder](const auto c){
+            return decoder.at(c);
+        }
+    );
+}
+
+class DecodedPatternValueToDigit{
+    auto initialize() const {
+        std::unordered_map<int, int> decodedPatternValueToDigit{};
+        const std::vector<std::string> digitPatterns ={
+            "abcefg",   //0
+            "cf",       //1
+            "acdeg",    //2
+            "acdfg",    //3
+            "bcdf",     //4
+            "abdfg",    //5
+            "abdefg",   //6
+            "acf",      //7
+            "abcdefg",  //8
+            "abcdfg"    //9
+        };
+
+        const auto decoder = getDecoder(digitPatterns);
+
+        for(auto digit=0u; digit<digitPatterns.size(); digit++){
+            const auto decodedPatternValue = decodePattern(digitPatterns[digit], decoder);
+            decodedPatternValueToDigit[decodedPatternValue] = digit;
+        }
+        return decodedPatternValueToDigit;
+    }
+
+public:
+    const std::unordered_map<int, int> decodedPatternValueToDigit{};
+
+    DecodedPatternValueToDigit() : decodedPatternValueToDigit{initialize()}{}
 };
 
-auto getOutput = [](const auto& patterns){
-    const auto decoder = getDecoder(patterns);
-    const auto patternToDigitMap = getPatternToDigitMap();
+auto& getDecodedPatternValueToDigit(){
+    static const DecodedPatternValueToDigit wrapper{};
+    return wrapper.decodedPatternValueToDigit;
+}
 
-    auto value = 0;
-    for(const auto& pattern : getOutputPatterns(patterns)){
-        const auto decodedPattern = decode(pattern, decoder);
-        value*=10;
-        value+=patternToDigitMap.at(decodedPattern);
+
+
+auto decodeOutput = [](const auto& patterns){
+    const auto decodedPatternValueToDigit = getDecodedPatternValueToDigit();
+    const auto signalPatterns = patterns | std::views::take(10);
+    const auto outputPatterns = patterns | std::views::drop(10);
+    const auto decoder = getDecoder(signalPatterns);
+
+    auto output = 0;
+    for(const auto& pattern : outputPatterns){
+        const auto decodedPatternValue = decodePattern(pattern, decoder);
+        output*=10;
+        output+=decodedPatternValueToDigit.at(decodedPatternValue);
     }
-    return value;
+    return output;
 };
 
 
@@ -97,10 +107,10 @@ int main(){
     const auto input = parseInput(readFile::vectorOfStrings("input.txt"));
 
     //Task 1
-    auto numberOfObviousDigitsInOutputPatterns = getNumberOfObviousDigitsInOutputPatterns(input);
+    const auto numberOfObviousDigitsInOutputPatterns = getNumberOfObviousDigitsInOutputPatterns(input);
     std::cout << "A total of " << numberOfObviousDigitsInOutputPatterns << " output values would display 1, 4, 7, or 8.\n";
 
     //Task 2
-    const auto sumOfOutputValues = Utilities::sum(input, 0, getOutput);
+    const auto sumOfOutputValues = Utilities::sum(input, 0, decodeOutput);
     std::cout << "The sum of all output values is " << sumOfOutputValues << ".\n";
 }
