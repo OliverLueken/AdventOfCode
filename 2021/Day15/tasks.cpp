@@ -46,12 +46,14 @@ auto getLowestRiskOfCrossing = [](const auto& matrix){
 };
 
 auto getCompleteRiskLevelMatrix = [](const auto& matrix){
-    Matrix::Matrix<int> completeMatrix{5*matrix.rows(), 5*matrix.cols()};
-    for(auto i=0u; i<completeMatrix.rows(); i++){
-        auto ihigher = i/matrix.rows();
-        for(auto j=0u; j<completeMatrix.cols(); j++){
-            auto jhigher=j/matrix.cols();
-            completeMatrix(i,j) = (int)(matrix(i%matrix.rows(), j%matrix.cols())+ihigher+jhigher-1)%9+1;
+    const auto n = matrix.rows();
+    const auto m = matrix.cols();
+    Matrix::Matrix<int> completeMatrix{5*n, 5*m};
+    for(auto row=0u; row<completeMatrix.rows(); row++){
+        const auto horizontalRiskOffset = row/n;
+        for(auto col=0u; col<completeMatrix.cols(); col++){
+            const auto verticalRiskOffset=col/m;
+            completeMatrix(row,col) = (int)(matrix(row%n, col%m)+horizontalRiskOffset+verticalRiskOffset-1)%9+1;
         }
     }
     return completeMatrix;
