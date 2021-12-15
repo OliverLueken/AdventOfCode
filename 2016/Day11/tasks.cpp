@@ -8,59 +8,45 @@
 #include <algorithm>
 #include <numeric>
 #include <ranges>
+#include <variant>
 
 struct Building{
     std::array<std::vector<int>,4> floors{};
 };
 
-auto addGenerator = [](const auto& split, auto& floor, auto& typeID, auto& id){
-    auto it=std::ranges::find(split, "generator");
+auto add = [](const auto& object, const auto& split, auto& floor, auto& typeIDs){
+    static int id=0;
+    auto it=std::ranges::find(split, object);
     while(it!=std::end(split)){
         auto thisID = -id;
-        if(typeID.contains( *(it-1) )){
-            thisID = -typeID[ *(it-1) ];
+        const auto specifier = Utilities::split(*(it-1), '-')[0];
+        if(typeIDs.contains( specifier )){
+            thisID = -typeIDs[ specifier ];
         }
         else{
-            typeID[ *(it-1) ] = id;
+            typeIDs[ specifier ] = id;
             id++;
         }
         floor.push_back(thisID);
-        it=std::ranges::find(it+1, std::end(split), "generator");
+        it=std::ranges::find(it+1, std::end(split), object);
     }
 };
 
-auto addMicrochip = [](const auto& split, auto& floor, auto& typeID, auto& id){
-    auto it=std::ranges::find(split, "microchip");
-    while(it!=std::end(split)){
-        auto thisID = id;
-        if(typeID.contains( *(it-2) )){
-            thisID = typeID[ *(it-2) ];
-        }
-        else{
-            typeID[ *(it-2) ] = id;
-            id++;
-        }
-        floor.push_back(thisID);
-        it=std::ranges::find(it+1, std::end(split), "microchip");
-    }
-};
-
-auto parseRow = [](const auto& s, auto& typeID, auto& id){
+auto parseRow = [](const auto& s, auto& typeIDs){
     std::vector<int> floor{};
-    const auto split = Utilities::splitOnEach(s, " ,.-");
-    addGenerator(split, floor, typeID, id);
-    addMicrochip(split, floor, typeID, id);
+    const auto split = Utilities::splitOnEach(s, " ,.");
+    add("generator", split, floor, typeIDs);
+    add("microchip", split, floor, typeIDs);
 
     return floor;
 };
 
 auto parseInput = [](const auto& input){
-    std::unordered_map<std::string, int> typeID{};
+    std::unordered_map<std::string, int> typeIDs{};
     Building building{};
-    int i=0;
-    auto id=1;
+    int floor=0u;
     for(const auto& s : input){
-        building.floors[i++] = parseRow(s, typeID, id);
+        building.floors[floor++] = parseRow(s, typeIDs);
     }
     return building;
 };
@@ -76,6 +62,8 @@ auto getMinSteps = [](const auto& building){
     auto r = stepsFor | std::views::values;
     return std::accumulate(std::begin(r), std::end(r), 3) - std::ranges::max(r);
 };
+
+
 
 
 int main(){
