@@ -20,6 +20,12 @@ auto parseInput = [](const auto& input){
     return std::make_pair(xBounds, yBounds);
 };
 
+auto getHighestYPosition(const auto& yBounds){
+    const auto maxYVelocity     = std::ranges::max(std::abs(yBounds.first), std::abs(yBounds.second))-1;
+    const auto highestYPosition = maxYVelocity*(maxYVelocity+1)/2;
+    return highestYPosition;
+}
+
 auto getVelocityToHitPosInNSteps(const auto posToHit, const auto steps){
     const auto div = std::div(2*posToHit+steps*(steps-1), 2*steps);
     return std::make_pair( div.rem==0, div.quot );
@@ -51,26 +57,26 @@ auto addValidVelocityValuesToHit(const auto xn, const auto yn, auto& validVeloci
     }
 }
 
-auto getResult = [](auto xBounds, auto yBounds){
+auto getNumberOfValidVelocityValues = [](auto xBounds, auto yBounds){
     std::unordered_set<Position, positionHash> validVelocityValues{};
     for(auto xn = xBounds.first; xn<=xBounds.second; xn++){
         for(auto yn = yBounds.first; yn<=yBounds.second; yn++){
             addValidVelocityValuesToHit(xn, yn, validVelocityValues);
         }
     }
-
-    const auto maxYVelocity  = std::ranges::max(validVelocityValues | std::views::elements<1>);
-    const auto maxY          = maxYVelocity*(maxYVelocity+1)/2;
+    
     const auto numberOfValidVelocityValues = validVelocityValues.size();
-
-    return std::make_pair(maxY, numberOfValidVelocityValues);
+    return numberOfValidVelocityValues;
 };
 
 int main(){
     const auto [xBounds, yBounds] = parseInput(readFile::string("input.txt"));
 
-    //Task 1 & 2
-    const auto [maxY, numberOfValidVelocityValues] = getResult(xBounds, yBounds);
-    std::cout << "The highest position y reached is " << maxY  << ".\n";
+    //Task 1
+    const auto highestYPosition = getHighestYPosition(yBounds);
+    std::cout << "The highest position y reached is " << highestYPosition  << ".\n";
+
+    //Task 2
+    const auto numberOfValidVelocityValues = getNumberOfValidVelocityValues(xBounds, yBounds);
     std::cout << "There are " << numberOfValidVelocityValues << " possible initial velocity vectors.\n";
 }
