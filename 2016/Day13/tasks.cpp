@@ -11,22 +11,15 @@
 #include <unordered_set>
 #include <limits.h>
 
-using Position = std::pair<unsigned int, unsigned int>;
+using Position = Utilities::Position<unsigned int>;
 
 Position operator+(const Position& lhs, const std::pair<int,int>& rhs){
     return std::make_pair(lhs.first+rhs.first, lhs.second+rhs.second);
 }
 
-struct positionHash{
-    std::size_t operator()(const Position& position) const noexcept{
-        return (size_t) position.first << 32 | position.second;
-    }
-};
-
-
 class Mace{
     unsigned int maceDesignersFavoriteNumber{};
-    std::unordered_map<Position, int, positionHash> spaceMap{};
+    std::unordered_map<Position, int> spaceMap{};
 
     int generate(const unsigned int x, const unsigned int y) const{
         auto n = x*x+3*x+2*x*y+y+y*y+maceDesignersFavoriteNumber;
@@ -62,7 +55,7 @@ public:
 
 class Spreader{
     Mace* macePtr{nullptr};
-    std::unordered_set<Position, positionHash> nextSpreadFrom{};
+    std::unordered_set<Position> nextSpreadFrom{};
     static const std::array<std::pair<int,int>, 4> directions;
 
     void spreadTo(const Position currentPos, const std::pair<int,int> direction){
@@ -78,7 +71,7 @@ class Spreader{
 
 public:
     Spreader(Mace* macePtr) : macePtr{macePtr}{}
-    std::unordered_set<Position, positionHash>& getNextSpreadFrom(){
+    std::unordered_set<Position>& getNextSpreadFrom(){
         return nextSpreadFrom;
     }
 
@@ -95,7 +88,7 @@ const std::array<std::pair<int,int>, 4> Spreader::directions
 
 int findShortestPath(Mace mace, const Position& start, const Position& end){
     mace.setValueAt(start, 0);
-    std::unordered_set<Position, positionHash> spreadFrom{start};
+    std::unordered_set<Position> spreadFrom{start};
     while(!spreadFrom.contains(end)){
         Spreader spread{&mace};
 
@@ -110,7 +103,7 @@ int findShortestPath(Mace mace, const Position& start, const Position& end){
 auto getLocationsCountIn(Mace mace, const Position& start, int steps){
     mace.setValueAt(start, 0);
 
-    std::unordered_set<Position, positionHash> spreadFrom{start};
+    std::unordered_set<Position> spreadFrom{start};
     auto locationsCount=spreadFrom.size();
 
     while(steps>0){
