@@ -10,12 +10,12 @@
 #include <unordered_map>
 #include <numeric>
 
-using Position = std::pair<int, int>;
-struct positionHash{
-    std::size_t operator()(const Position& position) const noexcept{
-        return (size_t) position.first << 32 | position.second;
-    }
-};
+using Position = Utilities::Position<int>;
+// struc{
+//     std::size_t operator()(const Position& position) const noexcept{
+//         return (size_t) position.first << 32 | position.second;
+//     }
+// };
 
 auto getPlacesOfInterest(const auto& mace){
     std::unordered_map<int, Position> placesOfInterest;
@@ -49,7 +49,7 @@ auto advance = [](const auto& currPos, const auto dx, const auto dy, auto& next,
 };
 
 auto getDistancesFrom(const auto& start, const auto& mace){
-    std::unordered_map<Position, int, positionHash> distances{};
+    std::unordered_map<Position, int> distances{};
     distances[start]=0;
     std::deque<Position> next;
     next.push_back(start);
