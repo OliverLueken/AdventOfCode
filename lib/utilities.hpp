@@ -275,8 +275,8 @@ namespace Utilities{
 template<class T>
 struct std::hash<Utilities::Position<T>>{
     size_t operator()(const Utilities::Position<T>& position) const noexcept{
-        std::size_t h1 = std::hash<T>{}(position.first);
-        std::size_t h2 = std::hash<T>{}(position.second);
+        const std::size_t h1 = std::hash<T>{}(position.first);
+        const std::size_t h2 = std::hash<T>{}(position.second);
         return h1^(h2<<1);
     }
 };
