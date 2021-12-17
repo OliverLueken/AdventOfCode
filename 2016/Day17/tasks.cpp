@@ -59,10 +59,10 @@ auto getShortestPath = [](const auto& input){
     std::vector<Path> paths{Path{input}};
     while(!paths.empty()){
         std::vector<Path> nextPaths{};
-        for(const auto path : paths){
+        for(const auto& path : paths){
             advance(path, nextPaths);
         }
-        for(const auto path : nextPaths){
+        for(const auto& path : nextPaths){
             if(path.pos.x == 3 && path.pos.y == 3){
                 return path.passcode.substr(input.size());
             }
@@ -86,7 +86,7 @@ auto getLongestPathLength = [](const auto& input){
     std::vector<Path> paths{Path{input}};
     while(!paths.empty()){
         std::vector<Path> nextPaths{};
-        for(const auto path : paths){
+        for(const auto& path : paths){
             advance(path, nextPaths);
         }
         std::erase_if(nextPaths, reachedEnd);
