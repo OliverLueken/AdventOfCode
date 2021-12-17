@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/utilities.hpp"
 
 #include <algorithm>
 #include <unordered_set>
@@ -8,12 +9,7 @@
 #include <string>
 
 
-using Position = std::pair<int,int>;
-struct positionHash{
-    std::size_t operator()(const Position& position) const noexcept{
-        return (size_t) position.first << 32 | position.second;
-    }
-};
+using Position = Utilities::Position<int>;
 
 auto deliverPresents = [](auto&& instructions, auto& housesWithPresents) {
     auto position = std::make_pair(0,0);
@@ -46,13 +42,13 @@ auto deliverPresents = [](auto&& instructions, auto& housesWithPresents) {
 
 
 auto deliverWithSanta(const auto& input){
-    std::unordered_set<Position, positionHash> housesWithPresents{};
+    std::unordered_set<Position> housesWithPresents{};
     deliverPresents(input, housesWithPresents);
     return housesWithPresents.size();
 }
 
 auto deliverWithSantaAndRobot(const auto& input){
-    std::unordered_set<Position, positionHash> housesWithPresents{};
+    std::unordered_set<Position> housesWithPresents{};
 
     auto even = [i=0](const auto&) mutable {return 0 == i++%2;};
     auto odd  = [i=1](const auto&) mutable {return 0 == i++%2;};
