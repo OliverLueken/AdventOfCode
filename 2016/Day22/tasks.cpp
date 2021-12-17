@@ -12,17 +12,11 @@
 #include <cmath>
 #include <deque>
 
-using Position = std::pair<int, int>;
+using Position = Utilities::Position<int>;
 
 Position operator+(const Position& lhs, const Position& rhs){
     return std::make_pair(lhs.first+rhs.first, lhs.second+rhs.second);
 }
-
-struct positionHash{
-    std::size_t operator()(const Position& position) const noexcept{
-        return (size_t) position.first << 32 | position.second;
-    }
-};
 
 struct Node;
 struct Node{
@@ -52,7 +46,7 @@ auto addNeighbors = [](auto& nodes){
 };
 
 auto parseInput = [](const auto& input){
-    std::unordered_map<Position, Node, positionHash> nodes{};
+    std::unordered_map<Position, Node> nodes{};
     for(const auto& in : input | std::views::drop(2)){
         const auto split = Utilities::splitOnEach(in, " xy");
 
@@ -97,7 +91,7 @@ auto getFreeNodePos = [](const auto& nodes){
 };
 
 auto getShortestPath = [](const auto& nodes, const auto& startPos, const auto& endPos){
-    std::unordered_map<Position, unsigned int, positionHash> shortestPathTo{};
+    std::unordered_map<Position, unsigned int> shortestPathTo{};
     for(const auto& [pos, node] : nodes){
         shortestPathTo[pos] = UINT_MAX;
     }
