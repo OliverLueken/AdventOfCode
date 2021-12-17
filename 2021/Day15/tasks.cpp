@@ -10,7 +10,7 @@
 #include <climits>
 #include <ranges>
 
-using Position = Matrix::Position<size_t>;
+using Position = Utilities::Position<size_t>;
 
 auto parseInput = [](const auto& input){
     Matrix::Matrix<int> riskLevelMatrix{input.size(), input[0].size(),

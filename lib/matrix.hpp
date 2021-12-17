@@ -8,6 +8,10 @@
 
 
 namespace Matrix{
+
+    template<class T>
+    using Position     = Utilities::Position<T>;
+
     template<class T>
     class Matrix{
         size_t n{0};
@@ -194,17 +198,6 @@ namespace Matrix{
             std::swap(matrix, newMatrix.data());
             std::swap(n, newMatrix.n);
             std::swap(m, newMatrix.m);
-        }
-    };
-
-
-    template<class T = uint32_t>
-    using Position = std::pair<T, T>;
-
-    // template<class T>
-    struct positionHash{
-        uint64_t operator()(const Position<>& position) const noexcept{
-            return (uint64_t) position.first << 32 | position.second;
         }
     };
 

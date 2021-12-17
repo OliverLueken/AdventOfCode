@@ -8,7 +8,12 @@
 #include <iostream>
 #include <numeric>
 
+
 namespace Utilities{
+
+    template<class T = size_t>
+    using Position = std::pair<T, T>;
+
     struct contains_{
         /*
         An algorithm that searches for the element value in the range [first, last)
@@ -266,5 +271,15 @@ namespace Utilities{
     };
     inline constexpr sum_ sum;
 }
+
+template<class T>
+struct std::hash<Utilities::Position<T>>{
+    size_t operator()(const Utilities::Position<T>& position) const noexcept{
+        std::size_t h1 = std::hash<T>{}(position.first);
+        std::size_t h2 = std::hash<T>{}(position.second);
+        return h1^(h2<<1);
+    }
+};
+
 
 #endif

@@ -1,7 +1,6 @@
 
 #include "../../lib/readFile.hpp"
 #include "../../lib/utilities.hpp"
-#include "../../lib/matrix.hpp"
 
 #include <iostream>
 #include <vector>
@@ -10,8 +9,8 @@
 #include <ranges>
 #include <cmath>
 
-using Position     = Matrix::Position<int>;
-using positionHash = Matrix::positionHash;
+using Position     = Utilities::Position<int>;
+// using positionHash = Utilities::positionHash;
 
 auto parseInput = [](const auto& input){
     const auto split = Utilities::splitOnEach(input, "=.");
@@ -58,13 +57,13 @@ auto addValidVelocityValuesToHit(const auto xn, const auto yn, auto& validVeloci
 }
 
 auto getNumberOfValidVelocityValues = [](auto xBounds, auto yBounds){
-    std::unordered_set<Position, positionHash> validVelocityValues{};
+    std::unordered_set<Position> validVelocityValues{};
     for(auto xn = xBounds.first; xn<=xBounds.second; xn++){
         for(auto yn = yBounds.first; yn<=yBounds.second; yn++){
             addValidVelocityValuesToHit(xn, yn, validVelocityValues);
         }
     }
-    
+
     const auto numberOfValidVelocityValues = validVelocityValues.size();
     return numberOfValidVelocityValues;
 };
@@ -79,4 +78,6 @@ int main(){
     //Task 2
     const auto numberOfValidVelocityValues = getNumberOfValidVelocityValues(xBounds, yBounds);
     std::cout << "There are " << numberOfValidVelocityValues << " possible initial velocity vectors.\n";
+
+
 }

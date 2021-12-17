@@ -9,8 +9,8 @@
 #include <vector>
 #include <unordered_set>
 
-using Position = Matrix::Position<size_t>;
-using positionHash = Matrix::positionHash;
+using Position     = Utilities::Position<size_t>;
+// using positionHash = Utilities::positionHash;
 
 auto parseInput = [](const auto& input){
     std::vector<std::pair<char, size_t>> instructions;
@@ -77,7 +77,7 @@ auto fold(auto& points, const auto& instruction){
 
 auto getVisibleDotsAfterOneFold = [](auto& points, const auto& instruction){
     fold(points, instruction);
-    std::unordered_set<Position, positionHash> pointSet{};
+    std::unordered_set<Position> pointSet{};
     for(const auto& point : points){
         pointSet.insert(point);
     }
@@ -91,6 +91,7 @@ auto finishFolding = [](auto& points, const auto& instructions){
     }
 };
 
+
 int main(){
     auto [points, instructions] = parseInput(readFile::vectorOfStrings("input.txt"));
 
@@ -102,4 +103,7 @@ int main(){
     finishFolding(points, instructions | std::views::drop(1));
     std::cout << "After finishing folding, the following letters are readable:\n";
     printPaper(points);
+
+    // std::unordered_set<Position> p{};
+    // p.emplace(2, 4);
 }
