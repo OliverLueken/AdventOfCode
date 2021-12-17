@@ -8,9 +8,7 @@
 #include <vector>
 #include <algorithm>
 
-struct Position{
-    int x{0}, y{0};
-};
+using Position = Utilities::Position<int>;
 
 struct Path{
     std::string passcode{};
@@ -24,32 +22,32 @@ auto advance = [](const auto& path, auto& nextPaths){
     const auto hash = MD5::getMD5Hash(path.passcode);
 
     if(Utilities::contains("BCDEF", hash[0])){ //Up
-        if(path.pos.y > 0){
+        if(path.pos.second > 0){
             auto newPos{path.pos};
-            newPos.y-=1;
+            newPos.second-=1;
             nextPaths.emplace_back(path.passcode+'U', newPos);
         }
     }
     if(Utilities::contains("BCDEF", hash[1])){ //down
-        if(path.pos.y < 3){
+        if(path.pos.second < 3){
             auto newPos{path.pos};
-            newPos.y+=1;
+            newPos.second+=1;
             nextPaths.emplace_back(path.passcode+'D', newPos);
         }
 
     }
     if(Utilities::contains("BCDEF", hash[2])){ //left
-        if(path.pos.x > 0){
+        if(path.pos.first > 0){
             auto newPos{path.pos};
-            newPos.x-=1;
+            newPos.first-=1;
             nextPaths.emplace_back(path.passcode+'L', newPos);
         }
 
     }
     if(Utilities::contains("BCDEF", hash[3])){ //right
-        if(path.pos.x < 3){
+        if(path.pos.first < 3){
             auto newPos{path.pos};
-            newPos.x+=1;
+            newPos.first+=1;
             nextPaths.emplace_back(path.passcode+'R', newPos);
         }
     }
@@ -63,7 +61,7 @@ auto getShortestPath = [](const auto& input){
             advance(path, nextPaths);
         }
         for(const auto& path : nextPaths){
-            if(path.pos.x == 3 && path.pos.y == 3){
+            if(path.pos.first == 3 && path.pos.second == 3){
                 return path.passcode.substr(input.size());
             }
         }
@@ -76,7 +74,7 @@ auto getLongestPathLength = [](const auto& input){
     auto longestPathLength = 0lu;
 
     auto reachedEnd = [&longestPathLength, &input](const auto& path){
-        if(path.pos.x == 3 && path.pos.y == 3){
+        if(path.pos.first == 3 && path.pos.second == 3){
             longestPathLength = path.passcode.size()-input.size();
             return true;
         }
