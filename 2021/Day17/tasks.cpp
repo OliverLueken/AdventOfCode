@@ -9,8 +9,8 @@
 #include <ranges>
 #include <cmath>
 
-using Position     = Utilities::Position<int>;
-// using positionHash = Utilities::positionHash;
+using Position = Utilities::Position<int>;
+
 
 auto parseInput = [](const auto& input){
     const auto split = Utilities::splitOnEach(input, "=.");
@@ -19,18 +19,13 @@ auto parseInput = [](const auto& input){
     return std::make_pair(xBounds, yBounds);
 };
 
-auto getHighestYPosition(const auto& yBounds){
-    const auto maxYVelocity     = std::ranges::max(std::abs(yBounds.first), std::abs(yBounds.second))-1;
-    const auto highestYPosition = maxYVelocity*(maxYVelocity+1)/2;
-    return highestYPosition;
-}
 
-auto getVelocityToHitPosInNSteps(const auto posToHit, const auto steps){
+auto getVelocityToHitPosInNSteps = [](const auto posToHit, const auto steps){
     const auto div = std::div(2*posToHit+steps*(steps-1), 2*steps);
     return std::make_pair( div.rem==0, div.quot );
-}
+};
 
-auto addValidVelocityValuesToHit(const auto xn, const auto yn, auto& validVelocityValues){
+auto addValidVelocityValuesToHit = [](const auto xn, const auto yn, auto& validVelocityValues){
     //Adding angles that hit the target before velocity of probe's x directions reaches 0
     //That happens after nMax steps
     const auto nMax = static_cast<int>(0.5*(std::sqrt(1+8*xn)-1));
@@ -54,30 +49,41 @@ auto addValidVelocityValuesToHit(const auto xn, const auto yn, auto& validVeloci
             }
         }
     }
-}
+};
 
-auto getNumberOfValidVelocityValues = [](auto xBounds, auto yBounds){
+auto getValidVelocityValues(auto xBounds, auto yBounds){
     std::unordered_set<Position> validVelocityValues{};
     for(auto xn = xBounds.first; xn<=xBounds.second; xn++){
         for(auto yn = yBounds.first; yn<=yBounds.second; yn++){
             addValidVelocityValuesToHit(xn, yn, validVelocityValues);
         }
     }
+    return validVelocityValues;
+}
 
-    const auto numberOfValidVelocityValues = validVelocityValues.size();
-    return numberOfValidVelocityValues;
+auto getHighestYPosition(const auto& validVelocityValues){
+    const auto maxYVelocity     = std::ranges::max( validVelocityValues | std::views::elements<1> );
+    const auto highestYPosition = maxYVelocity*(maxYVelocity+1)/2;
+    return highestYPosition;
 };
 
 int main(){
     const auto [xBounds, yBounds] = parseInput(readFile::string("input.txt"));
 
+    const auto validVelocityValues = getValidVelocityValues(xBounds, yBounds);
+
     //Task 1
-    const auto highestYPosition = getHighestYPosition(yBounds);
+    const auto highestYPosition = getHighestYPosition(validVelocityValues);
     std::cout << "The highest y position the probe reaches is " << highestYPosition  << ".\n";
 
     //Task 2
-    const auto numberOfValidVelocityValues = getNumberOfValidVelocityValues(xBounds, yBounds);
+    const auto numberOfValidVelocityValues = validVelocityValues.size();
     std::cout << "There are " << numberOfValidVelocityValues << " possible initial velocity vectors.\n";
 
 
 }
+
+
+
+
+
