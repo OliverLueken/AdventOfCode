@@ -13,10 +13,6 @@
 
 using Position = Utilities::Position<unsigned int>;
 
-Position operator+(const Position& lhs, const std::pair<int,int>& rhs){
-    return std::make_pair(lhs.first+rhs.first, lhs.second+rhs.second);
-}
-
 class Mace{
     unsigned int maceDesignersFavoriteNumber{};
     std::unordered_map<Position, int> spaceMap{};
