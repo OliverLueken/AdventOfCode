@@ -73,7 +73,7 @@ int main(){
 
     //Task 1
     const auto highestYPosition = getHighestYPosition(yBounds);
-    std::cout << "The highest position y reached is " << highestYPosition  << ".\n";
+    std::cout << "The highest y position the probe reaches is " << highestYPosition  << ".\n";
 
     //Task 2
     const auto numberOfValidVelocityValues = getNumberOfValidVelocityValues(xBounds, yBounds);
