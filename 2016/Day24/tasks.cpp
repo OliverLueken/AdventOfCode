@@ -11,11 +11,6 @@
 #include <numeric>
 
 using Position = Utilities::Position<int>;
-// struc{
-//     std::size_t operator()(const Position& position) const noexcept{
-//         return (size_t) position.first << 32 | position.second;
-//     }
-// };
 
 auto getPlacesOfInterest(const auto& mace){
     std::unordered_map<int, Position> placesOfInterest;
