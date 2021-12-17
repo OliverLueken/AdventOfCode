@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
+#include <complex>
 
 
 namespace Utilities{
@@ -281,5 +282,13 @@ struct std::hash<Utilities::Position<T>>{
     }
 };
 
+template<class T>
+struct std::hash<std::complex<T>>{
+    std::size_t operator()(const std::complex<T>& z) const noexcept{
+        const std::size_t h1 = std::hash<T>{}(z.real());
+        const std::size_t h2 = std::hash<T>{}(z.imag());
+        return h1^(h2<<1);
+    }
+};
 
 #endif
