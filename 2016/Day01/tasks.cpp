@@ -9,12 +9,6 @@
 #include <unordered_set>
 
 
-struct complexHash{
-    std::size_t operator()(const std::complex<int>& position) const noexcept{
-        return (size_t) position.real() << 32 | position.imag();
-    }
-};
-
 auto infNorm(const auto& z){
     return std::abs(z.real()) + std::abs(z.imag());
 }
@@ -43,7 +37,7 @@ auto distanceToDestination = [](const auto& instructions){
 
 auto distanceToFirstPlaceVisitedTwice = [](const auto& instructions){
     using namespace std::complex_literals;
-    std::unordered_set<std::complex<int>, complexHash> visitedPlaces{0};
+    std::unordered_set<std::complex<int>> visitedPlaces{0};
 
     std::complex<int> facing{1i};
     std::complex<int> currentPosition{0}, nextPosition{0};
