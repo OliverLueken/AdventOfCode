@@ -293,12 +293,12 @@ struct std::hash<std::complex<T>>{
 };
 
 
-template<typename T>
-concept Addable = requires (T x){ x + x; };
+template<typename T, typename S>
+concept Addable = requires (T x, S y){ x + y; };
 
-template<typename T>
-requires Addable<T>
-Utilities::Position<T> operator+(const Utilities::Position<T>& lhs, const Utilities::Position<T>& rhs){
+template<typename T, typename S>
+requires Addable<T, S>
+Utilities::Position<T> operator+(const Utilities::Position<T>& lhs, const Utilities::Position<S>& rhs){
     return Utilities::Position<T>{lhs.first+rhs.first, lhs.second+rhs.second};
 }
 
