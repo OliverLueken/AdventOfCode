@@ -15,6 +15,7 @@ namespace Utilities{
     template<class T = size_t>
     using Position = std::pair<T, T>;
 
+
     struct contains_{
         /*
         An algorithm that searches for the element value in the range [first, last)
@@ -290,5 +291,15 @@ struct std::hash<std::complex<T>>{
         return h1^(h2<<1);
     }
 };
+
+
+template<typename T>
+concept Addable = requires (T x){ x + x; };
+
+template<typename T>
+requires Addable<T>
+Utilities::Position<T> operator+(const Utilities::Position<T>& lhs, const Utilities::Position<T>& rhs){
+    return Utilities::Position<T>{lhs.first+rhs.first, lhs.second+rhs.second};
+}
 
 #endif
