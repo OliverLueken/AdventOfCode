@@ -9,8 +9,7 @@
 #include <vector>
 #include <unordered_set>
 
-using Position     = Utilities::Position<size_t>;
-// using positionHash = Utilities::positionHash;
+using Position = Utilities::Position<size_t>;
 
 auto parseInput = [](const auto& input){
     std::vector<std::pair<char, size_t>> instructions;
@@ -103,7 +102,4 @@ int main(){
     finishFolding(points, instructions | std::views::drop(1));
     std::cout << "After finishing folding, the following letters are readable:\n";
     printPaper(points);
-
-    // std::unordered_set<Position> p{};
-    // p.emplace(2, 4);
 }
