@@ -8,7 +8,7 @@
 auto getLargerThanPreviousSlideCount(const auto& v, const unsigned int n = 1u){
     auto count=0u;
     for(auto i=n; i<v.size(); i++){
-        if(v[i] < v[i+n]) count++;
+        if(v[i-n] < v[i]) count++;
     }
     return count;
 }
