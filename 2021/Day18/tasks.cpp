@@ -31,33 +31,34 @@ class Node{
     std::variant<int, std::unique_ptr<Node>> left{};
     std::variant<int, std::unique_ptr<Node>> right{};
 
+    auto getSeparatorPosition(const std::string& s){
+        auto separatorPos   = 0u;
+        auto bracketCounter = 0;
+        for(auto pos=1u; pos<=s.size(); pos++){
+            if(s[pos]=='[') bracketCounter++;
+            if(s[pos]==']') bracketCounter--;
+            if(bracketCounter==0){
+                separatorPos = pos+1;
+                break;
+            }
+        }
+        return separatorPos;
+    }
+
+    auto set(std::string&& s ) -> std::variant<int, std::unique_ptr<Node>> {
+        if(s[0]=='['){
+            return std::move(std::make_unique<Node>(s, this));
+        }
+        else{
+            return std::move(std::stoi(s));
+        }
+    }
+
 public:
     Node(const std::string& s, Node* father = nullptr) : father{father}{
-        auto separatorPos = 0u;
-        if(s[1]=='['){
-            auto bracketCounter=0;
-            for(auto pos=1u; pos<=s.size(); pos++){
-                if(s[pos]=='[') bracketCounter++;
-                if(s[pos]==']') bracketCounter--;
-                if(bracketCounter==0){
-                    separatorPos = pos+1;
-                    break;
-                }
-            }
-            left = std::make_unique<Node>(s.substr(1, separatorPos-1 ), this);
-        }
-        else{
-            auto commaPos = std::ranges::find(s, ',');
-            separatorPos = (unsigned int) std::distance(std::begin(s), commaPos);
-            left = std::stoi(s.substr(1));
-        }
-
-        if(s[separatorPos+1]=='['){
-            right = std::make_unique<Node>(s.substr(separatorPos+1  ), this);
-        }
-        else{
-            right = std::stoi(s.substr(separatorPos+1));
-        }
+        const auto separatorPos = getSeparatorPosition(s);
+        setSon<Son::left> ( set(s.substr(1, separatorPos-1)) );
+        setSon<Son::right>( set(s.substr(separatorPos+1)) );
     }
 
     Node(std::unique_ptr<Node>&& left, const std::string& s, Node* father = nullptr)
@@ -72,7 +73,7 @@ public:
     }
 
     template<Son son>
-    constexpr auto setSon( std::variant<int, std::unique_ptr<Node>>&& val ) {
+    constexpr auto setSon( std::variant<int, std::unique_ptr<Node>>&& val ) -> void {
         if constexpr (son==Son::left){
             left  = std::move(val);
         }
