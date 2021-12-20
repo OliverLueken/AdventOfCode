@@ -174,19 +174,19 @@ auto explodeNode(Node* nodePtr){
 
 auto explode(Node* nodePtr, auto level) -> bool {
     auto didExplode = false;
-    if( nodePtr->isSonPtr<Son::left>() || nodePtr->isSonPtr<Son::right>() ){
-        if(nodePtr->isSonPtr<Son::left>()){
-            didExplode |= explode(nodePtr->getSonPtr<Son::left>(), level+1);
-        }
-        if(nodePtr->isSonPtr<Son::right>()){
-            didExplode |= explode(nodePtr->getSonPtr<Son::right>(), level+1);
-        }
+    const auto leftSonIsPtr  = nodePtr->isSonPtr<Son::left>();
+    const auto rightSonIsPtr = nodePtr->isSonPtr<Son::right>();
+    // if( nodePtr->isSonPtr<Son::left>() || nodePtr->isSonPtr<Son::right>() ){
+    if(leftSonIsPtr){
+        didExplode |= explode(nodePtr->getSonPtr<Son::left>(), level+1);
     }
-    else{
-        if(level>4){
-            explodeNode(nodePtr);
-            return true;
-        }
+    if(rightSonIsPtr){
+        didExplode |= explode(nodePtr->getSonPtr<Son::right>(), level+1);
+    }
+
+    if(!leftSonIsPtr && !rightSonIsPtr && level>4){
+        explodeNode(nodePtr);
+        return true;
     }
     return didExplode;
 }
