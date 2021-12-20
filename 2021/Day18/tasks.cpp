@@ -174,11 +174,11 @@ auto explodeNode(Node* nodePtr){
 
 auto explode(Node* nodePtr, auto level) -> bool {
     auto didExplode = false;
-    const auto leftSonIsPtr  = nodePtr->isSonPtr<Son::left>();
+    const auto leftSonIsPtr  = nodePtr->isSonPtr<Son::left >();
     const auto rightSonIsPtr = nodePtr->isSonPtr<Son::right>();
-    // if( nodePtr->isSonPtr<Son::left>() || nodePtr->isSonPtr<Son::right>() ){
+
     if(leftSonIsPtr){
-        didExplode |= explode(nodePtr->getSonPtr<Son::left>(), level+1);
+        didExplode |= explode(nodePtr->getSonPtr<Son::left>() , level+1);
     }
     if(rightSonIsPtr){
         didExplode |= explode(nodePtr->getSonPtr<Son::right>(), level+1);
