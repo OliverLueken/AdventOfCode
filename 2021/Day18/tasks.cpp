@@ -241,9 +241,9 @@ auto getSonMagnitude(Node* nodePtr) -> unsigned long {
 }
 
 auto getMagnitude(Node* nodePtr) -> unsigned long {
-    const auto left  = getSonMagnitude<Son::left>(nodePtr);
-    const auto right = getSonMagnitude<Son::right>(nodePtr);
-    return 3*left+2*right;
+    const auto leftMagnitude  = getSonMagnitude<Son::left>(nodePtr);
+    const auto rightMagnitude = getSonMagnitude<Son::right>(nodePtr);
+    return 3*leftMagnitude+2*rightMagnitude;
 };
 
 auto getMaxMagnitudeOfTwoSnailfishes = [](const auto& snailfishes){
