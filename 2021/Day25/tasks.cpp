@@ -4,18 +4,7 @@
 #include "../../lib/matrix.hpp"
 
 #include <iostream>
-#include <string>
-#include <vector>
-#include <array>
-#include <unordered_map>
-#include <unordered_set>
-#include <deque>
-#include <algorithm>
-#include <numeric>
-#include <climits>
-#include <memory>
 #include <ranges>
-#include <cmath>
 
 enum seaFloorOccupant {Nothing, EastFacingSeaCucumber, SouthFacingSeaCucumber};
 
@@ -25,6 +14,7 @@ auto parseInput = [](const auto& input){
             switch(c){
                 break; case '>': return seaFloorOccupant::EastFacingSeaCucumber;
                 break; case 'v': return seaFloorOccupant::SouthFacingSeaCucumber;
+                break; case '.': return seaFloorOccupant::Nothing;
             }
             return seaFloorOccupant::Nothing;
         }
@@ -32,7 +22,7 @@ auto parseInput = [](const auto& input){
     return seaCucumberPositions;
 };
 
-auto moveSeaCucumbers(auto& seaCucumberPositions){
+auto moveSeaCucumbers = [](auto& seaCucumberPositions){
     Matrix::Matrix<seaFloorOccupant> newSeaCucumberPositions{seaCucumberPositions.rows(), seaCucumberPositions.cols(), seaFloorOccupant::Nothing};
     auto cucumbersMoved = false;
     // moving the east facinc sea cucumbers first
@@ -44,7 +34,7 @@ auto moveSeaCucumbers(auto& seaCucumberPositions){
                     cucumbersMoved=true;
                 }
                 else{
-                    newSeaCucumberPositions(i,j)=seaFloorOccupant::EastFacingSeaCucumber;
+                    newSeaCucumberPositions(i,j) = seaFloorOccupant::EastFacingSeaCucumber;
                 }
             }
         }
@@ -66,9 +56,9 @@ auto moveSeaCucumbers(auto& seaCucumberPositions){
     }
     std::swap(newSeaCucumberPositions, seaCucumberPositions);
     return cucumbersMoved;
-}
+};
 
-auto countStepsUntilEquilibrium = [](auto seaCucumberPositions){
+auto countStepsUntilEquilibrium = [](auto& seaCucumberPositions){
     auto steps=1u;
     while(moveSeaCucumbers(seaCucumberPositions)){
         steps++;
@@ -78,9 +68,9 @@ auto countStepsUntilEquilibrium = [](auto seaCucumberPositions){
 
 
 int main(){
-    const auto seaCucumberPositions = parseInput(readFile::vectorOfStrings("input.txt"));
+    auto seaCucumberPositions = parseInput(readFile::vectorOfStrings("input.txt"));
 
     //Task 1
-    auto stepsUntilEquilibrium = countStepsUntilEquilibrium(seaCucumberPositions);
+    const auto stepsUntilEquilibrium = countStepsUntilEquilibrium(seaCucumberPositions);
     std::cout << "It takes " << stepsUntilEquilibrium << " steps until the sea cucumbers stop moving.\n";
 }
