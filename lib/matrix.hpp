@@ -318,17 +318,17 @@ namespace Matrix{
     }
 
     template<class T>
-    void print(T&& v){
+    void print(T&& v, const char separator = ' '){
         for(const auto& i : v){
-            std::cout << i << '\t';
+            std::cout << i << separator;
         }
         std::cout << '\n';
     }
 
     template<class T>
-    void print(Matrix<T>& m) {
+    void print(Matrix<T>& m, const char columnSeparator = '\t') {
         for(auto i=0u; i<m.rows(); i++){
-            print(m.row(i));
+            print(m.row(i), columnSeparator);
         }
         std::cout << '\n';
     }
