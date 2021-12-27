@@ -10,7 +10,7 @@
 namespace Matrix{
 
     template<class T>
-    using Position     = Utilities::Position<T>;
+    using Position = Utilities::Position<T>;
 
     template<class T>
     class Matrix{
@@ -113,6 +113,18 @@ namespace Matrix{
         }
 
         constexpr const std::vector<T>::const_reference operator()(const size_t i, const size_t j) const {
+            checkBounds(i,j);
+            return matrix[i*m+j];
+        }
+
+        constexpr std::vector<T>::reference operator()(const Position<size_t> pos){
+            const auto& [i,j] = pos;
+            checkBounds(i,j);
+            return matrix[i*m+j];
+        }
+
+        constexpr const std::vector<T>::const_reference operator()(const Position<size_t> pos) const {
+            const auto& [i,j] = pos;
             checkBounds(i,j);
             return matrix[i*m+j];
         }
