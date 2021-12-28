@@ -297,9 +297,18 @@ template<typename T, typename S>
 concept Addable = requires (T x, S y){ x + y; };
 
 template<typename T, typename S>
+concept Subtractable = requires (T x, S y){ x - y; };
+
+template<typename T, typename S>
 requires Addable<T, S>
 Utilities::Position<T> operator+(const Utilities::Position<T>& lhs, const Utilities::Position<S>& rhs){
     return Utilities::Position<T>{lhs.first+rhs.first, lhs.second+rhs.second};
+}
+
+template<typename T, typename S>
+requires Subtractable<T, S>
+Utilities::Position<T> operator-(const Utilities::Position<T>& lhs, const Utilities::Position<S>& rhs){
+    return Utilities::Position<T>{lhs.first-rhs.first, lhs.second-rhs.second};
 }
 
 #endif
