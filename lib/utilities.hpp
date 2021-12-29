@@ -301,14 +301,29 @@ concept Subtractable = requires (T x, S y){ x - y; };
 
 template<typename T, typename S>
 requires Addable<T, S>
-Utilities::Position<T> operator+(const Utilities::Position<T>& lhs, const Utilities::Position<S>& rhs){
+constexpr Utilities::Position<T>
+operator+(const Utilities::Position<T>& lhs, const Utilities::Position<S>& rhs){
     return Utilities::Position<T>{lhs.first+rhs.first, lhs.second+rhs.second};
 }
 
 template<typename T, typename S>
 requires Subtractable<T, S>
-Utilities::Position<T> operator-(const Utilities::Position<T>& lhs, const Utilities::Position<S>& rhs){
+constexpr Utilities::Position<T>
+ operator-(const Utilities::Position<T>& lhs, const Utilities::Position<S>& rhs){
     return Utilities::Position<T>{lhs.first-rhs.first, lhs.second-rhs.second};
+}
+
+template<typename T>
+constexpr Utilities::Position<T>
+operator/(const Utilities::Position<T>& numerator, const T& divisor){
+    return Utilities::Position<T>{numerator.first/divisor, numerator.second/divisor};
+}
+
+template<typename T>
+requires Addable<T, T>
+constexpr T
+abs(const Utilities::Position<T>& position){
+    return std::abs(position.first)+std::abs(position.second);
 }
 
 #endif
