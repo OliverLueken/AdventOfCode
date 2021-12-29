@@ -1,23 +1,14 @@
 
 #include "../../lib/readFile.hpp"
 #include "../../lib/utilities.hpp"
-#include "../../lib/md5.hpp"
 #include "../../lib/matrix.hpp"
 
 #include <iostream>
 #include <string>
 #include <vector>
-#include <array>
-#include <unordered_map>
-#include <unordered_set>
 #include <deque>
 #include <algorithm>
-#include <numeric>
-#include <climits>
-#include <memory>
 #include <ranges>
-#include <cmath>
-#include <iomanip>
 
 using Position = Utilities::Position<int>;
 
