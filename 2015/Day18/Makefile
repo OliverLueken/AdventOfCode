@@ -1,18 +1,12 @@
-CC = g++
-CFLAGS = -std=c++20 -Wall -Wpedantic -Wextra -Wconversion -g -O3
+CPP = g++
+CPPFLAGS = -std=c++20 -Wall -Wpedantic -Wextra -Wconversion -O3
 
 
-all: tasks.out lightShow.o
+all: tasks.out tasks.o lightShow.o
 
 tasks.out: tasks.o lightShow.o
-	$(CC) $(CFLAGS) -o tasks.out tasks.o lightShow.o
+	$(CPP)  -o tasks.out tasks.o lightShow.o $(CPPFLAGS)
 
-tasks.o: tasks.cpp lightShow.h
-	$(CC) $(CFLAGS) -c tasks.cpp
-
-lightShow.o: lightShow.cpp lightShow.h
-	$(CC) $(CFLAGS) -c lightShow.cpp
-
-
+.PHONY = clean
 clean:
-	rm *.o
+	rm *.o tasks.out
