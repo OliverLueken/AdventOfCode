@@ -15,7 +15,7 @@ class Board{
 public:
     Board(auto&& range){
         auto i=0;
-        for(const auto s : range){
+        for(const auto& s : range){
             const auto split = Utilities::split(s);
             std::ranges::transform(split, std::begin(board)+5*i,
                 [](const auto n){ return std::stoi(n); }
