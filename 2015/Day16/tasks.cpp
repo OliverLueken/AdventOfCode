@@ -30,7 +30,7 @@ auto parseAuntdata = [](const auto& input){
 
 auto parseSpecialAuntData = [](const auto& input){
     auntDetails specialAuntDetails{};
-    for(const auto s : input){
+    for(const auto& s : input){
         const auto split = Utilities::splitOnEach(s, " :");
         const auto object = split[0];
         const auto amount = std::stoi(split[1]);
