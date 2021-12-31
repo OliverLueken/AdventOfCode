@@ -1,20 +1,12 @@
 
 #include "../../lib/readFile.hpp"
 #include "../../lib/utilities.hpp"
-#include "../../lib/md5.hpp"
-#include "../../lib/matrix.hpp"
 
 #include <iostream>
 #include <string>
 #include <vector>
-#include <array>
 #include <unordered_map>
-#include <unordered_set>
-#include <deque>
 #include <algorithm>
-#include <numeric>
-#include <climits>
-#include <memory>
 #include <ranges>
 
 
@@ -53,11 +45,11 @@ unsigned long evaluateNode(const auto type, const auto& nodes){
         break; case 3:
             return std::ranges::max(nodes, {}, &Node::value).value;
         break; case 5:
-            return nodes[0].value >  nodes[1].value;//? 1 : 0;
+            return nodes[0].value >  nodes[1].value;
         break; case 6:
-            return nodes[0].value <  nodes[1].value;// ? 1 : 0;
+            return nodes[0].value <  nodes[1].value;
         break; case 7:
-            return nodes[0].value == nodes[1].value;// ? 1 : 0;
+            return nodes[0].value == nodes[1].value;
     }
     return 0;
 }
@@ -109,7 +101,7 @@ auto decode(std::string& s) -> Node{
 
 int getVersionSum(const Node& root){
     auto sum=root.version;
-    for(const auto node : root.nodes){
+    for(const auto& node : root.nodes){
         sum+=getVersionSum(node);
     }
     return sum;
@@ -119,26 +111,26 @@ auto buildBITSTree = [](const auto& input){
 
     const std::unordered_map<char, std::string> hexToBin =
     {
-        {'0', "0000"},
-        {'1', "0001"},
-        {'2', "0010"},
-        {'3', "0011"},
-        {'4', "0100"},
-        {'5', "0101"},
-        {'6', "0110"},
-        {'7', "0111"},
-        {'8', "1000"},
-        {'9', "1001"},
-        {'A', "1010"},
-        {'B', "1011"},
-        {'C', "1100"},
-        {'D', "1101"},
-        {'E', "1110"},
-        {'F', "1111"}
+        {'0', std::string("0000")},
+        {'1', std::string("0001")},
+        {'2', std::string("0010")},
+        {'3', std::string("0011")},
+        {'4', std::string("0100")},
+        {'5', std::string("0101")},
+        {'6', std::string("0110")},
+        {'7', std::string("0111")},
+        {'8', std::string("1000")},
+        {'9', std::string("1001")},
+        {'A', std::string("1010")},
+        {'B', std::string("1011")},
+        {'C', std::string("1100")},
+        {'D', std::string("1101")},
+        {'E', std::string("1110")},
+        {'F', std::string("1111")}
     };
     std::string binaryInput{};
     binaryInput.reserve(input.size()*4);
-    
+
     for(const auto c : input){
         binaryInput+=hexToBin.at(c);
     }
