@@ -33,8 +33,8 @@ auto getNumberOfObviousDigitsInOutputPatterns = [](const auto& input){
 
 auto getDecoder(const auto& signalPatterns){
     std::unordered_map<char, size_t> decoder{};
-    for(const auto pattern : signalPatterns){
-        for(const auto signal : pattern){
+    for(const auto& pattern : signalPatterns){
+        for(const auto& signal : pattern){
             decoder[signal]+=2*pattern.size()%7;
         }
     }
