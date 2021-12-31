@@ -1,5 +1,11 @@
-CPP = g++
-CPPFLAGS = -std=c++20 -Wall -Wpedantic -Wextra -Wconversion -O3
+SHELL = /bin/sh
+.SUFFIXES:
+.SUFFIXES: .cpp .o
+
+CPP = g++ -O3
+CDEBUG = -g
+CWARNINGS = -Wall -Wpedantic -Wextra -Wconversion
+CPPFLAGS = -std=c++20 $(CDEBUG) $(CWARNINGS)
 
 all: tasks.out
 

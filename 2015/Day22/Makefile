@@ -1,11 +1,19 @@
+SHELL = /bin/sh
+.SUFFIXES:
+.SUFFIXES: .cpp .o
 
-CPP = g++
-CPPFLAGS = -std=c++20 -Wall -Wpedantic -Wextra -Wconversion -O3
+CPP = g++ -O3
+CDEBUG = -g
+CWARNINGS = -Wall -Wpedantic -Wextra -Wconversion
+CPPFLAGS = -std=c++20 $(CDEBUG) $(CWARNINGS)
 
-all: tasks.out tasks.o battleground.o enemy.o magician.o spell.o effect.o
+all: tasks.out
 
-tasks.out: tasks.o battleground.o enemy.o magician.o spell.o effect.o
-	$(CPP) $(CPPFLAGS) -o tasks.out tasks.o battleground.o enemy.o magician.o spell.o effect.o
+objects = tasks.o battleground.o effect.o enemy.o magician.o spell.o
 
+tasks.out: $(objects)
+	$(CPP) -o tasks.out $(objects) $(CPPFLAGS)
+
+.PHONY = clean
 clean:
-	rm *.o
+	rm *.o tasks.out
