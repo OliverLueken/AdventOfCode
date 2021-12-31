@@ -102,7 +102,7 @@ auto getWinningScores = [](const auto& numbers, auto& boards){
 int main(){
     auto [numbers, boards] = parseInput(readFile::vectorOfStrings("input.txt"));
 
-    auto [firstWinningScore, lastWinningScore] = getWinningScores(numbers, boards);
+    const auto [firstWinningScore, lastWinningScore] = getWinningScores(numbers, boards);
 
     //Task 1
     std::cout << "The score of the first board to win is " << firstWinningScore << ".\n";
