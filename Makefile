@@ -1,12 +1,22 @@
+SHELL = /bin/sh
+.SUFFIXES:
+.SUFFIXES: .cpp .o
 
-SUBDIRS = 20*
+CPP = g++
+CDEBUG = -g
+CWARNINGS = -Wall -Wpedantic -Wextra -Wconversion
+CPPFLAGS = -std=c++20 -O3 $(CDEBUG) $(CWARNINGS)
+LIBS = -L/usr/lib/cryptopp/ -lcryptopp
 
-.PHONY: subdirs $(SUBDIRS) clean
+SUBDIRS = 20*/Day*
 
-subdirs: $(SUBDIRS)
+all: $(SUBDIRS)
 
-$(SUBDIRS):
-	$(MAKE) -C $@
 
+.SECONDEXPANSION:
+$(SUBDIRS): $$(patsubst %.cpp,%.o,$$(wildcard $$@/*.cpp))
+	$(CPP)  $(CPPFLAGS)     -o $@/tasks.out $^ $(LIBS)
+
+.PHONY: clean
 clean:
 	rm */*/*.o */*/*.out
