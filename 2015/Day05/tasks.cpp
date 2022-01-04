@@ -10,20 +10,20 @@
 
 
 auto isTaskOneNice = [](const auto& string){
-    auto hasThreeVowels = [](const auto& string){
+    auto hasThreeVowels = [](const auto& s){
         const std::regex threeVowels{ ".*[aeiou].*[aeiou].*[aeiou].*" };
-        return std::regex_search(string, threeVowels);
+        return std::regex_search(s, threeVowels);
     };
 
-    auto hasLetterTwiceInARow = [](const auto& string){
-        return std::ranges::adjacent_find(string) != std::end(string);
+    auto hasLetterTwiceInARow = [](const auto& s){
+        return std::ranges::adjacent_find(s) != std::end(s);
     };
 
-    auto hasNoEvilParts = [](const auto& string){
+    auto hasNoEvilParts = [](const auto& s){
         const std::vector<std::string> badParts = { "ab", "cd", "pq", "xy"};
 
-        auto isInsideString = [&string](const auto& badPart){
-            const auto found = std::ranges::search(string, badPart);
+        auto isInsideString = [&s](const auto& badPart){
+            const auto found = std::ranges::search(s, badPart);
             return !found.empty();
         };
 
@@ -35,21 +35,21 @@ auto isTaskOneNice = [](const auto& string){
 
 
 auto isTaskTwoNice = [](const auto& string){
-    auto hasTwoLettersRepeating = [](const auto& string){
-        for(auto it = std::begin(string); it != std::end(string); it++){
-            const auto found = std::search(it+2, std::end(string), it, it+2);
-            if(found != std::end(string)) return true;
+    auto hasTwoLettersRepeating = [](const auto& s){
+        for(auto it = std::begin(s); it != std::end(s); it++){
+            const auto found = std::search(it+2, std::end(s), it, it+2);
+            if(found != std::end(s)) return true;
         }
         return false;
     };
 
-    auto hasLetterAfterAnotherAgain = [](const auto& string){
+    auto hasLetterAfterAnotherAgain = [](const auto& s){
         //looking for the first occurances where two characters "mismatch to be not the same"
         //                     which means where two characters are the same
-        const auto its = std::ranges::mismatch(std::begin(string)  , std::end(string),
-                                               std::begin(string)+2, std::end(string),
+        const auto its = std::ranges::mismatch(std::begin(s)  , std::end(s),
+                                               std::begin(s)+2, std::end(s),
                                                std::not_equal_to<char>());
-        return its.in2 != std::end(string);
+        return its.in2 != std::end(s);
     };
 
     return hasTwoLettersRepeating(string) && hasLetterAfterAnotherAgain(string);
