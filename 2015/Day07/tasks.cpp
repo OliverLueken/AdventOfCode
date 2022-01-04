@@ -17,8 +17,8 @@ class andGate{
     std::string wire2{};
 
 public:
-    andGate(std::unordered_map<std::string, uint16_t>* signals, std::string&& out, std::string&& in1, std::string&& in2)
-        : signals{signals}, outWire{std::move(out)}, wire1{std::move(in1)}, wire2{std::move(in2)}{}
+    andGate(std::unordered_map<std::string, uint16_t>* _signals, std::string&& _out, std::string&& _in1, std::string&& _in2)
+        : signals{_signals}, outWire{std::move(_out)}, wire1{std::move(_in1)}, wire2{std::move(_in2)}{}
     void passSignal() const {
         (*signals)[outWire] = (*signals)[wire1]&(*signals)[wire2];
     }
@@ -35,8 +35,8 @@ class orGate{
     std::string wire2{};
 
 public:
-    orGate(std::unordered_map<std::string, uint16_t>* signals, std::string&& out, std::string&& in1, std::string&& in2)
-        : signals{signals}, outWire{std::move(out)}, wire1{std::move(in1)}, wire2{std::move(in2)}{}
+    orGate(std::unordered_map<std::string, uint16_t>* _signals, std::string&& _out, std::string&& _in1, std::string&& _in2)
+        : signals{_signals}, outWire{std::move(_out)}, wire1{std::move(_in1)}, wire2{std::move(_in2)}{}
     void passSignal() const {
         (*signals)[outWire] = (*signals)[wire1]|(*signals)[wire2];
     }
@@ -52,8 +52,8 @@ class lshiftGate{
     size_t shift{};
 
 public:
-    lshiftGate(std::unordered_map<std::string, uint16_t>* signals, std::string&& out, std::string&& in1, std::string&& in2)
-        : signals{signals}, outWire{std::move(out)}, wire{std::move(in1)}, shift{std::stoul(in2)} {}
+    lshiftGate(std::unordered_map<std::string, uint16_t>* _signals, std::string&& _out, std::string&& _in1, std::string&& _in2)
+        : signals{_signals}, outWire{std::move(_out)}, wire{std::move(_in1)}, shift{std::stoul(_in2)} {}
     void passSignal() const {
         (*signals)[outWire] = (*signals)[wire]<<shift;
     }
@@ -69,8 +69,8 @@ class rshiftGate{
     size_t shift{};
 
 public:
-    rshiftGate(std::unordered_map<std::string, uint16_t>* signals, std::string&& out, std::string&& in1, std::string&& in2)
-        : signals{signals}, outWire{std::move(out)}, wire{std::move(in1)}, shift{std::stoul(in2)} {}
+    rshiftGate(std::unordered_map<std::string, uint16_t>* _signals, std::string&& _out, std::string&& _in1, std::string&& _in2)
+        : signals{_signals}, outWire{std::move(_out)}, wire{std::move(_in1)}, shift{std::stoul(_in2)} {}
     void passSignal() const {
         (*signals)[outWire] = (*signals)[wire]>>shift;
     }
@@ -85,8 +85,8 @@ class notGate{
     std::string wire{};
 
 public:
-    notGate(std::unordered_map<std::string, uint16_t>* signals, std::string&& out, std::string&& in)
-        : signals{signals}, outWire{std::move(out)}, wire{std::move(in)}{}
+    notGate(std::unordered_map<std::string, uint16_t>* _signals, std::string&& _out, std::string&& _in)
+        : signals{_signals}, outWire{std::move(_out)}, wire{std::move(_in)}{}
     void passSignal() const {
         (*signals)[outWire] = ~(*signals)[wire];
     }
@@ -101,8 +101,8 @@ class defaultGate{
     std::string inWire{};
 
 public:
-    defaultGate(std::unordered_map<std::string, uint16_t>* signals, auto&& out, auto&& in)
-        : signals{signals}, outWire{std::move(out)}, inWire{std::move(in)}{}
+    defaultGate(std::unordered_map<std::string, uint16_t>* _signals, auto&& _out, auto&& _in)
+        : signals{_signals}, outWire{std::move(_out)}, inWire{std::move(_in)}{}
     void passSignal() const {
         (*signals)[outWire] = (*signals)[inWire];
     }
@@ -173,12 +173,12 @@ public:
         }
 
         auto signalPassedThrough = [this](auto& gate){
-            const auto isReady = std::visit([](const auto& gate) -> bool {
-                return gate.isReady();
+            const auto isReady = std::visit([](const auto& _gate) -> bool {
+                return _gate.isReady();
             }, gate);
 
             if(isReady){
-                std::visit([](const auto& gate){ gate.passSignal(); }, gate);
+                std::visit([](const auto& _gate){ _gate.passSignal(); }, gate);
                 return true;
             }
             return false;
