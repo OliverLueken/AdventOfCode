@@ -5,17 +5,17 @@
 
 
 auto playLookAndSay = [](auto& number, const size_t n){
-    auto lookAndSay = [](auto& number){
+    auto lookAndSay = [](auto& num){
         std::string newNumber{};
-        auto it1 = std::begin(number);
+        auto it1 = std::begin(num);
         auto it2 = it1;
         do{
-            it2 = std::mismatch(it2, std::end(number), it2+1).second;
+            it2 = std::mismatch(it2, std::end(num), it2+1).second;
             newNumber += std::to_string(std::distance(it1, it2));
             newNumber += *it1;
             it1=it2;
-        }while(it2 != std::end(number));
-        std::swap(number, newNumber);
+        }while(it2 != std::end(num));
+        std::swap(num, newNumber);
     };
 
     for(auto i = 0u; i < n; i++){
