@@ -64,21 +64,21 @@ namespace Matrix{
 
     public:
         constexpr Matrix() = default;
-        constexpr Matrix(size_t n, size_t m) : n{n}, m{m}, matrix(n*m){}
-        constexpr Matrix(size_t n, size_t m, const T& value) : n{n}, m{m}, matrix(n*m, value){}
+        constexpr Matrix(const size_t _n, const size_t _m) : n{_n}, m{_m}, matrix(_n*_m){}
+        constexpr Matrix(const size_t _n, const size_t _m, const T& _value) : n{_n}, m{_m}, matrix(_n*_m, _value){}
 
         template<std::forward_iterator I, std::sentinel_for<I> S>
         requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
-        constexpr Matrix(size_t n, size_t m, I first, S last) : n{n}, m{m}, matrix(n*m){
-            assign(first, last);
+        constexpr Matrix(const size_t _n, const size_t _m, I _first, S _last) : n{_n}, m{_m}, matrix(_n*_m){
+            assign(_first, _last);
         }
 
         template< std::ranges::forward_range R>
-        constexpr Matrix(size_t n, size_t m, R&& range) : n{n}, m{m}, matrix(n*m){
-            assign(range);
+        constexpr Matrix(const size_t _n, const size_t _m, R&& _range) : n{_n}, m{_m}, matrix(_n*_m){
+            assign(_range);
         }
-        constexpr Matrix(size_t n, size_t m, std::initializer_list<T> ilist) : n{n}, m{m}, matrix(n*m){
-            assign(ilist);
+        constexpr Matrix(const size_t _n, const size_t _m, std::initializer_list<T> _ilist) : n{_n}, m{_m}, matrix(_n*_m){
+            assign(_ilist);
         }
 
         template<std::forward_iterator I, std::sentinel_for<I> S>
@@ -174,15 +174,13 @@ namespace Matrix{
 
         [[nodiscard]] constexpr auto col(const size_t j) {
             checkColBound(j);
-            const auto m = this->m;
-            auto mthElement = [m, i=0](const auto&) mutable { return i++%m==0; };
+            auto mthElement = [m=this->m, i=0](const auto&) mutable { return i++%m==0; };
             return matrix | std::views::drop(j) | std::views::filter(mthElement);
         }
 
         [[nodiscard]] constexpr auto col(const size_t j) const {
             checkColBound(j);
-            const auto m = this->m;
-            auto mthElement = [m, i=0](const auto&) mutable { return i++%m==0; };
+            auto mthElement = [m=this->m, i=0](const auto&) mutable { return i++%m==0; };
             return matrix | std::views::drop(j) | std::views::filter(mthElement);
         }
 
