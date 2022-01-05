@@ -13,7 +13,12 @@ protected:
 
 public:
     Keypad() = default;
-    Keypad(int x, int y) : x{x}, y{y}{}
+    Keypad(int _x, int _y) : x{_x}, y{_y}{}
+    Keypad(const Keypad&) = default;
+    Keypad& operator=(const Keypad&) = default;
+    Keypad(Keypad&&) = default;
+    Keypad& operator=(Keypad&&) = default;
+    virtual ~Keypad() = default;
 
     virtual std::string getCurrentButton() const = 0;
     virtual void moveRight()=0;
