@@ -51,7 +51,7 @@ auto decodePattern(const auto& s, const auto& decoder){
 
 class DecodedPatternValueToDigit{
     auto initialize() const {
-        std::unordered_map<int, int> decodedPatternValueToDigit{};
+        std::unordered_map<int, int> _decodedPatternValueToDigit{};
         const std::vector<std::string> digitPatterns ={
             "abcefg",   //0
             "cf",       //1
@@ -69,9 +69,9 @@ class DecodedPatternValueToDigit{
 
         for(auto digit=0u; digit<digitPatterns.size(); digit++){
             const auto decodedPatternValue = decodePattern(digitPatterns[digit], decoder);
-            decodedPatternValueToDigit[decodedPatternValue] = digit;
+            _decodedPatternValueToDigit[decodedPatternValue] = digit;
         }
-        return decodedPatternValueToDigit;
+        return _decodedPatternValueToDigit;
     }
 
 public:
