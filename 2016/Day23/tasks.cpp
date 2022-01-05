@@ -15,7 +15,13 @@ struct Computer;
 
 struct Instruction{
     Computer* computerPtr{nullptr};
-    Instruction(Computer* computerPtr) : computerPtr{computerPtr}{}
+    Instruction(Computer* _computerPtr) : computerPtr{_computerPtr}{}
+    Instruction(const Instruction&) = default;
+    Instruction& operator=(const Instruction&) = default;
+    Instruction(Instruction&&) = default;
+    Instruction& operator=(Instruction&&) = default;
+    virtual ~Instruction() = default;
+
     virtual void execute() = 0;
     virtual std::unique_ptr<Instruction> toggle() const = 0;
     virtual std::string name() const = 0;
@@ -56,8 +62,8 @@ auto toInt(const std::string& s, const Computer* computerPtr){
 struct cpy : public Instruction{
     std::string source{};
     std::string destination{};
-    cpy(Computer* computerPtr, std::string source, std::string destination)
-        : Instruction{computerPtr}, source{source}, destination{destination}{}
+    cpy(Computer* _computerPtr, std::string _source, std::string _destination)
+        : Instruction{_computerPtr}, source{_source}, destination{_destination}{}
 
     void execute() override {
         if(std::isdigit(destination[0]) || destination[0] == '-') return;
@@ -73,7 +79,7 @@ struct cpy : public Instruction{
 
 struct dec : public Instruction{
     std::string destination{};
-    dec(Computer* computerPtr, std::string destination) : Instruction{computerPtr}, destination{destination}{}
+    dec(Computer* _computerPtr, std::string _destination) : Instruction{_computerPtr}, destination{_destination}{}
     void execute() override{
         if(std::isdigit(destination[0]) || destination[0]=='-') return;
         computerPtr->reg[destination[0]-'a']--;
@@ -89,8 +95,8 @@ struct jnz : public Instruction{
     std::string destination{};
     std::string offset{};
 
-    jnz(Computer* computer, std::string destination, std::string offset)
-        : Instruction{computer}, destination{destination}, offset{offset}{}
+    jnz(Computer* _computerPtr, std::string _destination, std::string _offset)
+        : Instruction{_computerPtr}, destination{_destination}, offset{_offset}{}
 
     void execute() override{
         const int val = toInt(destination, computerPtr);
@@ -108,8 +114,8 @@ struct jnz : public Instruction{
 struct tgl : public Instruction{
     std::string destination{};
 
-    tgl(Computer* computerPtr, std::string destination)
-        : Instruction{computerPtr}, destination{destination}{}
+    tgl(Computer* _computerPtr, std::string _destination)
+        : Instruction{_computerPtr}, destination{_destination}{}
 
     void execute() override{
         const auto x = toInt(destination, computerPtr);;
@@ -132,7 +138,7 @@ std::string getDestination(const int pos, const auto& program){
 struct inc : public Instruction{
     std::string destination{};
 
-    inc(Computer* computerPtr, std::string destination) : Instruction{computerPtr}, destination{destination}{}
+    inc(Computer* _computerPtr, std::string _destination) : Instruction{_computerPtr}, destination{_destination}{}
 
     bool multiplyPattern() const {
         const auto pos = computerPtr->programPosition;
