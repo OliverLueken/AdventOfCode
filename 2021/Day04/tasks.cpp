@@ -51,7 +51,7 @@ public:
     }
 
     int score(const auto n) const {
-        auto notMarked = [](const auto n){ return n!=-1; };
+        auto notMarked = [](const auto i){ return i!=-1; };
         return n*Utilities::sum( board | std::views::filter(notMarked) );
     }
 };
