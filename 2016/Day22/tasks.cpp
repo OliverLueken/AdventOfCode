@@ -66,11 +66,11 @@ auto dataTransferable = [](const auto& senderNode, const auto& receiverNode){
 
 auto getViableTransferCount = [](const auto& nodes){
 
-    auto validNeighborTransferCount = [&nodes](const auto& pair){
-        const auto& [senderPos, senderNode] = pair;
+    auto validNeighborTransferCount = [&nodes](const auto& senderPair){
+        const auto& [senderPos, senderNode] = senderPair;
         return std::ranges::count_if(nodes,
-            [&senderPos, &senderNode](const auto pair){
-                const auto& [receiverPos, receiverNode] = pair;
+            [&senderPos, &senderNode](const auto& receiverPair){
+                const auto& [receiverPos, receiverNode] = receiverPair;
                 return senderPos != receiverPos && dataTransferable(senderNode, receiverNode);
             }
         );
