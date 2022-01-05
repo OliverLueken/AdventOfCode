@@ -50,7 +50,7 @@ struct Step{
     Cuboid cuboid{};
     bool on{true};
 
-    Step(Cuboid&& cuboid, const std::string& on) : cuboid{std::move(cuboid)}, on{on=="on"}{}
+    Step(Cuboid&& _cuboid, const std::string& _on) : cuboid{std::move(_cuboid)}, on{_on=="on"}{}
 };
 
 auto parseInput = [](const auto& input){
