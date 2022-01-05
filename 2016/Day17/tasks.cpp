@@ -14,8 +14,8 @@ struct Path{
     std::string passcode{};
     Position pos{};
 
-    Path(std::string passcode) : passcode{std::move(passcode)}{}
-    Path(std::string passcode, Position pos) : passcode{std::move(passcode)}, pos(std::move(pos)){}
+    Path(std::string _passcode)                : passcode{std::move(_passcode)}{}
+    Path(std::string _passcode, Position _pos) : passcode{std::move(_passcode)}, pos(std::move(_pos)){}
 };
 
 auto advance = [](const auto& path, auto& nextPaths){
