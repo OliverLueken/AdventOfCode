@@ -13,15 +13,21 @@
 
 struct Instruction{
     int* programPositionPtr{nullptr};
-    Instruction(int* programPositionPtr) : programPositionPtr{programPositionPtr}{}
+    Instruction(int* _programPositionPtr) : programPositionPtr{_programPositionPtr}{}
+    Instruction(const Instruction&) = default;
+    Instruction& operator=(const Instruction&) = default;
+    Instruction(Instruction&&) = default;
+    Instruction& operator=(Instruction&&) = default;
+    virtual ~Instruction() = default;
+
     virtual void execute() = 0;
 };
 
 struct cpy : public Instruction{
     std::variant<int, int*> source;
     int* destination{nullptr};
-    cpy(int* programPositionPtr, int* source, int* destination) : Instruction{programPositionPtr}, source{source}, destination{destination}{}
-    cpy(int* programPositionPtr, int  source, int* destination) : Instruction{programPositionPtr}, source{source}, destination{destination}{}
+    cpy(int* _programPositionPtr, int* _source, int* _destination) : Instruction{_programPositionPtr}, source{_source}, destination{_destination}{}
+    cpy(int* _programPositionPtr, int  _source, int* _destination) : Instruction{_programPositionPtr}, source{_source}, destination{_destination}{}
     void execute() override{
         if(source.index()==0){
             *destination = std::get<int>(source);
@@ -35,7 +41,7 @@ struct cpy : public Instruction{
 
 struct inc : public Instruction{
     int* registerPtr{nullptr};
-    inc(int* programPositionPtr, int* registerPtr) : Instruction{programPositionPtr}, registerPtr{registerPtr}{}
+    inc(int* _programPositionPtr, int* _registerPtr) : Instruction{_programPositionPtr}, registerPtr{_registerPtr}{}
     void execute() override{
         (*registerPtr)++;
         (*programPositionPtr)++;
@@ -44,7 +50,7 @@ struct inc : public Instruction{
 
 struct dec : public Instruction{
     int* registerPtr{nullptr};
-    dec(int* programPositionPtr, int* registerPtr) : Instruction{programPositionPtr}, registerPtr{registerPtr}{}
+    dec(int* _programPositionPtr, int* _registerPtr) : Instruction{_programPositionPtr}, registerPtr{_registerPtr}{}
     void execute() override{
         (*registerPtr)--;
         (*programPositionPtr)++;
@@ -54,7 +60,7 @@ struct dec : public Instruction{
 struct jnz : public Instruction{
     int* registerPtr{nullptr};
     int offset{0};
-    jnz(int* programPositionPtr, int* registerPtr, int offset) : Instruction{programPositionPtr}, registerPtr{registerPtr}, offset{offset}{}
+    jnz(int* _programPositionPtr, int* _registerPtr, int _offset) : Instruction{_programPositionPtr}, registerPtr{_registerPtr}, offset{_offset}{}
     void execute() override{
         if(*registerPtr!=0) (*programPositionPtr)+=offset;
         else (*programPositionPtr)++;
