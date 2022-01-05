@@ -62,19 +62,19 @@ auto parseInput = [](const auto& input){
 
 
 auto hash = [](const Configuration& configuration) {
-    auto hash = 0ul;
+    auto hashVal = 0ul;
     const std::array<unsigned long,4> offset = {1, 1'00'00, 1'00'00'00'00, 1'00'00'00'00'00'00};
     for(const auto& [id, floor] : configuration){
         if(id>0){
-            hash+=offset[floor];
-            hash+=offset[floor]*100*std::abs(configuration.at(-id)-floor);
+            hashVal+=offset[floor];
+            hashVal+=offset[floor]*100*std::abs(configuration.at(-id)-floor);
         }
         else{
-            hash+= id != 0 ? 10*offset[floor] : 0;
+            hashVal+= id != 0 ? 10*offset[floor] : 0;
         }
     }
-    hash<<=2;
-    return hash+configuration.at(0);
+    hashVal<<=2;
+    return hashVal+configuration.at(0);
 };
 
 
@@ -127,9 +127,9 @@ auto addAllNextConfigurationsInDirection(const auto& configuration, const auto d
     auto onElevatorFloor = [&elevatorFloor](const auto& pair){
         return pair.second==elevatorFloor && pair.first!=0;
     };
-    auto IDsOnElevatorFloor = configuration | std::views::filter(onElevatorFloor);
-    for(const auto& [id1, _] : IDsOnElevatorFloor){
-        for(const auto& [id2, _] : IDsOnElevatorFloor){
+    auto IDsOnElevatorFloor = configuration | std::views::filter(onElevatorFloor) | std::views::keys;
+    for(const auto& id1 : IDsOnElevatorFloor){
+        for(const auto& id2 : IDsOnElevatorFloor){
             addNextConfigurationInDirection(configuration, direction, nextConfigurations, id1, id2, configurationsReached);
         }
     }
