@@ -66,11 +66,11 @@ struct Instruction{
     std::variant<int, char> x{0};
     std::variant<int, char> y{0};
 
-    Instruction(auto fun, auto x, auto y) : fun{fun}, x{x}, y{y} {}
-    Instruction(auto fun, auto x) : fun{fun}, x{x} {}
+    Instruction(auto _fun, auto _x, auto _y) : fun{_fun}, x{_x}, y{_y} {}
+    Instruction(auto _fun, auto _x)          : fun{_fun}, x{_x}        {}
 
-    void operator()(std::string& s, const bool reverse = false) const {
-        fun(s, x, y, reverse);
+    void operator()(std::string& s, const bool reverseInstruction = false) const {
+        fun(s, x, y, reverseInstruction);
     }
 };
 
