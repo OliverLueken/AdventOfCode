@@ -66,7 +66,7 @@ class Spreader{
     }
 
 public:
-    Spreader(Mace* macePtr) : macePtr{macePtr}{}
+    Spreader(Mace* _macePtr) : macePtr{_macePtr}{}
     std::unordered_set<Position>& getNextSpreadFrom(){
         return nextSpreadFrom;
     }
