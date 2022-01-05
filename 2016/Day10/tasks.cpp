@@ -16,7 +16,12 @@ protected:
     int id{-1};
 
 public:
-    ChipReceiver(int id) : id{id}{}
+    ChipReceiver(int _id) : id{_id}{}
+    ChipReceiver(const ChipReceiver&) = default;
+    ChipReceiver& operator=(const ChipReceiver&) = default;
+    ChipReceiver(ChipReceiver&&) = default;
+    ChipReceiver& operator=(ChipReceiver&&) = default;
+    virtual ~ChipReceiver() = default;
 
     void addChip(int chip){
         chips.push_back(chip);
@@ -30,7 +35,7 @@ public:
 class Output : public ChipReceiver{
 public:
     Output() : ChipReceiver{-1}{}
-    Output(int id) : ChipReceiver{id}{}
+    Output(int _id) : ChipReceiver{_id}{}
 };
 
 class Robot : public ChipReceiver{
@@ -39,10 +44,10 @@ class Robot : public ChipReceiver{
 
 public:
     Robot() : ChipReceiver{-1}{};
-    void initialize(ChipReceiver* lowPtr, ChipReceiver* highPtr, int id){
-        this->lowPtr = lowPtr;
-        this->highPtr = highPtr;
-        this->id = id;
+    void initialize(ChipReceiver* _lowPtr, ChipReceiver* _highPtr, int _id){
+        this->lowPtr  = _lowPtr;
+        this->highPtr = _highPtr;
+        this->id      = _id;
     }
 
     void passChips(){
