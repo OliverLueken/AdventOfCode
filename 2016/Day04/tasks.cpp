@@ -27,10 +27,10 @@ public:
     }
 
     bool isValid() const {
-        auto name = this->name;
-        std::erase(name, '-');
+        auto roomName = this->name;
+        std::erase(roomName, '-');
         std::unordered_map<char, int> quantityMap{};
-        for(const auto c : name) quantityMap[c]++;
+        for(const auto c : roomName) quantityMap[c]++;
 
         std::vector<std::pair<char, int>> quantityVec{};
         std::ranges::move(std::begin(quantityMap),
