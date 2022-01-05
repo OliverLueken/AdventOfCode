@@ -55,18 +55,18 @@ class Node{
     }
 
 public:
-    Node(const std::string& s, Node* father = nullptr) : father{father}{
-        const auto separatorPos = getSeparatorPosition(s);
-        setSon<Son::left> ( set(s.substr(1, separatorPos-1)) );
-        setSon<Son::right>( set(s.substr(separatorPos+1)) );
+    Node(const std::string& _s, Node* _father = nullptr) : father{_father}{
+        const auto separatorPos = getSeparatorPosition(_s);
+        setSon<Son::left> ( set(_s.substr(1, separatorPos-1)) );
+        setSon<Son::right>( set(_s.substr(separatorPos+1)) );
     }
 
-    Node(std::unique_ptr<Node>&& left, const std::string& s, Node* father = nullptr)
-        : father{father}, left{std::move(left)}, right{std::make_unique<Node>(s, this)}{
+    Node(std::unique_ptr<Node>&& _left, const std::string& _s, Node* _father = nullptr)
+        : father{_father}, left{std::move(_left)}, right{std::make_unique<Node>(_s, this)}{
         std::get<1>(this->left)->father = this;
     }
 
-    Node(int left, int right, Node* father) : father{father}, left{left}, right{right} {}
+    Node(int _left, int _right, Node* _father) : father{_father}, left{_left}, right{_right} {}
 
     constexpr auto getFather(){
         return father;
