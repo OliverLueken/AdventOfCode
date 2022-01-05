@@ -28,12 +28,12 @@ using Amphipods = std::vector<Amphipod>;
 
 
 auto hash = [](const Amphipods& amphipods){
-    std::string hash(50, ' ');
+    std::string hashVal(50, ' ');
     for(const auto& amphipod : amphipods){
         const auto i = 10*amphipod.pos.first + amphipod.pos.second;
-        hash[i] = (char)amphipod.type+'A';
+        hashVal[i] = (char)amphipod.type+'A';
     }
-    return std::hash<std::string>{}(hash);
+    return std::hash<std::string>{}(hashVal);
 };
 
 auto parseInput = [](const auto& parsedInput){
@@ -99,11 +99,11 @@ auto moveAmphipodToItsRoom(const size_t index, const Amphipods& amphipods, auto&
 
     //move the amphipod as far into it's room as possible
     const auto depth = std::ranges::max(amphipods | std::views::transform(&Amphipod::pos) | std::views::transform(&Position::first));
-    const auto destinationPosition = Position{depth, goalColumn};
+    auto destinationPosition = Position{depth, goalColumn};
     const auto i = getMaxReachableDistance(Position{0, goalColumn}, destinationPosition, amphipods);
 
     if(i>0){
-        const auto destinationPosition = Position{i, goalColumn};
+        destinationPosition = Position{i, goalColumn};
         moveAmphipod(index, destinationPosition, amphipods, next, visited);
     }
 }
