@@ -26,22 +26,22 @@ auto getReindeerData = [](const auto& input){
     return data;
 };
 
-auto getFurthestDistance = [](const auto& data, const auto seconds){
+auto getFurthestDistance = [](const auto& data, const auto totalRunDuration){
     auto maxDistance = 0ul;
     for(const auto& reindeer : data){
         const auto segmentDuration = reindeer.maxSpeedDuration+reindeer.restDuration;
-        const auto segments        = seconds/segmentDuration;
+        const auto segments        = totalRunDuration/segmentDuration;
               auto distance        = segments*reindeer.maxSpeed*reindeer.maxSpeedDuration;
-        if(segments*segmentDuration + reindeer.maxSpeedDuration <= seconds)
+        if(segments*segmentDuration + reindeer.maxSpeedDuration <= totalRunDuration)
             distance+=reindeer.maxSpeed*reindeer.maxSpeedDuration;
         else
-            distance+=reindeer.maxSpeed*(seconds - segments*segmentDuration);
+            distance+=reindeer.maxSpeed*(totalRunDuration - segments*segmentDuration);
         if(distance > maxDistance) maxDistance = distance;
     }
     return maxDistance;
 };
 
-auto getMostStars = [](const auto& data, const auto seconds){
+auto getMostStars = [](const auto& data, const auto totalRunDuration){
     auto move = [](auto& distanceTraveled, auto& second, const auto& reindeer){
         distanceTraveled[second] = distanceTraveled[second-1]+reindeer.maxSpeed;
         second++;
@@ -52,9 +52,9 @@ auto getMostStars = [](const auto& data, const auto seconds){
         second++;
     };
 
-    auto logTravel = [&](auto& distanceTraveled, const auto& reindeer, const auto seconds){
+    auto logTravel = [&move, &rest, totalRunDuration](auto& distanceTraveled, const auto& reindeer){
         auto segmentDuration = reindeer.maxSpeedDuration+reindeer.restDuration;
-        auto segments = seconds/segmentDuration;
+        auto segments = totalRunDuration/segmentDuration;
         auto second = 1u;
 
         //run the first segments unhindered
@@ -64,16 +64,16 @@ auto getMostStars = [](const auto& data, const auto seconds){
             for(auto j=0u; j<reindeer.restDuration; j++)
                 rest(distanceTraveled, second);
         }
-        //check with seconds for the last few meters
-        for(auto j=0u; j<reindeer.maxSpeedDuration && second<=seconds; j++)
+        //check with totalRunDuration for the last few meters
+        for(auto j=0u; j<reindeer.maxSpeedDuration && second<=totalRunDuration; j++)
             move(distanceTraveled, second, reindeer);
-        for(auto j=0u; j<reindeer.restDuration && second<=seconds; j++)
+        for(auto j=0u; j<reindeer.restDuration && second<=totalRunDuration; j++)
             rest(distanceTraveled, second);
 
     };
 
-    auto awardStars = [](const auto& distanceTraveled, const auto N, const auto seconds){
-        auto awardStarToWinner = [](auto& stars, const auto& distanceTraveled, const auto s, const auto N){
+    auto awardStars = [totalRunDuration](const auto& distanceTraveled, const auto N){
+        auto awardStarToWinner = [N, distanceTraveled](auto& stars, const auto s){
             auto winner = 0u;
             for(auto reindeer=1u; reindeer<N; reindeer++){
                 if(distanceTraveled[reindeer][s] > distanceTraveled[winner][s]) winner=reindeer;
@@ -82,18 +82,18 @@ auto getMostStars = [](const auto& data, const auto seconds){
         };
 
         std::vector<unsigned int> stars(N);
-        for(auto s=1u; s<seconds; s++){
-            awardStarToWinner(stars, distanceTraveled, s, N);
+        for(auto s=1u; s<totalRunDuration; s++){
+            awardStarToWinner(stars, s);
         }
         return stars;
     };
 
-    std::vector<std::vector<unsigned int>> distanceTraveled(data.size(), std::vector<unsigned int>(seconds+1));
+    std::vector<std::vector<unsigned int>> distanceTraveled(data.size(), std::vector<unsigned int>(totalRunDuration+1));
     for(size_t reindeer=0u; reindeer < data.size(); reindeer++){
-        logTravel(distanceTraveled[reindeer], data[reindeer], seconds);
+        logTravel(distanceTraveled[reindeer], data[reindeer]);
     }
 
-    const auto stars = awardStars(distanceTraveled, data.size(), seconds);
+    const auto stars = awardStars(distanceTraveled, data.size());
     return std::ranges::max(stars);
 };
 
