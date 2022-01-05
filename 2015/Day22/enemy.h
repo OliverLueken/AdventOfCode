@@ -11,7 +11,7 @@ public:
     int hp{0};
     const int damage{0};
 
-    Enemy(int hp, int damage) : maxHP{hp}, hp{hp}, damage{damage}{}
+    Enemy(int _hp, int _damage) : maxHP{_hp}, hp{_hp}, damage{_damage}{}
     void makeTurn();
     bool isDead() const;
     void reset();

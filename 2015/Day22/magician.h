@@ -20,12 +20,12 @@ public:
     std::vector<unsigned int> battlePlan{std::vector<unsigned int>(10,0)};
                                                 //10 is an arbitrarily choosen number of max rounds, increase if needed
 
-    Magician(Battleground* battlegroundPtr) : battlegroundPtr{battlegroundPtr}{
-        spells.emplace_back(std::make_unique<MissileSpell> (battlegroundPtr));
-        spells.emplace_back(std::make_unique<DrainSpell>   (battlegroundPtr));
-        spells.emplace_back(std::make_unique<ShieldSpell>  (battlegroundPtr));
-        spells.emplace_back(std::make_unique<PoisonSpell>  (battlegroundPtr));
-        spells.emplace_back(std::make_unique<RechargeSpell>(battlegroundPtr));
+    Magician(Battleground* _battlegroundPtr) : battlegroundPtr{_battlegroundPtr}{
+        spells.emplace_back(std::make_unique<MissileSpell> (_battlegroundPtr));
+        spells.emplace_back(std::make_unique<DrainSpell>   (_battlegroundPtr));
+        spells.emplace_back(std::make_unique<ShieldSpell>  (_battlegroundPtr));
+        spells.emplace_back(std::make_unique<PoisonSpell>  (_battlegroundPtr));
+        spells.emplace_back(std::make_unique<RechargeSpell>(_battlegroundPtr));
     }
 
     int makeTurn(unsigned int);

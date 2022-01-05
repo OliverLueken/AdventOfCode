@@ -5,8 +5,8 @@
 #include "spell.h"
 #include "effect.h"
 
-Battleground::Battleground(Enemy&& tempEnemy, bool hardDifficulty)
-    : hardDifficulty{hardDifficulty}, enemy{tempEnemy}, magician{this}, activeEffects{}{
+Battleground::Battleground(Enemy&& _tempEnemy, bool _hardDifficulty)
+    : hardDifficulty{_hardDifficulty}, enemy{_tempEnemy}, magician{this}, activeEffects{}{
     enemy.battlegroundPtr = this;
 }
 
@@ -20,8 +20,8 @@ unsigned int Battleground::battle(unsigned int& minMana){
     auto round = 0u;
     auto manaConsumed = 0u;
 
-    auto magicianWon = [&minMana, &manaConsumed](const auto& enemy){
-        if(enemy.isDead()){
+    auto magicianWon = [&minMana, &manaConsumed](const auto& _enemy){
+        if(_enemy.isDead()){
             if(manaConsumed < minMana){
                 minMana = manaConsumed;
             }
@@ -29,8 +29,8 @@ unsigned int Battleground::battle(unsigned int& minMana){
         }
         return false;
     };
-    auto enemyWon = [](const auto& magician){
-        return magician.isDead();
+    auto enemyWon = [](const auto& _magician){
+        return _magician.isDead();
     };
 
     for(auto spell : magician.battlePlan){
