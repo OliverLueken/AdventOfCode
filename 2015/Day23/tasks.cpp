@@ -12,13 +12,18 @@
 
 struct Instruction{
     int* pos{nullptr};
-    Instruction(int* pos) : pos{pos}{}
+    Instruction(int* _pos) : pos{_pos}{}
+    Instruction(const Instruction&) = default;
+    Instruction& operator=(const Instruction&) = default;
+    Instruction(Instruction&&) = default;
+    Instruction& operator=(Instruction&&) = default;
+    virtual ~Instruction() = default;
     virtual void execute() = 0;
 };
 
 struct hlf : public Instruction{
     unsigned int* r{nullptr};
-    hlf(int* pos, unsigned int* r) : Instruction{pos}, r{r}{}
+    hlf(int* _pos, unsigned int* _r) : Instruction{_pos}, r{_r}{}
     void execute() override{
         (*r)/=2;
         (*pos)++;
@@ -27,7 +32,7 @@ struct hlf : public Instruction{
 
 struct tpl : public Instruction{
     unsigned int* r{nullptr};
-    tpl(int* pos, unsigned int* r) : Instruction{pos}, r{r}{}
+    tpl(int* _pos, unsigned int* _r) : Instruction{_pos}, r{_r}{}
     void execute() override{
         (*r)*=3;
         (*pos)++;
@@ -36,7 +41,7 @@ struct tpl : public Instruction{
 
 struct inc : public Instruction{
     unsigned int* r{nullptr};
-    inc(int* pos, unsigned int* r) : Instruction{pos}, r{r}{}
+    inc(int* _pos, unsigned int* _r) : Instruction{_pos}, r{_r}{}
     void execute() override{
         (*r)++;
         (*pos)++;
@@ -45,7 +50,7 @@ struct inc : public Instruction{
 
 struct jmp : public Instruction{
     int offset{0};
-    jmp(int* pos, int offset) : Instruction{pos}, offset{offset}{}
+    jmp(int* _pos, int _offset) : Instruction{_pos}, offset{_offset}{}
     void execute() override{
         (*pos)+=offset;
     }
@@ -54,7 +59,7 @@ struct jmp : public Instruction{
 struct jie : public Instruction{
     unsigned int* r{nullptr};
     int offset{0};
-    jie(int* pos, unsigned int* r, int offset) : Instruction{pos}, r{r}, offset{offset}{}
+    jie(int* _pos, unsigned int* _r, int _offset) : Instruction{_pos}, r{_r}, offset{_offset}{}
     void execute() override{
         if(*r%2==0) (*pos)+=offset;
         else (*pos)++;
@@ -64,7 +69,7 @@ struct jie : public Instruction{
 struct jio : public Instruction{
     unsigned int* r{nullptr};
     int offset{0};
-    jio(int* pos, unsigned int* r, int offset) : Instruction{pos}, r{r}, offset{offset}{}
+    jio(int* _pos, unsigned int* _r, int _offset) : Instruction{_pos}, r{_r}, offset{_offset}{}
     void execute() override{
         if(*r==1) (*pos)+=offset;
         else (*pos)++;
