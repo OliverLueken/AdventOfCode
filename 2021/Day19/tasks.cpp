@@ -19,22 +19,22 @@ class Rotator{
     int rotationCounts{0};
 
     auto rotate(Coordinate& coord) const{
-        auto rotateXY = [](Coordinate& coord){
+        auto rotateXY = [&coord](){
             coord[1] = -std::exchange(coord[0], coord[1]);
         };
 
-        auto rotateXZ = [](Coordinate& coord){
+        auto rotateXZ = [&coord](){
             coord[0] = -std::exchange(coord[2], coord[0]);
         };
 
-        auto rotateYZ = [](Coordinate& coord){
+        auto rotateYZ = [&coord](){
             coord[2] = -std::exchange(coord[1], coord[2]);
         };
 
         switch(rotationAxis){
-            break; case 0: rotateXY(coord);
-            break; case 1: rotateXZ(coord);
-            break; case 2: rotateYZ(coord);
+            break; case 0: rotateXY();
+            break; case 1: rotateXZ();
+            break; case 2: rotateYZ();
         }
     }
 public:
