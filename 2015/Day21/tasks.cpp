@@ -35,9 +35,9 @@ auto parseEnemyInput = [](const auto&& input){
 };
 
 auto parseStoreInput = [](const auto&& input){
-    auto stockItems = [](const auto& input) mutable{
+    auto stockItems = [](const auto& itemInput){
         std::vector<item> items{};
-        for(const auto& row : input){
+        for(const auto& row : itemInput){
             const auto split = Utilities::split(row);
             const auto n = split.size();
             items.emplace_back(std::stoi(split[n-3]), std::stoi(split[n-2]), std::stoi(split[n-1]));
