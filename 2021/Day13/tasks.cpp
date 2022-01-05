@@ -42,8 +42,8 @@ auto printPaper(const auto& points){
 
     for(auto i=0u; i<paper.rows(); i++){
         const auto row = paper.row(i);
-        for(const auto i : row){
-            std::cout << ( i>0 ? '#' : ' ' );
+        for(const auto j : row){
+            std::cout << ( j>0 ? '#' : ' ' );
         }
         std::cout << '\n';
     }
