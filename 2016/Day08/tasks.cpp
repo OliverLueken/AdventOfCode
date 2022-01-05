@@ -51,13 +51,20 @@ public:
 
 class Operation{
 public:
+    Operation() = default;
+    Operation(const Operation&) = default;
+    Operation& operator=(const Operation&) = default;
+    Operation(Operation&&) = default;
+    Operation& operator=(Operation&&) = default;
+    virtual ~Operation() = default;
+
     virtual void operator()(Display*) const = 0;
 };
 
 class rectOperation : public Operation{
     int rows{}, cols{};
 public:
-    rectOperation(const int rows, const int cols) : rows{rows}, cols{cols}{}
+    rectOperation(const int _rows, const int _cols) : rows{_rows}, cols{_cols}{}
     void operator()(Display* display) const override {
         display->rectangle(rows, cols);
     }
@@ -66,7 +73,7 @@ public:
 class rotRowOperation : public Operation{
     int row{}, shift{};
 public:
-    rotRowOperation(const int row, const int shift) : row{row}, shift{shift}{}
+    rotRowOperation(const int _row, const int _shift) : row{_row}, shift{_shift}{}
     void operator()(Display* display) const override {
         display->rotateRow(row, shift);
     }
@@ -75,7 +82,7 @@ public:
 class rotColOperation : public Operation{
     int col{}, shift{};
 public:
-    rotColOperation(const int col, const int shift) : col{col}, shift{shift}{}
+    rotColOperation(const int _col, const int _shift) : col{_col}, shift{_shift}{}
     void operator()(Display* display) const override {
         display->rotateCol(col, shift);
     }
