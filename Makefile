@@ -3,10 +3,11 @@ SHELL = /bin/sh
 .SUFFIXES: .cpp .o
 
 CPP = g++
-CDEBUG = -g
-CWARNINGS = -Wall -Wpedantic -Wextra -Wconversion -Wshadow -Werror
-CPPFLAGS = -std=c++20 -O3 $(CDEBUG) $(CWARNINGS)
+CPPDEBUG = -g
+CPPWARNINGS = -Wall -Wpedantic -Wextra -Wconversion -Wshadow -Werror
 CPPSANITIZER = -fsanitize=undefined,address
+#CPPFLAGS = -std=c++20 -O3 $(CPPWARNINGS) $(CPPDEBUG) $(CPPSANITIZER)
+CPPFLAGS = -std=c++20 -O3 $(CPPWARNINGS)
 LIBS = -L/usr/lib/cryptopp/ -lcryptopp
 
 SUBDIRS = 20*/Day*
@@ -16,7 +17,7 @@ all: $(SUBDIRS)
 
 .SECONDEXPANSION:
 $(SUBDIRS): $$(patsubst %.cpp,%.o,$$(wildcard $$@/*.cpp))
-	$(CPP)  $(CPPFLAGS) $(CPPSANITIZER)    -o $@/tasks.out $^ $(LIBS)
+	$(CPP)  $(CPPFLAGS)     -o $@/tasks.out $^ $(LIBS)
 
 .PHONY: clean
 clean:
