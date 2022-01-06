@@ -55,7 +55,7 @@ public:
     lshiftGate(std::unordered_map<std::string, uint16_t>* _signals, std::string&& _out, std::string&& _in1, std::string&& _in2)
         : signals{_signals}, outWire{std::move(_out)}, wire{std::move(_in1)}, shift{std::stoul(_in2)} {}
     void passSignal() const {
-        (*signals)[outWire] = (*signals)[wire]<<shift;
+        (*signals)[outWire] = static_cast<uint16_t>((*signals)[wire]<<shift);
     }
     bool isReady() const {
         return signals->contains(wire);
@@ -72,7 +72,7 @@ public:
     rshiftGate(std::unordered_map<std::string, uint16_t>* _signals, std::string&& _out, std::string&& _in1, std::string&& _in2)
         : signals{_signals}, outWire{std::move(_out)}, wire{std::move(_in1)}, shift{std::stoul(_in2)} {}
     void passSignal() const {
-        (*signals)[outWire] = (*signals)[wire]>>shift;
+        (*signals)[outWire] = static_cast<uint16_t>((*signals)[wire]>>shift);
     }
     bool isReady() const {
         return signals->contains(wire);
