@@ -8,61 +8,49 @@
 #include <vector>
 #include <algorithm>
 
-// clear && g++ tasks.cpp -std=c++20 -Wpedantic -Wall -Wextra -Wconversion -L/usr/lib/cryptopp/ -lcryptopp
 
-auto hasNLeadingZeros(const auto& s, const unsigned int n){
-    bool hasNLeadingZeros = true;
-    for(auto i=0u; i<n; i++){
-        hasNLeadingZeros &= s[i]=='0';
-    }
-    return hasNLeadingZeros;
-}
-
-class getNextValidHash_{
-    unsigned int i{0u};
-
-public:
-    auto operator()(const auto& input) {
-        std::string msg{};
-        while(true){
-            msg = input + std::to_string(i++);
-            const auto hash = MD5::getMD5Hash(std::move(msg));
-            if(hasNLeadingZeros(hash, 5u)){
-                std::cout << i << ' ' << hash << '\n';
-                return hash;
-            }
+auto getNextValidHash = [i=1u](const auto& input) mutable {
+    std::string msg{};
+    while(true){
+        msg = input + std::to_string(i++);
+        const auto hash = MD5::getMD5Hash(std::move(msg));
+        if( hash.starts_with("00000") ){
+            std::cout << i << ' ' << hash << '\n';
+            return hash;
         }
     }
-
-    void reset(){
-        i=0u;
-    }
 };
-inline getNextValidHash_ getNextValidHash{};
 
 auto getFirstPassword = [](const auto& input){
     std::string pw{};
+    std::vector<std::string> validHashs{};
     while(pw.size() < 8){
-        pw+=getNextValidHash(input)[5];
+        validHashs.emplace_back(getNextValidHash(input));
+        pw+=validHashs.back()[5];
     }
-    return pw;
+    return std::make_pair(pw, std::move(validHashs));
 };
 
-auto getSecondPassword = [](const auto& input){
-
-    getNextValidHash.reset();
-
-    std::unordered_map<int, char> characterPositions;
-    while(characterPositions.size() < 8){
-        auto nextHash = getNextValidHash(input);
-        auto pos = nextHash[5];
-        if(std::isdigit(pos) && pos-'0' < 8 && !characterPositions.contains(pos-'0')){
-            characterPositions[pos-'0'] = nextHash[6];
+auto getSecondPassword = [](const auto& input, auto& validHashs){
+    auto addCharacterToPassword = [foundPasswordCharacters=0u](const auto& nextHash, auto& pw) mutable {
+        const auto pos = nextHash[5]-'0';
+        if(pos>=0 && pos<8 && pw[pos]=='_'){
+            pw[pos] = nextHash[6];
+            foundPasswordCharacters++;
+            std::cout << pw << '\n';
         }
-    }
+        return foundPasswordCharacters == pw.size();
+    };
+
     std::string pw{"________"};
-    for(const auto& [pos, c] : characterPositions){
-        pw[pos] = c;
+    bool passwordComplete = false;
+    for(const auto& nextHash : validHashs){
+        passwordComplete = addCharacterToPassword(nextHash, pw);
+    }
+
+    while( !passwordComplete ){
+        const auto nextHash = getNextValidHash(input);
+        passwordComplete = addCharacterToPassword(nextHash, pw);
     }
     return pw;
 };
@@ -71,10 +59,10 @@ int main(){
     const auto input = "uqwqemis";
 
     //Task 1
-    const auto firstPW = getFirstPassword(input);
+    auto [firstPW, validHashs] = getFirstPassword(input);
     std::cout << "The first password is " << firstPW << ".\n";
 
     //Task 2
-    const auto secondPW = getSecondPassword(input);
+    const auto secondPW = getSecondPassword(input, validHashs);
     std::cout << "The second password is " << secondPW << ".\n";
 }
