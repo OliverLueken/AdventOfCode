@@ -1,5 +1,5 @@
-#ifndef READINPUT_H
-#define READINPUT_H
+#ifndef READFILE_H
+#define READFILE_H
 
 #include <string>
 #include <fstream>
