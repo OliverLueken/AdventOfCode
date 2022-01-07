@@ -1,48 +1,51 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <set>
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/utilities.hpp"
+
 #include <algorithm>
+#include <iostream>
 
-int main(){
-    std::string line;
-    std::ifstream input("input.txt");
-    int count_valid=0;
-    int min, max;
-    char letter;
-    std::string pw;
+struct PasswordPolicy{
+    int  leftInteger{};
+    int  rightInteger{};
+    char letter{};
+    std::string password{};
+};
 
-    if(input.is_open()){
-	while(getline(input,line)){
-	    std::string::size_type n, m;
-	    n = line.find("-");
-	    min = stoi(line.substr(0,n));
-	    m = line.find(" ");
-	    max = stoi(line.substr(n+1, m-1-n));
-	    m=line.find(":");
-	    letter = line.substr(m-1,1).front();
-	    pw = line.substr(m+2,line.size());
+auto parseInput(const auto& input){
+    std::vector<PasswordPolicy> passwords{};
+    std::ranges::transform(input, std::back_inserter(passwords), [](const auto& row){
+        const auto split = Utilities::splitOnEach(row, " -");
+        return PasswordPolicy{std::stoi(split[0]), std::stoi(split[1]), split[2][0], split[3]};
+    });
+    return passwords;
+}
 
-	    /* //part 1
-	    int count = 0;
-	    for(auto pos=0; pos<=pw.size()-1; pos++){
-		if(letter==pw[pos])
-			count++;
-	    }
-	    if(min<= count && count <= max)
-		    count_valid++;
-	    */
+auto getValidPasswordCount1(const auto& passwords){
+    auto letterOccuranceInRange = [](const auto& password){
+        const auto letterCount = std::ranges::count(password.password, password.letter);
+        return password.leftInteger <= letterCount
+                     && letterCount <= password.rightInteger;
+    };
+    return std::ranges::count_if(passwords, letterOccuranceInRange);
+}
 
-	    //part 2
-	    if((pw[min-1]==letter) ^ (pw[max-1]==letter))
-		    count_valid++;
+auto getValidPasswordCount2(const auto& passwords){
+    auto letterInPos1AndNotInPos2 = [](const auto& password){
+        return (password.password[password.leftInteger -1]==password.letter)
+             ^ (password.password[password.rightInteger-1]==password.letter);
+    };
+    return std::ranges::count_if(passwords, letterInPos1AndNotInPos2);
+}
 
-	}
-	input.close();
-    }
-    else
-	std::cout << "Unable to open file\n";
-    //std::sort(numbers.begin(), numbers.end());
+int main() {
+    const auto passwords = parseInput(readFile::vectorOfStrings("input.txt"));
 
-    std::cout << count_valid << "\n";
+    //Task 1
+    const auto validPasswordCount1 = getValidPasswordCount1(passwords);
+    std::cout << "With the first policy interpretation there are "  << validPasswordCount1 << " valid passwords.\n";
+
+    //Task 2
+    const auto validPasswordCount2 = getValidPasswordCount2(passwords);
+    std::cout << "With the second policy interpretation there are " << validPasswordCount2 << " valid passwords.\n";
 }
