@@ -1,42 +1,32 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/utilities.hpp"
+
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <set>
-#include <algorithm>
 
-int main(){
-    std::string line;
-    std::ifstream input("input.txt");
-    std::set<int> numbers;
-    if(input.is_open()){
-	while(getline(input,line)){
-		numbers.insert(stoi(line));
-		//std::cout << numbers.back() << "\n";
-	}
-	input.close();
+auto getProductOfNNumbersSummingTo(const auto& numbers, const auto n, const auto sumToReach){
+    if(sumToReach<=0) return 0;
+    if(n==1){
+        return sumToReach*bool(Utilities::contains(numbers, sumToReach));
     }
-    else
-	std::cout << "Unable to open file\n";
-    //std::sort(numbers.begin(), numbers.end());
 
+    for (const auto& number : numbers) {
+        const auto product = getProductOfNNumbersSummingTo(numbers, n-1, sumToReach-number);
+        if(product > 0){
+            return number*product;
+        }
+    }
+    return 0;
+}
 
-    for(auto n=numbers.begin(); n!=numbers.end(); n++){
-	    //std::cout << *n <<"\n";
-	    int a=*n, b=2020-a;
-	    if(numbers.find(b)!=numbers.end()){
-		    std::cout << a*b << "\n";
-		    break;
-	    }
-    }
-    for(auto n=numbers.begin();n!=numbers.end(); n++){
-	    int a=*n;
-	    for(auto m=next(n); m!=numbers.end(); m++){
-		int b=*m, c=2020-a-b;
-		if(numbers.find(c)!=numbers.end()){
-			std::cout << a*b*c << "\n";
-			goto endloop;
-		}
-	    }
-    }
-endloop: ;
+int main() {
+    const auto numbers = readFile::vectorOfInts("input.txt");
+
+    //Task 1
+    const auto productOfTwo   = getProductOfNNumbersSummingTo(numbers, 2, 2020);
+    std::cout << "The product of two numbers summing to 2020 is "   << productOfTwo   << ".\n";
+
+    //Task 2
+    const auto productOfThree = getProductOfNNumbersSummingTo(numbers, 3, 2020);
+    std::cout << "The product of three numbers summing to 2020 is " << productOfThree << ".\n";
 }
