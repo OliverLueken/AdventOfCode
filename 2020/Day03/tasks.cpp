@@ -1,40 +1,45 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
+
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
+#include <ranges>
+
+auto parseInput(const auto& input){
+    return Matrix::Matrix<char>(input.size(), input[0].size(), input | std::views::join);
+}
+
+auto countTreesOnSlope(const auto& forest, const auto dx, const auto dy){
+    auto count = 0ul;
+    auto y = dy;
+    auto x = dx;
+    while(y < forest.rows()){
+        count+=bool(forest(y, x%forest.cols()) == '#' );
+        y+=dy;
+        x+=dx;
+    }
+    return count;
+}
+
+auto multiplyTreeCountOfRemainingSlopes(const auto& forest){
+    auto product  = countTreesOnSlope(forest, 1u, 1u);
+         product *= countTreesOnSlope(forest, 5u, 1u);
+         product *= countTreesOnSlope(forest, 7u, 1u);
+         product *= countTreesOnSlope(forest, 1u, 2u);
+    return product;
+}
 
 int main(){
-    std::string line;
-    std::ifstream input("input.txt");
-    std::vector<std::pair<int,int>> slopes;
-   	slopes.push_back(std::make_pair(1,1));
-   	slopes.push_back(std::make_pair(3,1));
-   	slopes.push_back(std::make_pair(5,1));
-   	slopes.push_back(std::make_pair(7,1));
-   	slopes.push_back(std::make_pair(1,2));
-    std::vector<int> count_trees(5,0);
-    std::vector<int> x(5,0);
-    std::vector<int> y(5,0);
+    const auto forest = parseInput(readFile::vectorOfStrings("input.txt"));
 
-    if(input.is_open()){
-	while(getline(input,line)){
-	    for(int i=0; i<slopes.size(); i++){
-		if(y[i]==0){
-		    y[i]-=slopes[i].second;
-	            if(line[x[i]]=='#')
-	   	        count_trees[i]++;
-	            x[i]=(x[i]+slopes[i].first)%line.size();
-		}
-		y[i]++;
-    	    }
-	}
-	input.close();
-    }
-    else
-	std::cout << "Unable to open file\n";
-    //std::sort(numbers.begin(), numbers.end());
-    long m=1;
-    for(auto it=count_trees.begin(); it!=count_trees.end(); it++)
-	m*=*it;
-    std::cout << m << "\n";
+    //Task 1
+    const auto treeCount = countTreesOnSlope(forest, 3u, 1u);
+    std::cout << "On slope (3,1) are " << treeCount << " trees.\n";
+
+    //Task 2
+    const auto allTreeSlopesProduct = treeCount * multiplyTreeCountOfRemainingSlopes(forest);
+    std::cout << "The product of the trees on all slopes is " << allTreeSlopesProduct << " trees.\n";
+
 }
