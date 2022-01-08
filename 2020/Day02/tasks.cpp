@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <algorithm>
@@ -48,4 +49,6 @@ int main() {
     //Task 2
     const auto validPasswordCount2 = getValidPasswordCount2(passwords);
     std::cout << "With the second policy interpretation there are " << validPasswordCount2 << " valid passwords.\n";
+
+    VerifySolution::verifySolution(validPasswordCount1, validPasswordCount2);
 }
