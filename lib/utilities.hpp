@@ -88,22 +88,12 @@ namespace Utilities{
         */
         auto operator()(auto first, const auto last, const char delimiter = ' ') const {
             std::vector<std::string> parts{};
-            std::string part{};
-            while(first != last){
-                if(*first == delimiter){
-                    if(!part.empty()){
-                        parts.emplace_back(std::move(part));
-                        part = std::string{};
-                    }
-                }
-                else{
-                    part.push_back(*first);
-                }
-                first++;
+            while(first < last){
+                const auto second = std::ranges::find(first, last, delimiter);
+                parts.emplace_back(first, second);
+                first = second+1;
             }
-            if(!part.empty()){
-                parts.emplace_back(std::move(part));
-            }
+            std::erase(parts, "");
             return parts;
         }
 
@@ -112,15 +102,7 @@ namespace Utilities{
         returns a std::vector<std::string> containing the parts
         */
         auto operator()(const std::string& r, const char delimiter = ' ') const {
-            std::vector<std::string> parts;
-
-            size_t pos1=0, pos2=0;
-            while(pos2 != r.npos){
-                pos2 = r.find(delimiter, pos1);
-                if(pos1 < pos2) parts.emplace_back(r.substr(pos1, pos2-pos1));
-                pos1=pos2+1;
-            }
-            return parts;
+            return (*this)(std::begin(r), std::end(r), delimiter);
         }
     };
     inline constexpr split_ split{};
