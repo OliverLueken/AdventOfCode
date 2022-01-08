@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -7,6 +8,8 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+
+int task1Solution{0};
 
 class Factory;
 
@@ -58,6 +61,7 @@ public:
         //Task 1
         if(*min == 17 && *max == 61){
             std::cout << "The robot handling chips 17 and 61 has the id " << id << ".\n";
+            task1Solution = id;
         }
     }
 
@@ -135,5 +139,8 @@ int main(){
 
     //Task 1 & 2
     factory.passAllChips();
-    std::cout << "The chips in the first three outputs have a product of " << getChipProduct(factory) << ".\n";
+    const auto task2Solution = getChipProduct(factory);
+    std::cout << "The chips in the first three outputs have a product of " << task2Solution << ".\n";
+
+    VerifySolution::verifySolution(task1Solution, task2Solution);
 }

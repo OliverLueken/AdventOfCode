@@ -1,8 +1,9 @@
 
+#include "../../lib/verifySolution.hpp"
+
 #include <iostream>
 #include <string>
 #include <algorithm>
-
 
 auto playLookAndSay = [](auto& number, const size_t n){
     auto lookAndSay = [](auto& num){
@@ -28,9 +29,13 @@ int main(){
 
     //Task 1
     playLookAndSay(number, 40);
-    std::cout << "The input after 40 iterations has length " << number.size() << ".\n";
+    const auto solution1 = number.size();
+    std::cout << "The input after 40 iterations has length " << solution1 << ".\n";
 
     //Task 2
     playLookAndSay(number, 10);
-    std::cout << "The input after 50 iterations has length " << number.size() << ".\n";
+    const auto solution2 = number.size();
+    std::cout << "The input after 50 iterations has length " << solution2 << ".\n";
+
+    VerifySolution::verifySolution(solution1, solution2);
 }

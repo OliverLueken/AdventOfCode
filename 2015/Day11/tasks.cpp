@@ -1,5 +1,7 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/verifySolution.hpp"
 
 #include <iostream>
 #include <string>
@@ -41,9 +43,13 @@ int main(){
 
     //Task 1
     getNewPassword(password);
-    std::cout << "The new password should be " << password << ".\n";
+    const auto password1 = password;
+    std::cout << "The new password should be " << password1 << ".\n";
 
     //Task 2
     getNewPassword(password);
-    std::cout << "The new password should be " << password << ".\n";
+    const auto password2 = password;
+    std::cout << "The new password should be " << password2 << ".\n";
+
+    VerifySolution::verifySolution(password1, password2);
 }

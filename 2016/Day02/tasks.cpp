@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 
 #include <iostream>
 #include <string>
@@ -107,10 +108,12 @@ int main(){
     const auto instructions = readFile::vectorOfStrings("input.txt");
 
     //Task 1
-    auto code = getCode(instructions, SquareKeypad{});
-    std::cout << "The code is " << code << ".\n";
+    const auto code1 = getCode(instructions, SquareKeypad{});
+    std::cout << "The code is " << code1 << ".\n";
 
     //Task 2
-    code = getCode(instructions, DiamondKeypad{});
-    std::cout << "The actual code is " << code << ".\n";
+    const auto code2 = getCode(instructions, DiamondKeypad{});
+    std::cout << "The actual code is " << code2 << ".\n";
+
+    VerifySolution::verifySolution(code1, code2);
 }

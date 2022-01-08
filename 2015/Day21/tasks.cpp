@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -117,4 +118,6 @@ int main(){
     //Task 2
     const auto mostAmountOfGoldToLose = getLeastAmountOfGoldToWin(enemy, store, std::greater<>());
     std::cout << "The player would still lose the fight with a maximum investment of "<< mostAmountOfGoldToLose << " gold.\n";
+
+    VerifySolution::verifySolution(leastAmountOfGoldToWin, mostAmountOfGoldToLose);
 }

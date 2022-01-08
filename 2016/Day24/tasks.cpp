@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -112,4 +113,6 @@ int main(){
     //Task 2
     const auto fewestStepsWithBacktrack = getShortestRoute(distanceMatrix, true);
     std::cout << "The shortest round trip for the robot takes " << fewestStepsWithBacktrack << " steps.\n";
+
+    VerifySolution::verifySolution(fewestSteps, fewestStepsWithBacktrack);
 }

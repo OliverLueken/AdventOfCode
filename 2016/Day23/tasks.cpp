@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -241,4 +242,5 @@ int main(){
     const auto aValue2 = calc(input, 12);
     std::cout << "With register a starting at 12, the value of the a reg is " << aValue2 << ".\n";
 
+    VerifySolution::verifySolution(aValue1, aValue2);
 }

@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -57,4 +58,6 @@ int main(){
     //Task 2
     const auto minimalQuantumEntaglementWithFourGroups = getMinQuantumEntanglement(weights, 4);
     std::cout << "With four trunks, the minimal quantum entanglement is " << minimalQuantumEntaglementWithFourGroups << ".\n";
+
+    VerifySolution::verifySolution(minimalQuantumEntaglement, minimalQuantumEntaglementWithFourGroups);
 }

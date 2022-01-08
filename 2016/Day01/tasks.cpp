@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -65,4 +66,6 @@ int main(){
     //Task 2
     const auto trueDistance = distanceToFirstPlaceVisitedTwice(instructions);
     std::cout << "The Easter Bunny HQ is actually " << trueDistance << " blocks away.\n";
+
+    VerifySolution::verifySolution(distance, trueDistance);
 }

@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/md5.hpp"
 
@@ -104,4 +105,6 @@ int main(){
     //Task 2
     const auto longestPathLength = getLongestPathLength(input);
     std::cout << "The longest path to the vault has length " << longestPathLength << ".\n";
+
+    VerifySolution::verifySolution(shortestPath, longestPathLength);
 }

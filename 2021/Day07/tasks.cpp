@@ -1,5 +1,7 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -39,4 +41,6 @@ int main(){
     //Task 2
     const auto cheapestFuelCost2 = getCheapestFuelCost2(crabPositions);
     std::cout << "With the updated crab understanding, they need at least " << cheapestFuelCost2 << " amount of fuel.\n";
+
+    VerifySolution::verifySolution(cheapestFuelCost, cheapestFuelCost2);
 }

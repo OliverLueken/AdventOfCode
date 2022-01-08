@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 
 #include <iostream>
 #include <string>
@@ -42,4 +43,5 @@ int main(){
     const auto sumWithoutRed = sumWithRedIgnored(input);
     std::cout << "The sum of all numbers without red is " << sumWithoutRed << ".\n";
 
+    VerifySolution::verifySolution(sum, sumWithoutRed);
 }

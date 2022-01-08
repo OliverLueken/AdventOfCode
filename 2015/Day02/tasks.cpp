@@ -5,6 +5,7 @@
 #include <numeric>
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 auto getAmountOfPaperNeeded(const auto& input){
@@ -38,4 +39,6 @@ int main(){
     //Task 2
     const auto ribbonNeeded = getAmountOfRibbonNeeded(input);
     std::cout << "The elves need " << ribbonNeeded << " feet of ribbon.\n";
+
+    VerifySolution::verifySolution(paperNeeded, ribbonNeeded);
 }

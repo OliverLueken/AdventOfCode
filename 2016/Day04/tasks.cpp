@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -100,4 +101,6 @@ int main(){
     //Task 2
     const auto storageID = getNorthPoleObjectStorageID(rooms);
     std::cout << "The ID of the northpole object storage is " << storageID << ".\n";
+
+    VerifySolution::verifySolution(sumOfValidRoomIDs, storageID);
 }

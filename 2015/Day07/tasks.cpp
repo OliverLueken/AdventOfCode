@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -220,4 +221,5 @@ int main(){
     const auto newSignalAtWireA = circuit.getSignalAtWire("a");
     std::cout << "Wire a provides signal " << newSignalAtWireA << " now.\n";
 
+    VerifySolution::verifySolution(signalAtWireA, newSignalAtWireA);
 }

@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -75,4 +76,6 @@ int main(){
     //Task 2
     const auto differenceAfter40Iterations = getMostCommonLeastCommonElementDifference(polymer, rules, 40);
     std::cout << "After 10 iterations, the difference between the most common and least common elements is " << differenceAfter40Iterations << ".\n";
+
+    VerifySolution::verifySolution(differenceAfter10Iteratins, differenceAfter40Iterations);
 }

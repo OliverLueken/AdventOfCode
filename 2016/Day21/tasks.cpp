@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -130,4 +131,6 @@ int main(){
     //Task 2
     const auto unscrambledWord = unscramble("fbgdceah", instructions);
     std::cout << "The unscrambled version is " << unscrambledWord << ".\n";
+
+    VerifySolution::verifySolution(scrambledWord, unscrambledWord);
 }

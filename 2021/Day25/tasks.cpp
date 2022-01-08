@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
 
@@ -73,4 +74,6 @@ int main(){
     //Task 1
     const auto stepsUntilEquilibrium = countStepsUntilEquilibrium(seaCucumberPositions);
     std::cout << "It takes " << stepsUntilEquilibrium << " steps until the sea cucumbers stop moving.\n";
+
+    VerifySolution::verifySolution(stepsUntilEquilibrium);
 }

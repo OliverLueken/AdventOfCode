@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 
 #include <iostream>
 #include <string>
@@ -76,4 +77,6 @@ int main(){
     //Task 2
     const auto lifeSupportRating = getLifeSupportRating(report);
     std::cout << "The life support rating of the submarine is at " << lifeSupportRating << ".\n";
+
+    VerifySolution::verifySolution(powerConsumption, lifeSupportRating);
 }

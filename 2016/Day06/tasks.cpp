@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 
 #include <iostream>
 #include <string>
@@ -36,4 +37,6 @@ int main(){
     //Task 2
     const auto originalMessage = getCorrectedMessage(messages, std::greater_equal<>());
     std::cout << "The original message says: " << originalMessage << ".\n";
+
+    VerifySolution::verifySolution(correctedMessage, originalMessage);
 }

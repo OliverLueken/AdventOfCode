@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
 
@@ -89,4 +90,6 @@ int main(){
     //Task 2
     const auto litPixelsAfterFiftyEnhancements = getLitPixelsAfterEnhancements(image, decoder, 50);
     std::cout << "There are " << litPixelsAfterFiftyEnhancements << " pixels lit after fifty enhancements.\n";
+
+    VerifySolution::verifySolution(litPixelsAfterTwoEnhancements, litPixelsAfterFiftyEnhancements);
 }

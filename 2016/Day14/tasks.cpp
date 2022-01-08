@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/md5.hpp"
 
@@ -92,4 +93,6 @@ int main(){
     //Task 2
     const auto lastStretchedKeyID = getLastKeyID(input, hash2017Times);
     std::cout << "The 64th stretched key is produced by the index " << lastStretchedKeyID << ".\n";
+
+    VerifySolution::verifySolution(lastKeyID, lastStretchedKeyID);
 }

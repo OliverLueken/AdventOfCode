@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
 
@@ -172,4 +173,6 @@ int main(){
     const auto amphipods2 = parseInput(input);
     const auto result2 = getLeastEnergyToOrganize(amphipods2);
     std::cout << "To organize all amphipods, at least " << result2 << " energy is required.\n";
+
+    VerifySolution::verifySolution(result, result2);
 }

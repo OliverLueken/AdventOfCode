@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -148,4 +149,6 @@ int main(){
     //Task 2
     const auto evaluatedBITS = root.value;
     std::cout << "The BITS transmission evaluates to " << evaluatedBITS << ".\n";
+
+    VerifySolution::verifySolution(sumOfVersions, evaluatedBITS);
 }

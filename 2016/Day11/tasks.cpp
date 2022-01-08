@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -184,4 +185,6 @@ int main(){
 
     const auto minSteps2 = getMinSteps(building);
     std::cout << "The minimum number of steps " << minSteps2 << ".\n";
+
+    VerifySolution::verifySolution(minSteps, minSteps2);
 }

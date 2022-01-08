@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -28,4 +29,6 @@ int main(){
 
     const auto startingParameter = getStartingParameter(input);
     std::cout << startingParameter << '\n';
+
+    VerifySolution::verifySolution(startingParameter);
 }

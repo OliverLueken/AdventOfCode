@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -61,4 +62,5 @@ int main(){
     const auto timeToDrop2 = solveCRM(parameter);
     std::cout << "The time to drop the ball is at t=" << timeToDrop2 <<  "\n";
 
+    VerifySolution::verifySolution(timeToDrop, timeToDrop2);
 }

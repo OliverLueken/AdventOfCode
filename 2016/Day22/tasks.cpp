@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -130,4 +131,6 @@ int main(){
     //Task 2
     const auto leastMovesCount = getFewestMoves(nodes);
     std::cout << "To access the data, at least " << leastMovesCount << " moves are needed.\n";
+
+    VerifySolution::verifySolution(viableTransferCount, leastMovesCount);
 }

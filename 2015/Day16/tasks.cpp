@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -85,4 +86,6 @@ int main(){
     //Task 2
     const auto specialAuntID = findSpecialAunt(allAuntsObjectData, specialAuntData, isTaskTwoSpecial);
     std::cout << "The aunt Sue that got you the gift is aunt #" << specialAuntID << ".\n";
+
+    VerifySolution::verifySolution(actuallyNotSpecialAuntID, specialAuntID);
 }

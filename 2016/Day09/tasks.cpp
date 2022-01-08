@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -63,4 +64,6 @@ int main(){
     //Task 2
     const auto decompressedLengthV2 = getDecompressedLengthV2(std::begin(string), std::end(string));
     std::cout << "With decompression 2.0, the file has length " << decompressedLengthV2 << ".\n";
+
+    VerifySolution::verifySolution(decompressedLength, decompressedLengthV2);
 }

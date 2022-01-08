@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -123,12 +124,15 @@ int main(){
 
     //Task 1
     computer.execute();
-    std::cout << "The value of register b at the end of the program is " << computer.reg[1] << ".\n";
+    const auto registerAfterExecution1 = computer.reg[1];
+    std::cout << "The value of register b at the end of the program is " << registerAfterExecution1 << ".\n";
 
     //Task 2
     computer.reset();
     computer.reg[0]=1;
     computer.execute();
-    std::cout << "With register a starting at 1, the value of the b reg is " << computer.reg[1] << ".\n";
+    const auto registerAfterExecution2 = computer.reg[1];
+    std::cout << "With register a starting at 1, the value of the b reg is " << registerAfterExecution2 << ".\n";
 
+    VerifySolution::verifySolution(registerAfterExecution1, registerAfterExecution2);
 }

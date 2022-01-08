@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -46,4 +47,6 @@ int main(){
     //Task 2
     const auto safeTileCount2 = getNumberOfSafeTiles(input, 400'000);
     std::cout << "There are " << safeTileCount2 << " safe tiles in 400,000 rows.\n";
+
+    VerifySolution::verifySolution(safeTileCount, safeTileCount2);
 }

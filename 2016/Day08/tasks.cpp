@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -116,8 +117,11 @@ int main(){
     );
 
     //Task 1
-    std::cout << "There are a total of " << display.countOn() << " pixels lit.\n\n";
+    const auto numberOfLitPixels = display.countOn();
+    std::cout << "There are a total of " << numberOfLitPixels << " pixels lit.\n\n";
 
     //Task 2
     display.print();
+
+    VerifySolution::verifySolution(numberOfLitPixels);
 }

@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -48,4 +49,6 @@ int main(){
     //Task 2
     const auto validColumnTriangles = countValidColTriangles(triangles);
     std::cout << "There are " << validColumnTriangles << " possible triangles by column.\n";
+
+    VerifySolution::verifySolution(validTriangles, validColumnTriangles);
 }

@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 
 int main(){
     const auto input = readFile::string("input.txt");
@@ -20,4 +21,6 @@ int main(){
     const auto firstBasementFloorIt = std::ranges::find_if(input, enteredBasement);
     const auto basementPosition = std::distance(std::begin(input), firstBasementFloorIt)+1;
     std::cout << "Task 2: Position of Santa entering the basement is " << basementPosition << ".\n";
+
+    VerifySolution::verifySolution(lastFloor, basementPosition);
 }

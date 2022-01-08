@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -101,4 +102,6 @@ int main(){
     commands = getTaskTwoCommands();
     const auto brightnessTaskTwo = getBrightness(instructions);
     std::cout << "The total brightness of the lights combine to " << brightnessTaskTwo << ".\n";
+
+    VerifySolution::verifySolution(brightnessTaskOne, brightnessTaskTwo);
 }

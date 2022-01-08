@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -83,4 +84,6 @@ int main(){
     // //Task 2
     const auto maxUniverseWins = getMaxUniverseWins(playerPosition);
     std::cout << "The player with the most wins won in " << maxUniverseWins << " universes.\n";
+
+    VerifySolution::verifySolution(result, maxUniverseWins);
 }

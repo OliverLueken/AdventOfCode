@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 
 #include <iostream>
 #include <string>
@@ -60,11 +61,12 @@ int main(){
     const auto strings = readFile::vectorOfStrings("input.txt");
 
     //Task 1
-    size_t niceStrings = std::ranges::count_if(strings, isTaskOneNice);
-    std::cout << "There are " << niceStrings << " nice strings.\n";
+    const auto niceStrings1 = std::ranges::count_if(strings, isTaskOneNice);
+    std::cout << "There are " << niceStrings1 << " nice strings.\n";
 
     //Task 2
-    niceStrings = std::ranges::count_if(strings, isTaskTwoNice);
-    std::cout << "There are " << niceStrings << " nice strings with the new rules.\n";
+    const auto niceStrings2 = std::ranges::count_if(strings, isTaskTwoNice);
+    std::cout << "There are " << niceStrings2 << " nice strings with the new rules.\n";
 
+    VerifySolution::verifySolution(niceStrings1, niceStrings2);
 }

@@ -1,4 +1,6 @@
 
+#include "../../lib/verifySolution.hpp"
+
 #include <iostream>
 #include <cmath>
 
@@ -31,4 +33,6 @@ int main(){
     //Task 2
     const auto secondGameWinner = getSecondGameWinner(input);
     std::cout << "The elf at position " << secondGameWinner << " gets all the presents on the second game.\n";
+
+    VerifySolution::verifySolution(firstGameWinner, secondGameWinner);
 }

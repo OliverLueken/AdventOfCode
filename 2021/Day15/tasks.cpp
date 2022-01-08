@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
 
@@ -70,4 +71,6 @@ int main(){
     const auto completeRiskLevelMatrix = getCompleteRiskLevelMatrix(riskLevelMatrix);
     const auto lowestRiskOfCrossingCompleteCave = getLowestRiskOfCrossing(completeRiskLevelMatrix);
     std::cout << "For the complete cave, the lowest risk is " << lowestRiskOfCrossingCompleteCave << ".\n";
+
+    VerifySolution::verifySolution(lowestRiskOfCrossingCave, lowestRiskOfCrossingCompleteCave);
 }

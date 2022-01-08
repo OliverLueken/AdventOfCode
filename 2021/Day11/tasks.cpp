@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
 
@@ -79,4 +80,6 @@ int main(){
     //Task 2
     const auto stepWithBrightFlash = getStepWithBrightFlash(octopiLightLevels);
     std::cout << "All octopi flash at the same time on step " << stepWithBrightFlash << ".\n";
+
+    VerifySolution::verifySolution(flashesIn100Steps, stepWithBrightFlash);
 }

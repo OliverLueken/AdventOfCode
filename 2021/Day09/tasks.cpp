@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
 
@@ -69,4 +70,6 @@ int main(){
     //Task 2
     const auto largestBasinsProduct = getLargestBasinsProduct(heightmap, lowpoints);
     std::cout << "The product of the three largest basins is " << largestBasinsProduct << ".\n";
+
+    VerifySolution::verifySolution(riskLevelSum, largestBasinsProduct);
 }

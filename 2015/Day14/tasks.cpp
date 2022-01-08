@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -109,4 +110,6 @@ int main(){
     //Task 2
     const auto mostStars = getMostStars(reindeerData, 2503u);
     std::cout << "The reindeer with the most stars accumulated " << mostStars << " stars.\n";
+
+    VerifySolution::verifySolution(furthestDistance, mostStars);
 }

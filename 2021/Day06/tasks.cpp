@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -35,4 +36,6 @@ int main(){
     //Task 2
     const auto populationAfter256Days = getPopulationAfter(256, startingPopulation);
     std::cout << "There are " << populationAfter256Days << " lanternfish after 256 days\n";
+
+    VerifySolution::verifySolution(populationAfter80Days, populationAfter256Days);
 }

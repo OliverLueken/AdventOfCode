@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "lightShow.h"
 
 #include <iostream>
@@ -28,4 +29,5 @@ int main(){
     const auto onLightsWithStuckCorners = animateWithCornersStuckOn(lightshowWithStuckCorners, 100);
     std::cout << "There are a total of " << onLightsWithStuckCorners << " lights on with the corner lights stuck on on.\n";
 
+    VerifySolution::verifySolution(onLights, onLightsWithStuckCorners);
 }

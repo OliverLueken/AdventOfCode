@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -19,4 +20,6 @@ int main(){
     }
 
     std::cout << "The machine is requesting the code " << code << ".\n";
+
+    VerifySolution::verifySolution(code);
 }

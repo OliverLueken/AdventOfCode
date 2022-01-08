@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -113,4 +114,6 @@ int main(){
     //Task 2
     const auto sumOfOutputValues = Utilities::sum(input, 0, decodeOutput);
     std::cout << "The sum of all output values is " << sumOfOutputValues << ".\n";
+
+    VerifySolution::verifySolution(numberOfObviousDigitsInOutputPatterns, sumOfOutputValues);
 }

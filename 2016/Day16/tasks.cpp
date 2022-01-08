@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -51,4 +52,6 @@ int main(){
     //Task 2
     const auto checksum2 = getChecksum(s, 35651584);
     std::cout << checksum2 << '\n';
+
+    VerifySolution::verifySolution(checksum1, checksum2);
 }

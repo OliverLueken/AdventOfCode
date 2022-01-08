@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -171,4 +172,6 @@ int main(){
     //Task 2
     const auto maxScannerDistance = getMaxScannerDistance(scannerCoordinates);
     std::cout << "The maximum manhatten distance between two scanners is " << maxScannerDistance << ".\n";
+
+    VerifySolution::verifySolution(beaconCount, maxScannerDistance);
 }

@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -274,4 +275,6 @@ int main(){
     //Task 2
     const auto maxMagnitudeOfTwoSnailfishes = getMaxMagnitudeOfTwoSnailfishes(snailfishes);
     std::cout << "Task 2: " << maxMagnitudeOfTwoSnailfishes << '\n';
+
+    VerifySolution::verifySolution(magnitude, maxMagnitudeOfTwoSnailfishes);
 }

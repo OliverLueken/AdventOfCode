@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <algorithm>
@@ -71,4 +72,5 @@ int main(){
     const auto numberOfHousesWithPresents2 = deliverWithSantaAndRobot(input);
     std::cout << "With the help of Robo-Santa, " << numberOfHousesWithPresents2 << " houses receive at least one present.\n";
 
+    VerifySolution::verifySolution(numberOfHousesWithPresents, numberOfHousesWithPresents2);
 }

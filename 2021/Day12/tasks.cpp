@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -71,4 +72,6 @@ int main(){
     //Task 2
     const auto numberOfPathsVisitingOneSmallCaveTwice = getNumberOfPathsThroughTheCave(caveConnectsTo, true);
     std::cout << "There are " << numberOfPathsVisitingOneSmallCaveTwice << " different paths through the cave while visiting a maximum of one small cave twice.\n";
+
+    VerifySolution::verifySolution(numberOfPaths, numberOfPathsVisitingOneSmallCaveTwice);
 }

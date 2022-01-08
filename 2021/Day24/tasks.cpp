@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -98,4 +99,5 @@ int main(){
     const auto smallestValidModelNumber = getSmallestValidModelNumber(validModelNumberDigits);
     std::cout << "The smallest model number accepted by MONAD is " << smallestValidModelNumber << ".\n";
 
+    VerifySolution::verifySolution(largestValidModelNumber, smallestValidModelNumber);
 }

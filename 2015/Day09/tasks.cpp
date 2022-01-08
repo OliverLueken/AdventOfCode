@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -61,4 +62,6 @@ int main(){
     //Task 2
     const auto maxDistance = tsp(distanceMatrix, citiesCount, std::greater<>());
     std::cout << "The greatest distance to visit every city amounts to " << maxDistance << ".\n";
+
+    VerifySolution::verifySolution(minDistance, maxDistance);
 }

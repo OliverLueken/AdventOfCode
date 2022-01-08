@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -34,10 +35,12 @@ int main(){
     const Enemy enemy = parseEnemyInput(readFile::vectorOfStrings("input.txt"));
 
     //Task 1
-    auto minManaConsumption = getLeastManaConsumption(enemy);
-    std::cout << "The fight can be won with at least " << minManaConsumption << " mana consumed.\n";
+    const auto minManaConsumption1 = getLeastManaConsumption(enemy);
+    std::cout << "The fight can be won with at least " << minManaConsumption1 << " mana consumed.\n";
 
     //Task 2
-    minManaConsumption = getLeastManaConsumption(enemy, true);
-    std::cout << "On hard difficulty, the fight can be won with at least " << minManaConsumption << " mana consumed.\n";
+    const auto minManaConsumption2 = getLeastManaConsumption(enemy, true);
+    std::cout << "On hard difficulty, the fight can be won with at least " << minManaConsumption2 << " mana consumed.\n";
+
+    VerifySolution::verifySolution(minManaConsumption1, minManaConsumption2);
 }

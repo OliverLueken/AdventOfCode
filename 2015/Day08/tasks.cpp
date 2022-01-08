@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -35,4 +36,6 @@ int main(){
     //Task 2
     const auto encodedSize = Utilities::sum( strings, 0u, encodeCharacters );
     std::cout << "The answer for task 2 is " << encodedSize << '\n';
+
+    VerifySolution::verifySolution(escapedCharacters, encodedSize);
 }

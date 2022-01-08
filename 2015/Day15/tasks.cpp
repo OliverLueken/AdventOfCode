@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -66,10 +67,12 @@ int main(){
     const auto ingredients = getIngredients(readFile::vectorOfStrings("input.txt"));
 
     //Task 1
-    auto score = getOptimalScore<false>(ingredients);
-    std::cout << "The maximum score is " << score << ".\n";
+    const auto score1 = getOptimalScore<false>(ingredients);
+    std::cout << "The maximum score is " << score1 << ".\n";
 
     //Task 2
-    score = getOptimalScore<true>(ingredients);
-    std::cout << "The maximum score with 500 cal per cookie is " << score << ".\n";
+    const auto score2 = getOptimalScore<true>(ingredients);
+    std::cout << "The maximum score with 500 cal per cookie is " << score2 << ".\n";
+
+    VerifySolution::verifySolution(score1, score2);
 }

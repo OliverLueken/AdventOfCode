@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 
 #include <iostream>
 #include <vector>
@@ -44,4 +45,6 @@ int main(){
     const auto [combinations, minContainerAmount] = getAmountOfCombinations(containers, 150u);
     std::cout << "There are a total of " << combinations << " combinations to fit the eggnog.\n";
     std::cout << "There are a total of " << minContainerAmount << " combinations with the minimal numbers of containers to fit the eggnog.\n";
+
+    VerifySolution::verifySolution(combinations, minContainerAmount);
 }

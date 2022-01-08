@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 
 #include <iostream>
 #include <vector>
@@ -24,4 +25,5 @@ int main(){
     const auto largerThanPreviousThreeSlideCount   = getLargerThanPreviousSlideCount(measurements, 3);
     std::cout << "There are a total of " << largerThanPreviousThreeSlideCount << " three-sums lager than the previous.\n";
 
+    VerifySolution::verifySolution(largerThanPreviousMeasurementsCount, largerThanPreviousThreeSlideCount);
 }

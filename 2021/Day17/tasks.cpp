@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -80,7 +81,7 @@ int main(){
     const auto numberOfValidVelocityValues = validVelocityValues.size();
     std::cout << "There are " << numberOfValidVelocityValues << " possible initial velocity vectors.\n";
 
-
+    VerifySolution::verifySolution(highestYPosition, numberOfValidVelocityValues);
 }
 
 

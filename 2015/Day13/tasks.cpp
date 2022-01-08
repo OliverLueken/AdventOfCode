@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
 
@@ -65,4 +66,6 @@ int main(){
     addMyself(happinessMatrix);
     const auto happinessWithMe = makeEveryoneHappy(happinessMatrix);
     std::cout << "Myself included the optimal change in happiness amounts to " << happinessWithMe << ".\n";
+
+    VerifySolution::verifySolution(happiness, happinessWithMe);
 }

@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -84,4 +85,6 @@ int main(){
     const auto supportsSSL = [](const auto& ip){return ip.supportsSSL();};
     const auto supportSSLCount = std::ranges::count_if(ips, supportsSSL);
     std::cout << "There are " << supportSSLCount << " IPs that support SSL.\n";
+
+    VerifySolution::verifySolution(supportTLSCount, supportSSLCount);
 }

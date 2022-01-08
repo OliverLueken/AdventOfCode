@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -128,4 +129,6 @@ int main(){
 
     const auto locationsCount = getLocationsCountIn(mace, start, 50);
     std::cout << "You can reach at most " << locationsCount << " different locations in 50 steps.\n";
+
+    VerifySolution::verifySolution(shortestPath, locationsCount);
 }

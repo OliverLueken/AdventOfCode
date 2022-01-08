@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -63,4 +64,6 @@ int main(){
     //Task 2
     const auto overlapsWithDiagonals = getOverlaps(lines);
     std::cout << "Including diagonal lines, there are " << overlapsWithDiagonals << " points the lines overlap.\n";
+
+    VerifySolution::verifySolution(overlaps, overlapsWithDiagonals);
 }

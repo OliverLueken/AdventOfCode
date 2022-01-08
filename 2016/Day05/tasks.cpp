@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/md5.hpp"
 
@@ -65,4 +66,6 @@ int main(){
     //Task 2
     const auto secondPW = getSecondPassword(input, validHashs);
     std::cout << "The second password is " << secondPW << ".\n";
+
+    VerifySolution::verifySolution(firstPW, secondPW);
 }

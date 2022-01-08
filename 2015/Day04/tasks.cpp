@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/md5.hpp"
 
 #include <iostream>
@@ -31,5 +32,7 @@ int main() {
     //Task 2
     const auto numberProducing6Zeros = getLowestNumber(input, "000000", numberProducing5Zeros);
     std::cout << numberProducing6Zeros << " is the lowest positive number producing 6 leading zeros.\n";
+
+    VerifySolution::verifySolution(numberProducing5Zeros, numberProducing6Zeros);
  }
 

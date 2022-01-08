@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -37,7 +38,7 @@ auto getTask2 = [](const auto& input){
         const auto split = Utilities::split(in);
         const auto cmd   = split[0];
         const auto x     = std::stoi(split[1]);
-        
+
         if( cmd == "down" ){
             aim += x;
         }
@@ -62,4 +63,6 @@ int main(){
     //Task 2
     const auto taskTwoResult = getTask2(input);
     std::cout << "The new product of the horizontal and vertical position is " << taskTwoResult << ".\n";
+
+    VerifySolution::verifySolution(taskOneResult, taskTwoResult);
 }

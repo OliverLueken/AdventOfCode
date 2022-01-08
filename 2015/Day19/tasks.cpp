@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -73,4 +74,6 @@ int main(){
 
     const auto stepsToCreateMolecule = countStepsToCreateMolecule(molecule, replacements);
     std::cout << "It will take at least " << stepsToCreateMolecule << " steps to create the desired molecule.\n";
+
+    VerifySolution::verifySolution(distinctMolecules, stepsToCreateMolecule);
 }

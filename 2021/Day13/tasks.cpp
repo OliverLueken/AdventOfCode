@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
 
@@ -102,4 +103,6 @@ int main(){
     finishFolding(points, instructions | std::views::drop(1));
     std::cout << "After finishing folding, the following letters are readable:\n";
     printPaper(points);
+
+    VerifySolution::verifySolution(visibleDotsAfterOneFold);
 }

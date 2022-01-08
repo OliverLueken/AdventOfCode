@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -78,4 +79,6 @@ int main(){
     //Task 2
     const auto completionScore = getCompletionScore(incompleteCodes);
     std::cout << "The autocomplete tool got a score of " << completionScore << ".\n";
+
+    VerifySolution::verifySolution(syntaxErrorScore, completionScore);
 }
