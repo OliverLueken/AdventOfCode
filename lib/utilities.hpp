@@ -15,6 +15,9 @@ namespace Utilities{
     template<class T = size_t>
     using Position = std::pair<T, T>;
 
+    template<typename T>
+    concept isNumber = std::integral<T> || std::floating_point<T>;
+
 
     struct contains_{
         /*
@@ -132,22 +135,12 @@ namespace Utilities{
         template<std::forward_iterator I, std::sentinel_for<I> S>
         auto operator()(I first, const S last, const std::string& delimiter = " ") const {
             std::vector<std::string> parts{};
-            std::string part{};
-            while(first != last){
-                if(contains(delimiter, *first)){
-                    if(!part.empty()){
-                        parts.emplace_back(std::move(part));
-                        part = std::string{};
-                    }
-                }
-                else{
-                    part.push_back(*first);
-                }
-                first++;
+            while(first < last){
+                const auto second = std::ranges::find_first_of(first, last, std::begin(delimiter), std::end(delimiter));
+                parts.emplace_back(first, second);
+                first = second+1;
             }
-            if(!part.empty()){
-                parts.emplace_back(std::move(part));
-            }
+            std::erase(parts, "");
             return parts;
         }
 
@@ -245,9 +238,6 @@ namespace Utilities{
 
     };
     inline constexpr rotate_ rotate;
-
-    template<typename T>
-    concept isNumber = std::integral<T> || std::floating_point<T>;
 
     struct sum_{
         /*
