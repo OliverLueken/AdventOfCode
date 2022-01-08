@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
 
@@ -42,4 +43,5 @@ int main(){
     const auto allTreeSlopesProduct = treeCount * multiplyTreeCountOfRemainingSlopes(forest);
     std::cout << "The product of the trees on all slopes is " << allTreeSlopesProduct << " trees.\n";
 
+    VerifySolution::verifySolution(treeCount, allTreeSlopesProduct);
 }
