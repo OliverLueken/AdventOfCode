@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -101,7 +102,7 @@ auto getActiveCubesCountInSmallRegion = [](const auto& steps){
     std::vector<Cuboid> activeCuboids{};
     std::ranges::for_each(steps, [&activeCuboids](auto& step){
         const Cuboid cuboid = narrowCuboid(step.cuboid, -50, 50);
-        if(step.cuboid.hasVolume()){
+        if(cuboid.hasVolume()){
             addCuboid(activeCuboids, cuboid, step.on);
         }
     });
@@ -126,4 +127,6 @@ int main(){
     //Task 2
     const auto activeCubesCount = getActiveCubesCount(steps);
     std::cout << "All in all, there are " << activeCubesCount << " activated cubes.\n";
+
+    VerifySolution::verifySolution(activeCubesCountInSmallRegion, activeCubesCount);
 }

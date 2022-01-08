@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -68,11 +69,11 @@ auto parseInput = [](const auto& input){
 
     //parse every other row into boards
     std::vector<Board> boards{};
-    const auto nBoards = std::distance(std::begin(input)+1, std::end(input))/6;
+    const auto nBoards = (input.size()-1)/5;
 
-    std::ranges::for_each(std::views::iota(0, nBoards),
+    std::ranges::for_each(std::views::iota(0lu, nBoards),
         [&input, &boards](const auto boardId){
-            boards.emplace_back( input | std::views::drop(2+6*boardId) | std::views::take(5) );
+            boards.emplace_back( input | std::views::drop(1+5*boardId) | std::views::take(5) );
         }
     );
 
@@ -109,4 +110,6 @@ int main(){
 
     //Task 2
     std::cout << "The score of the last board to win is "  << lastWinningScore << ".\n";
+
+    VerifySolution::verifySolution(firstWinningScore, lastWinningScore);
 }
