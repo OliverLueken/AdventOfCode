@@ -1,5 +1,6 @@
 
 #include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -29,4 +30,6 @@ int main() {
     //Task 2
     const auto productOfThree = getProductOfNNumbersSummingTo(numbers, 3, 2020);
     std::cout << "The product of three numbers summing to 2020 is " << productOfThree << ".\n";
+
+    VerifySolution::verifySolution(productOfTwo, productOfThree);
 }
