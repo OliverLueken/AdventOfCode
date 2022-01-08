@@ -272,6 +272,16 @@ namespace Utilities{
 
     };
     inline constexpr sum_ sum;
+
+    struct toupper_{
+        auto
+        operator()(const std::string& s) const {
+            std::string upper{};
+            std::ranges::transform(s, std::back_inserter(upper), [](const auto c){return std::toupper(c);});
+            return upper;
+        }
+    };
+    inline constexpr toupper_ toupper;
 }
 
 template<class T>
