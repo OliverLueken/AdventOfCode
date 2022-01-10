@@ -261,6 +261,34 @@ namespace Utilities{
         }
     };
     inline constexpr toupper_ toupper;
+
+    /*
+    Takes a string s and returns true if every character of s is a digit, false otherwise
+    */
+    constexpr bool
+    isNumber(const std::string& s){
+        auto isDigit = [](const auto c){ return std::isdigit(c); };
+        return std::ranges::all_of(s, isDigit);
+    }
+
+    /*
+    Takes a string s and returns true if every character of s is a hexadecimal digit, false otherwise
+    */
+    constexpr bool
+    isHexNumber(const std::string& s){
+        auto isHex = [](const auto c){ return std::isxdigit(c); };
+        return std::ranges::all_of(s, isHex);
+    }
+
+    /*
+    Takes a value val and returns true if val is in the range [left, right), false otherwise
+    */
+    template<typename T>
+    requires std::totally_ordered<T>
+    constexpr bool
+    isBetween(const T& val, const T& left, const T& right ){
+        return left <= val && val < right;
+    }
 }
 
 template<class T>
