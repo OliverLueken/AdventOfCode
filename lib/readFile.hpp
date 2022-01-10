@@ -48,9 +48,9 @@ namespace readFile{
         return v;
     }
 
-    auto vectorOfStrings(const std::string& filename, char del = '\n'){
+    auto vectorOfStrings(const std::string& filename, char del = '\n', const bool keepEmpty = false){
         auto wholeFile{getStream(filename).str()};
-        return Utilities::split(wholeFile, del);
+        return Utilities::split(wholeFile, del, keepEmpty);
     }
 
 
