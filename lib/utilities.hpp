@@ -86,14 +86,16 @@ namespace Utilities{
         A function that splits a string [first, last) by delimiter and
         returns a std::vector<std::string> containing the parts
         */
-        auto operator()(auto first, const auto last, const char delimiter = ' ') const {
+        auto operator()(auto first, const auto last, const char delimiter = ' ', const bool keepEmpty = false) const {
             std::vector<std::string> parts{};
             while(first < last){
                 const auto second = std::ranges::find(first, last, delimiter);
                 parts.emplace_back(first, second);
                 first = second+1;
             }
-            std::erase(parts, "");
+            if(!keepEmpty){
+                std::erase(parts, "");
+            }
             return parts;
         }
 
@@ -101,8 +103,8 @@ namespace Utilities{
         A function that splits a string r by delimiter and
         returns a std::vector<std::string> containing the parts
         */
-        auto operator()(const std::string& r, const char delimiter = ' ') const {
-            return (*this)(std::begin(r), std::end(r), delimiter);
+        auto operator()(const std::string& r, const char delimiter = ' ', const bool keepEmpty = false) const {
+            return (*this)(std::begin(r), std::end(r), delimiter, keepEmpty);
         }
     };
     inline constexpr split_ split{};
@@ -115,14 +117,16 @@ namespace Utilities{
         returns a std::vector<std::string> containing parts
         */
         template<std::forward_iterator I, std::sentinel_for<I> S>
-        auto operator()(I first, const S last, const std::string& delimiter = " ") const {
+        auto operator()(I first, const S last, const std::string& delimiter = " ", const bool keepEmpty = false) const {
             std::vector<std::string> parts{};
             while(first < last){
                 const auto second = std::ranges::find_first_of(first, last, std::begin(delimiter), std::end(delimiter));
                 parts.emplace_back(first, second);
                 first = second+1;
             }
-            std::erase(parts, "");
+            if(!keepEmpty){
+                std::erase(parts, "");
+            }
             return parts;
         }
 
@@ -130,8 +134,8 @@ namespace Utilities{
         A function that splits a string r on each character contained in delimiter and
         returns a std::vector<std::string> containing parts
         */
-        auto operator()(const std::string& r, const std::string& delimiter = " ") const {
-            return (*this)(std::begin(r), std::end(r), delimiter);
+        auto operator()(const std::string& r, const std::string& delimiter = " ", const bool keepEmpty = false) const {
+            return (*this)(std::begin(r), std::end(r), delimiter, keepEmpty);
         }
     };
     inline constexpr splitOnEach_ splitOnEach{};
@@ -245,6 +249,9 @@ namespace Utilities{
     };
     inline constexpr sum_ sum;
 
+    /*
+    Takes a string s and returns a new string containing every character of s converted to uppercase
+    */
     struct toupper_{
         auto
         operator()(const std::string& s) const {
