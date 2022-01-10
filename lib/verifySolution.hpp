@@ -25,7 +25,7 @@ namespace VerifySolution{
         }
 
     private:
-        template<Utilities::isNumber T>
+        template<Utilities::number T>
         auto verify(const T& answer, const std::string& solution) const {
             verify(std::to_string(answer), solution);
         }

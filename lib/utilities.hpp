@@ -16,7 +16,7 @@ namespace Utilities{
     using Position = std::pair<T, T>;
 
     template<typename T>
-    concept isNumber = std::integral<T> || std::floating_point<T>;
+    concept number = std::integral<T> || std::floating_point<T>;
 
 
     struct contains_{
@@ -229,7 +229,7 @@ namespace Utilities{
         /*
         Sums up all the elements in the range [first, last) and the value init.
         */
-        template<std::forward_iterator I, std::sentinel_for<I> S, isNumber T = unsigned int, class Proj = std::identity >
+        template<std::forward_iterator I, std::sentinel_for<I> S, number T = unsigned int, class Proj = std::identity >
         requires std::indirect_binary_predicate<std::ranges::equal_to, std::projected<I, Proj>, const T*>
         constexpr auto
         operator()(I first, S last, T init = 0u, Proj proj = {}) const {
@@ -239,7 +239,7 @@ namespace Utilities{
         /*
         Sums up all the elements in the range r and the value init.
         */
-        template<std::ranges::forward_range R, isNumber T = unsigned int, class Proj = std::identity >
+        template<std::ranges::forward_range R, number T = unsigned int, class Proj = std::identity >
         requires std::indirect_binary_predicate<std::ranges::equal_to, std::projected<std::ranges::iterator_t<R>, Proj>, const T*>
         constexpr auto
         operator()(R&& r, T init = 0u, Proj proj = {} ) const {
