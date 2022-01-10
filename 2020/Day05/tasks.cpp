@@ -1,53 +1,41 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
+#include <set>
+
+auto getOccupiedSeats(const auto& boardingPasses){
+    std::set<unsigned int> seatIDs{};
+    for(const auto& boardingPass : boardingPasses){
+        unsigned int id=0;
+        for(int i=0; i<10; i++){
+            id<<=1;
+            if(boardingPass[i]=='B' || boardingPass[i]=='R') id++;
+        }
+        seatIDs.insert(id);
+    }
+    return seatIDs;
+}
+
+auto getMySeat(const auto& seatIDs, const auto maxSeatID){
+    for(auto id = maxSeatID; id>=0; id--){
+        if(!seatIDs.contains(id)) return id; //find first id not included in the set
+    }
+    return 0u;
+}
 
 int main(){
-  std::string line;
-  std::ifstream input("input.txt");
-  std::vector<bool> occupiedseats(2048,0);
+    const auto boardingPasses = readFile::vectorOfStrings("input.txt");
 
-  int biggest=0;
-  if(input.is_open()){
-  	while(getline(input,line)){
-        unsigned int id=0;
-        for(int i=0; i<7; i++){
-          id<<=1;
-          if(line[i]!='F') id++;
-        }
-        for(int i=7; i<10; i++){
-          id<<=1;
-          if(line[i]!='L') id++;
-        }
-        if(id>biggest) biggest=id;
-        occupiedseats[id]=true;
-        std::cout << line << ", " << id << std::endl;
-    	}
-      input.close();
-    }
-  else
-    std::cout << "Unable to open file\n";
+    //Task 1
+    const auto occupiedSeats = getOccupiedSeats(boardingPasses);
+    const auto maxSeatID = std::ranges::max(occupiedSeats);
+    std::cout << "The highest seat ID on a boarding pass is " << maxSeatID << ".\n";
 
-  // unsigned int a=1;
-  // for(int i=0; i<10; i++){
-  //   std::cout << a << std::endl;
-  //   a<<1;
-  // }
-  int firstocc=0;
-  for(int i=0; i<occupiedseats.size(); i++)
-    if(occupiedseats[i]){
-      firstocc=i;
-      break;
-    }
-  int myseat=0;
-  for(int i=firstocc; i<occupiedseats.size(); i++){
-    if(!occupiedseats[i]){
-      myseat=i;
-      break;
-    }
-  }
+    //Task 2
+    const auto mySeatID = getMySeat(occupiedSeats, maxSeatID);
+    std::cout << "The ID of my seat is " << mySeatID << ".\n";
 
-    std::cout << biggest << "\n";
-      std::cout << myseat << "\n";
+    VerifySolution::verifySolution(maxSeatID, mySeatID);
 }
