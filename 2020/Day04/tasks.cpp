@@ -1,114 +1,106 @@
-#include <iostream>
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
+
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <iomanip>
 
-bool fieldIsValid(int type, std::string info){
-  try{
-    switch(type){
-      case 0: {//byr
-        int birthyear = stoi(info);
-        if(birthyear <1920 || birthyear > 2002 )
-          return false;
-        break;
-      }
-      case 1:{ //iyr
-        int issueyear = stoi(info);
-        if(issueyear <2010 || issueyear > 2020)
-          return false;
-        break;
-      }
-      case 2:{ //eyr
-        int expiratioinyear = stoi(info);
-        if(expiratioinyear < 2020 || expiratioinyear >2030)
-          return false;
-        break;
-      }
-      case 3:{ //hgt
-        int height = stoi(info.substr(0,info.size()-2));
-        if(info.substr(info.size()-2,2)=="cm"){
-          if(height<150 || height >193)
-            return false;
-        } else if(info.substr(info.size()-2,2)=="in"){
-          if(height<59|| height > 76)
-            return false;
-        } else
-          return false;
-        break;
-      }
-      case 4:{ //hcl
-        if(info[0]!='#')   return false;
-        if(info.size()!=7) return false;
-        for(int i=1; i<info.size(); i++)
-          if(isxdigit(info[i])==0 || isupper(info[i])!=0)
-            return false;
-        break;
-      }
-      case 5:{ //ecl
-        if(info.size()!=3) return false;
-        if(info == "amb" || info == "blu" || info == "brn" || info == "gry" || info == "grn" || info == "hzl" || info == "oth") return true;
-        return false;
-        break;
-      }
-      case 6:{ //pid
-        if(info.size()!=9) return false;
-        int n = stoi(info);
-        break;
-      }
+using Passport = std::unordered_map<std::string, std::string>;
+auto parseInput(const std::vector<std::string>& input){
+    std::vector<Passport> passports{};
+    Passport passport{};
+    for(const auto& row : input){
+        if(row.empty()){
+            passports.emplace_back(std::move(passport));
+            passport.clear();
+        }
+        else{
+            auto split = Utilities::splitOnEach(row, " :");
+            for(auto i=0u; i<split.size(); i+=2){
+                passport.emplace(std::move(split[i]), std::move(split[i+1]));
+            }
+        }
     }
-  }
-  catch(const std::exception& ex){
-    return false;
-  }
-  return true;
+    passports.emplace_back(std::move(passport));
+    return passports;
+}
+
+auto getValidCount1(const auto& passports){
+    const std::vector<std::string> requiredFields = {"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"};
+    auto hasEveryRequiredField = [&requiredFields](const auto& passport){
+        return std::ranges::all_of(requiredFields, [&passport](const auto& field){return passport.contains(field);});
+    };
+    return std::ranges::count_if( passports, hasEveryRequiredField );
+}
+auto getValidCount2(const auto& passports){
+    const std::vector<std::string> requiredFields = {"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"};
+    auto hasEveryRequiredField = [&requiredFields](const auto& passport){
+        return std::ranges::all_of(requiredFields, [&passport](const auto& field){return passport.contains(field);});
+    };
+    auto satisfiesFieldConditions = [](const auto& passport){
+        auto satisfies_byr_Condition = [](const auto& _passport){
+            const auto& val = _passport.at("byr");
+            return Utilities::isNumber(val) && Utilities::isBetween(std::stoi(val), 1920, 2003);
+        };
+        auto satisfies_iyr_Condition = [](const auto& _passport){
+            const auto& val = _passport.at("iyr");
+            return Utilities::isNumber(val) && Utilities::isBetween(std::stoi(val), 2010, 2021);
+        };
+        auto satisfies_eyr_Condition = [](const auto& _passport){
+            const auto& val = _passport.at("eyr");
+            return Utilities::isNumber(val) && Utilities::isBetween(std::stoi(val), 2020, 2031);
+        };
+        auto satisfies_hgt_Condition = [](const auto& _passport){
+            const auto& val = _passport.at("hgt");
+            const auto unit = val.substr(val.size()-2);
+            if(unit == "cm") return Utilities::isBetween(std::stoi(val), 150, 194);
+            if(unit == "in") return Utilities::isBetween(std::stoi(val), 59,  77);
+            return false;
+        };
+        auto satisfies_hcl_Condition = [](const auto& _passport){
+            const auto& val = _passport.at("hcl");
+            return val[0]=='#' && val.size()==7 && Utilities::isHexNumber(val.substr(1));
+        };
+        auto satisfies_ecl_Condition = [validEyeColors = std::array<std::string, 7>{"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}](const auto& _passport){
+            const auto& val = _passport.at("ecl");
+            return Utilities::contains(validEyeColors, val);
+        };
+        auto satisfies_pid_Condition = [](const auto& _passport){
+            const auto& val = _passport.at("pid");
+            return Utilities::isNumber(val) && val.size()==9;
+        };
+
+        return satisfies_byr_Condition(passport)
+            && satisfies_iyr_Condition(passport)
+            && satisfies_eyr_Condition(passport)
+            && satisfies_hgt_Condition(passport)
+            && satisfies_hcl_Condition(passport)
+            && satisfies_ecl_Condition(passport)
+            && satisfies_pid_Condition(passport);
+    };
+    auto hasEveryRequiredFieldAndSatisfiesFieldConditions = [&hasEveryRequiredField, &satisfiesFieldConditions](const auto& passport){
+        bool valid = hasEveryRequiredField(passport) && satisfiesFieldConditions(passport);
+        return valid;
+    };
+    return std::ranges::count_if( passports, hasEveryRequiredFieldAndSatisfiesFieldConditions );
 }
 
 int main(){
-    std::string line;
-    std::ifstream input("input.txt");
-    std::vector<std::string> passports;
-    std::vector<std::string> fields;
-      fields.push_back("byr");
-      fields.push_back("iyr");
-      fields.push_back("eyr");
-      fields.push_back("hgt");
-      fields.push_back("hcl");
-      fields.push_back("ecl");
-      fields.push_back("pid");
-    std::vector<bool> hasvalidfield(fields.size(),0);
+    const auto passports = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
 
-  if(input.is_open()){
-  	while(getline(input,line)){
-        passports.push_back(line);
-    	}
-      input.close();
-    }
-  else
-    std::cout << "Unable to open file\n";
+    //Task 1
+    const auto validCount1 = getValidCount1(passports);
+    std::cout << "Valid passports " << validCount1 << ".\n";
 
-  int validpassports=0;
-  for(int line=0; line<=passports.size(); line++){
-    if(line==passports.size() || passports[line].empty()){
-      bool isvalid=true;
-      for(auto it=hasvalidfield.begin(); it!=hasvalidfield.end(); it++){
-        if(!*it){
-          isvalid=false;
-        }
-        *it=false;
-      }
-      if(isvalid) validpassports++;
-    }
-    else{
-      for(int i=0; i<fields.size(); i++){
-        size_t a = passports[line].find(fields[i]+":");
-        if(a!=std::string::npos){
-          size_t b = passports[line].find(" ", a);
-          hasvalidfield[i]=fieldIsValid(i,passports[line].substr(a+4,b-a-4));
-        }
-      }
-    }
+    //Task 2
+    const auto validCount2 = getValidCount2(passports);
+    std::cout << "Valid passports " << validCount2 << ".\n";
 
-  }
-
-  std::cout << validpassports << "\n";
+    VerifySolution::verifySolution(validCount1, validCount2);
 }
