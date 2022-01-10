@@ -2,17 +2,14 @@
 #include "../../lib/readFile.hpp"
 #include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
-#include "../../lib/matrix.hpp"
 
-#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <iomanip>
 
 using Passport = std::unordered_map<std::string, std::string>;
-auto parseInput(const std::vector<std::string>& input){
+auto parseInput(const auto& input){
     std::vector<Passport> passports{};
     Passport passport{};
     for(const auto& row : input){
