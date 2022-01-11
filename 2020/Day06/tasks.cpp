@@ -1,45 +1,55 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <vector>
+#include <algorithm>
+#include <ranges>
+
+using Group = std::vector<std::string>;
+
+auto parseInput = [](auto&& input){
+    std::vector<Group> groups;
+    Group group{};
+    for(auto& row : input){
+        if(row.empty()){
+            groups.emplace_back(std::move(group));
+            group.clear();
+        }
+        else{
+            std::ranges::sort(row);
+            group.emplace_back(std::move(row));
+        }
+    }
+    groups.emplace_back(std::move(group));
+    return groups;
+};
+
+
+auto getGroupCountSum = [](const auto& groups, const auto unionFunction){
+    auto groupYesAnswerCount = [&unionFunction](const auto& group){
+        auto binaryOp = [&unionFunction](const auto& lhs, const auto& rhs){
+            std::string tempUnion{};
+            unionFunction(lhs, rhs, std::back_inserter(tempUnion));
+            return tempUnion;
+        };
+        return std::accumulate(std::begin(group)+1, std::end(group), group[0], binaryOp).size();
+    };
+    return Utilities::sum(groups, 0u, groupYesAnswerCount);
+};
 
 int main(){
-  std::string line;
-  std::ifstream input("input.txt");
-  std::vector<int> yesanswers(26,0);
+    const auto groups = parseInput(readFile::vectorOfStrings("input.txt", '\n', true)); // true to keep empty rows to distinguish different groups
 
-  std::vector<std::string> lines;
+    //Task 1
+    const auto sumOfYesAnswersAnyoneGave = getGroupCountSum(groups,std::ranges::set_union);
+    std::cout << "The sum of yes answer anyone in a group gave is " << sumOfYesAnswersAnyoneGave << ".\n";
 
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(line);
-    	}
-      input.close();
-    }
-  else{
-    std::cout << "Unable to open file\n";
-  }
+    //Task 2
+    const auto sumOfYesAnswersEveryoneGave = getGroupCountSum(groups, std::ranges::set_intersection);
+    std::cout << "The sum of yes answers everyone in a group gave is " << sumOfYesAnswersEveryoneGave << ".\n";
 
-  int total1=0;
-  int total2=0;
-  int grpsize=0;
-  for(int i=0; i<=lines.size(); i++){
-    if(i==lines.size() || lines[i].empty()){
-      for(auto i:yesanswers){
-        if(i>0) total1++;
-        if(i==grpsize) total2++;
-      }
-      grpsize=0;
-      yesanswers.assign(26,0);
-    }
-    else{
-      grpsize++;
-      for(auto c:lines[i]){
-        yesanswers[c-'a']++;
-      }
-    }
-  }
-
-  std::cout << total1 << "\n";
-  std::cout << total2 << "\n";
+    VerifySolution::verifySolution(sumOfYesAnswersAnyoneGave, sumOfYesAnswersEveryoneGave);
 }
