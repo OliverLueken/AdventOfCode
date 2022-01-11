@@ -1,69 +1,125 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
+#include <unordered_set>
+#include <variant>
 
-bool run(std::vector<std::string>& lines, int& acc){
+struct acc{
+    int value{};
+};
 
-    std::vector<bool> linevisited(lines.size(),0);
-    int currentline =0, count=0;
-    char com;
-    do{
-      count++;
-      std::cout << currentline << ", " << lines[currentline] << ", "<< linevisited[currentline] << std::endl;
-      linevisited[currentline]=true;
-      com=lines[currentline][0];
-      switch(com){
-        case 'n':{
-          currentline++;
-          break;
-        }
-        case 'j':{
-          currentline+=stoi(lines[currentline].substr(4,50));
-          break;
-        }
-        case 'a':{
-          acc+=stoi(lines[currentline].substr(4,50));
-          currentline++;
-        }
-      }
-    }while(linevisited[currentline]==false && currentline <lines.size() && currentline >=0 && count <lines.size());
+struct jmp{
+    int value{};
+};
 
-    return currentline==lines.size();
+struct nop{
+    int value{};
+};
+
+template<typename ... Base>
+struct Executor : Base ... {
+	using Base::operator()...;
+};
+template<typename ... T> Executor(T...) -> Executor<T...>;
+
+struct Computer{
+    int _reg{0};
+    int _currentLine{0};
+    std::vector<std::variant<acc, jmp, nop>> commands{};
+
+    auto getRegister(){ return _reg; }
+    auto getCurrentLine(){ return _currentLine; }
+
+    void execute(){
+        auto& reg         = _reg;
+        auto& currentLine = _currentLine;
+        Executor executor{
+            [&reg, &currentLine](const acc& cmd) -> void { reg+=cmd.value; currentLine++;          },
+            [&reg, &currentLine](const jmp& cmd) -> void {                 currentLine+=cmd.value; },
+            [&reg, &currentLine](const nop&    ) -> void {                 currentLine++;          }
+        };
+
+        std::visit(executor, commands[currentLine]);
+    }
+
+    bool isInValidState(){
+        return Utilities::isBetween(_currentLine, 0, (int)commands.size());
+    }
+
+    void reset(){
+        _reg         = 0;
+        _currentLine = 0;
+    }
+};
+
+auto parseInput = [](const auto& input){
+    std::vector<std::variant<acc, jmp, nop>> commands;
+    for(const auto& row : input){
+        const auto split = Utilities::split(row, ' ');
+        const auto value = std::stoi(split[1]);
+        if(split[0] == "acc"){
+            commands.emplace_back(acc{value});
+        }
+        else if(split[0] == "jmp"){
+            commands.emplace_back(jmp{value});
+        }
+        else{
+            commands.emplace_back(nop{value});
+        }
+    }
+    return commands;
+};
+
+auto runComputer(auto& computer){
+    std::unordered_set<int> visitedLines{};
+    while(!visitedLines.contains( computer.getCurrentLine() ) && computer.isInValidState() ){
+        visitedLines.insert(computer.getCurrentLine());
+        computer.execute();
+    }
+    return !computer.isInValidState();
 }
 
+auto getRegisterAfterFirstLoop = [](auto& computer){
+    runComputer(computer);
+    const auto reg = computer.getRegister();
+    computer.reset();
+    return reg;
+};
+
+auto getRegisterAfterSuccessfullyCorrectingProgram = [](auto& computer){
+    for(auto& operation : computer.commands){
+        auto tmp = operation;
+        if(std::holds_alternative<jmp>(operation)){
+            operation = nop{std::get<jmp>(operation).value};
+        }
+        else if(std::holds_alternative<nop>(operation)){
+            operation = jmp{std::get<nop>(operation).value};
+        }
+        else{
+            continue;
+        }
+        if(runComputer(computer)) break;
+        operation = std::move(tmp);
+        computer.reset();
+    }
+    return computer.getRegister();
+};
+
 int main(){
-  std::string line;
-  std::ifstream input("input.txt");
-  std::vector<std::string> lines;
+    Computer computer{0, 0, parseInput(readFile::vectorOfStrings("input.txt"))};
 
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(line);
-    	}
-      input.close();
-    }
-  else{
-    std::cout << "Unable to open file\n";
-  }
-  std::string a;
-  int acc;
-  bool terminatesuccessfully;
-  for(auto it=lines.begin(); it!=lines.end(); it++){
-    acc=0;
-    if((*it)[0]=='n'){
-      (*it)[0]='j';
-      terminatesuccessfully = run(lines, acc);
-      (*it)[0]='n';
-    }
-    else if((*it)[0]=='j'){
-      (*it)[0]='n';
-      terminatesuccessfully = run(lines, acc);
-      (*it)[0]='j';
-    }
-    //std::getline(std::cin, a);
-    if(terminatesuccessfully) break;
-  }
+    //Task 1
+    const auto registerAfterFirstLoop = getRegisterAfterFirstLoop(computer);
+    std::cout << "The register after the first detected loop is " << registerAfterFirstLoop << ".\n";
 
-  std::cout << acc << "\n";
+    //Task 2
+    const auto registerAferSuccessfulExecution = getRegisterAfterSuccessfullyCorrectingProgram(computer);
+    std::cout << "The register after successfully correcting the program is " << registerAferSuccessfulExecution << ".\n";
+
+    VerifySolution::verifySolution(registerAfterFirstLoop, registerAferSuccessfulExecution);
 }
