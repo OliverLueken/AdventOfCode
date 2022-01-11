@@ -1,80 +1,72 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <vector>
+#include <algorithm>
+#include <ranges>
 #include <unordered_map>
 
-long sumallbags(std::string bag, std::vector<std::string>* rules, int depth){
-  long bagcount=0;
-  for(auto& rule:*rules){
-    if(rule.find(bag)==0){
-      size_t a;
-      std::string thisrule=rule;
-      a=thisrule.find("contain ")+6;
-      do{
-        thisrule=thisrule.substr(a+2,rule.size());
-        // std::cout << thisrule << std::endl;
-        try{
-          int num=std::stoi(thisrule);
+auto parseInput = [](auto&& input){
+    std::unordered_map<std::string, std::vector<std::pair<int, std::string>>> bagRules;
+    for(auto& row : input){
+        const auto mainBagEndPos = row.find("bag");
+        std::string mainBag{row, 0, mainBagEndPos-1};
 
-          a=thisrule.find("bag");
-          std::string thisbag = thisrule.substr(2,a-3);
-          std::cout << std::string(depth,' ') << num << " " << thisbag << std::endl;
-          bagcount+=num+num*sumallbags(thisbag,rules, depth+2);
-            // std::cout << bagcount << std::endl;
+        auto split = Utilities::split(std::begin(row)+mainBagEndPos+13, std::end(row)-5, ' ');
+        std::vector<std::pair<int, std::string>> containedBags;
+        if(split[0] != "no"){
+            for(auto i=0u; i<split.size(); i+=4){
+                containedBags.emplace_back(std::stoi(split[i]), split[i+1]+' '+split[i+2]);
+            }
         }
-        catch (...){
+        bagRules.emplace(std::move(mainBag), std::move(containedBags));
+    };
+    return bagRules;
+};
+
+auto processRules(const auto& bagRules){
+    std::unordered_map<std::string, std::pair<bool, unsigned long>> bagInfo{bagRules.size()};
+    auto keyRange = bagRules | std::views::keys;
+    std::vector<std::reference_wrapper<const std::string>> bagsToProcess{keyRange.begin(), keyRange.end()};
+
+    auto bagProcessed = [&bagRules, &bagInfo](const auto& bag){
+        auto subBagInfoAvailable = [&bagInfo](const auto& containedBag){ return bagInfo.contains(containedBag); };
+        const bool allSubBagInfosAvailable = std::ranges::all_of(bagRules.at(bag) | std::views::values, subBagInfoAvailable );
+
+        if(allSubBagInfosAvailable){
+            auto bagContainsShinyGold = [&bagInfo](const auto& containedBag){
+                return containedBag == "shiny gold" || bagInfo[containedBag].first == true;
+            };
+            const bool containsShinyGold = std::ranges::any_of(bagRules.at(bag) | std::views::values, bagContainsShinyGold );
+
+            const auto containedBags = Utilities::sum(bagRules.at(bag), 1ul, [&bagInfo](const auto& pair){
+                return pair.first*bagInfo[pair.second].second;
+            });
+            bagInfo[bag] = std::make_pair(containsShinyGold, containedBags);
+            return true;
         }
-        a=thisrule.find(", ",a);
-
-      }while(a!=std::string::npos);
-
+        return false;
+    };
+    while(!bagsToProcess.empty()){
+        std::erase_if(bagsToProcess, bagProcessed);
     }
-  }
-    std::cout << std::string(depth,' ') << bagcount << std::endl;
-  return bagcount;
-}
-
-void findallouter(std::vector<std::string>* outerbags, std::vector<std::string>* rules){  //std::unordered_map<std::string,std::vector<std::string>>* bagchildren){
-
-  for(auto bagit=outerbags->begin(); bagit!=outerbags->end(); bagit++){
-    size_t a;
-    for(auto it=rules->begin(); it!=rules->end(); ){
-      a=it->find("bag");
-      if(it->find(*bagit,a)!=std::string::npos){
-        std::string newbag=it->substr(0,a-1);
-        outerbags->push_back(newbag);
-        it=rules->erase(it);
-        continue;
-      }
-      it++;
-    }
-  }
+    const auto sumOfBagsContainingShinyGold  = Utilities::sum(bagInfo | std::views::elements<1> | std::views::elements<0>);
+    const auto sumOfBagsContainedInShinyGold = bagInfo["shiny gold"].second-1;
+    return std::make_pair(sumOfBagsContainingShinyGold, sumOfBagsContainedInShinyGold);
 }
 
 int main(){
-  std::string line;
-  std::ifstream input("input.txt");
-  std::vector<std::string> lines;
+    const auto bagRules = parseInput(readFile::vectorOfStrings("input.txt"));
 
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(line);
-    	}
-      input.close();
-    }
-  else{
-    std::cout << "Unable to open file\n";
-  }
+    //Task 1
+    const auto [sumOfBagsContainingShinyGoldBag, sumOfBagsContainedInShinyGold] = processRules(bagRules);
+    std::cout << "There are a total of " << sumOfBagsContainingShinyGoldBag << " bags that contain the shiny gold bag.\n";
 
-  long int bagcount = sumallbags("shiny gold", &lines,0);
+    //Task 2
+    std::cout << "There are a total of " << sumOfBagsContainedInShinyGold << " bags contained inside the shiny gold bag.\n";
 
-
-  std::vector<std::string> outerbags;
-  outerbags.reserve(lines.size());
-  outerbags.push_back("shiny gold");
-  findallouter(&outerbags, &lines);
-
-  std::cout << outerbags.size()-1 << "\n";
-  std::cout << bagcount << "\n";
+    VerifySolution::verifySolution(sumOfBagsContainingShinyGoldBag, sumOfBagsContainedInShinyGold);
 }
