@@ -1,64 +1,86 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
+#include <deque>
+#include <algorithm>
 
-void encodingerror(std::vector<long>& input, long& result1, long& result2){
-  for(int i=25; i<input.size(); i++){
-    bool isvalid=false;
-    for(int a=i-25; a<i-1; a++){
-      for(int b=a+1; b<i; b++){
-        if(input[a]+input[b]==input[i]){
-          isvalid=true;
-          goto endcheckvalid;
+auto parseInput(const auto& input){
+    std::vector<long> numbers{};
+    std::ranges::transform(input, std::back_inserter(numbers), [](const auto& s){return std::stol(s);});
+    return numbers;
+}
+
+auto doesDequeContain(const auto& dequeOfSums, const auto val){
+    auto containsVal = [val](const auto& deque){
+        return Utilities::contains(deque, val);
+    };
+    return std::ranges::any_of(dequeOfSums, containsVal);
+}
+
+auto getFirstNumberNotFulfillingTheRule = [](const auto& numbers){
+    std::deque<std::deque<long>> dequeOfSums{};
+    auto addNextDeque = [](auto& _dequeOfSums, const auto& _numbers, const auto i){
+        std::deque<long> nextDeque{};
+        for(auto j=std::max(25u, i)-25; j<i; j++){
+            nextDeque.push_back(_numbers[j]+_numbers[i]);
         }
-      }
-    }
-    endcheckvalid:
-    if(!isvalid){
-      result1=input[i];
-      break;
-    }
-  }
+        _dequeOfSums.emplace_back(std::move(nextDeque));
+    };
 
-  for(int i=0; i<input.size(); i++){
-    long sum=input[i];
-    long mini=result1, maxi=0;
-    for(int j=i+1; sum<result1; j++){
-      sum+=input[j];
-      if( mini > input[j]) mini=input[j];
-      if( maxi < input[j]) maxi=input[j];
+    for(auto i=1u; i<25u; i++){
+        addNextDeque(dequeOfSums, numbers, i);
     }
-    if(sum==result1){
-      result2=mini+maxi;
-      break;
-    }
-  }
-}
 
-std::vector<long> readfile(std::string file){
-  std::string line;
-  std::ifstream input(file);
-  std::vector<long> lines;
-
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(stol(line));
-    	}
-      input.close();
+    auto removeOldSums = [](auto& _dequeOfSums){
+        _dequeOfSums.pop_front();
+        for( auto& deque : _dequeOfSums ){
+            deque.pop_front();
+        }
+    };
+    for(auto i=25u; i<numbers.size(); i++){
+        if( doesDequeContain(dequeOfSums, numbers[i]) == false ) return numbers[i];
+        removeOldSums(dequeOfSums);
+        addNextDeque(dequeOfSums, numbers, i);
     }
-  else{
-    std::cout << "Unable to open file\n";
-  }
-  return lines;
-}
+    return 0l;
+};
+
+auto getEncryptionWeakness = [](const auto& numbers, const auto val){
+    auto sum     = 0l;
+    auto leftIt  = std::begin(numbers);
+    auto rightIt = std::begin(numbers);
+    while(rightIt < std::end(numbers) || sum >= val ){
+        if(sum < val){
+            sum+=*rightIt;
+            rightIt++;
+        }
+        else if(sum == val){
+            const auto [minIt, maxIt] = std::ranges::minmax_element(leftIt, rightIt);
+            return *minIt+*maxIt;
+        }
+        else if( val < sum ){
+            sum-=*leftIt;
+            leftIt++;
+        }
+    }
+    return 0l;
+};
 
 int main(){
-  std::vector<long> input=readfile("input.txt");
+    const auto numbers = parseInput(readFile::vectorOfStrings());
 
-  long result1, result2;
-  encodingerror(input, result1, result2);
+    //Task 1
+    const auto badNumber = getFirstNumberNotFulfillingTheRule(numbers);
+    std::cout << "The first number not being a sum of two of the 25 previous numbers is " << badNumber << ".\n";
 
-  std::cout << result1 << "\n";
-  std::cout << result2 << "\n";
+    //Task 2
+    const auto encryptionWeakness = getEncryptionWeakness(numbers, badNumber);
+    std::cout << "The encryption weakness is " << encryptionWeakness << ".\n";
+
+    VerifySolution::verifySolution(badNumber, encryptionWeakness);
 }
