@@ -26,12 +26,12 @@ namespace readFile{
     }
 
 
-    auto string = [](const std::string& filename){
+    auto string = [](const std::string& filename = "input.txt"){
         std::string s{getStream(filename).str()};
         return s;
     };
 
-    auto vectorOfVectorOfInts(const std::string& filename, char del1 = '\n', char del2 = ' '){
+    auto vectorOfVectorOfInts(const std::string& filename = "input.txt", char del1 = '\n', char del2 = ' '){
         const auto text{getStream(filename).str()};
 
         const auto rows = Utilities::split(text, del1);
@@ -48,13 +48,13 @@ namespace readFile{
         return v;
     }
 
-    auto vectorOfStrings(const std::string& filename, char del = '\n', const bool keepEmpty = false){
+    auto vectorOfStrings(const std::string& filename = "input.txt", char del = '\n', const bool keepEmpty = false){
         auto wholeFile{getStream(filename).str()};
         return Utilities::split(wholeFile, del, keepEmpty);
     }
 
 
-    auto vectorOfInts(const std::string& filename, char del = '\n'){
+    auto vectorOfInts(const std::string& filename = "input.txt", char del = '\n'){
         auto wholeFile{getStream(filename).str()};
 
         std::vector<int> v{};
