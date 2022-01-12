@@ -1,63 +1,52 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
-#include <algorithm>
-#include <cmath>
+#include <unordered_map>
 
-long long f(int n){
-  return std::pow(2,std::max(n-1,0))-pow(2,std::max(n-3,0))+1;
+auto parseInput(auto&& input){
+    input.push_back(0);
+    std::ranges::sort(input);
+    return std::move(input);
 }
 
-void joltagedifference(std::vector<int>& input, int& result1, long long& result2){
-  input.push_back(0);
-  std::sort(input.begin(),input.end());
-
-
-  int ones=0, threes=1, diff, n=0;
-  for(int i=0; i<input.size()-1; i++){
-    diff=input[i+1]-input[i];
-    if(diff==1){
-      ones++;
-      n++;
-    }
-    if(diff==3){
-      threes++;
-
-      result2*=f(n);
-      n=0;
-    }
-  }
-
-  result2*=f(n);
-  result1=ones*threes;
-
-
+auto possibleArrangementsOfNConsecutiveAdapters(const auto n){
+    return (1<<std::max(n-1,0)) - (1<<std::max(n-3,0)) + 1;
 }
 
-std::vector<int> readfile(std::string file){
-  std::string line;
-  std::ifstream input(file);
-  std::vector<int> lines;
-
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(stol(line));
-    	}
-      input.close();
+auto getResults(const auto& adapters){
+    auto totalPossibleArrangements = 1ul;
+    std::unordered_map<int, int> differenceCounts{};
+    auto consecutiveAdapterCount = 0;
+    for(auto i=0u; i<adapters.size()-1; i++){
+        const auto difference = adapters[i+1]-adapters[i];
+        differenceCounts[difference]++;
+        switch(difference){
+        break; case 1:
+            consecutiveAdapterCount++;
+        break; case 3:
+            totalPossibleArrangements*=possibleArrangementsOfNConsecutiveAdapters(consecutiveAdapterCount);
+            consecutiveAdapterCount = 0;
+        }
     }
-  else{
-    std::cout << "Unable to open file\n";
-  }
-  return lines;
+
+    differenceCounts[3]++;
+    const auto productOfDifferenceCounts=differenceCounts[1]*differenceCounts[3];
+    totalPossibleArrangements*=possibleArrangementsOfNConsecutiveAdapters(consecutiveAdapterCount);
+    return std::make_pair(productOfDifferenceCounts, totalPossibleArrangements);
 }
 
 int main(){
-  std::vector<int> input=readfile("input.txt");
+    const auto adapters = parseInput(readFile::vectorOfInts());
 
-  int result1; long long result2=1;
-  joltagedifference(input, result1, result2);
+    //Task 1
+    const auto [productOfDifferenceCounts, totalPossibleArrangements] = getResults(adapters);
+    std::cout << "The product of the two difference counts is " << productOfDifferenceCounts << ".\n";
 
-  std::cout << result1 << "\n";
-  std::cout << result2 << "\n";
+    //Task 2
+    std::cout << "There are a total of " << totalPossibleArrangements << " possible adapter arrangements.\n";
+
+    VerifySolution::verifySolution(productOfDifferenceCounts, totalPossibleArrangements);
 }
