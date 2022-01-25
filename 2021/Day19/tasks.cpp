@@ -112,7 +112,6 @@ auto testCoordinatesOverlapWithBeacons(const auto& coordinates, const auto& beac
 
 auto findNewScanner(auto& scanners, auto& beaconCoordinates, auto& scannerCoordinates){
     for(auto& coordinates : scanners ){
-        // nextRotation_ rotator{};
         do{
             const auto [testSuccessful, beacon, coord1] = testCoordinatesOverlapWithBeacons(coordinates, beaconCoordinates);
             if(testSuccessful){
