@@ -14,7 +14,7 @@ using Position    = Utilities::Position<int>;
 using Coordinate  = std::array<int,3>;
 using Coordinates = std::vector<Coordinate>;
 
-class Rotator{
+class nextRotation_{
     static int rotationAxis;
     static int faceRotation;
     static int rotationCounts;
@@ -27,9 +27,9 @@ class Rotator{
 public:
     bool operator()(Coordinates& coordinates) {
         if(rotationCounts==23){
+            rotationAxis   = 0;
+            faceRotation   = 0;
             rotationCounts = 0;
-            rotationAxis = 0;
-            faceRotation = 0;
             return false;
         }
         for(auto& coord : coordinates){
@@ -42,10 +42,10 @@ public:
         return true;
     }
 };
-inline Rotator next_rotation;
-int Rotator::rotationAxis = 0;
-int Rotator::faceRotation = 0;
-int Rotator::rotationCounts = 0;
+inline nextRotation_ next_rotation;
+int nextRotation_::rotationAxis   = 0;
+int nextRotation_::faceRotation   = 0;
+int nextRotation_::rotationCounts = 0;
 
 auto operator+(const Coordinate& lhs, const Coordinate& rhs){
     return Coordinate{ lhs[0]+rhs[0],lhs[1]+rhs[1],lhs[2]+rhs[2] };
@@ -112,7 +112,7 @@ auto testCoordinatesOverlapWithBeacons(const auto& coordinates, const auto& beac
 
 auto findNewScanner(auto& scanners, auto& beaconCoordinates, auto& scannerCoordinates){
     for(auto& coordinates : scanners ){
-        // Rotator rotator{};
+        // nextRotation_ rotator{};
         do{
             const auto [testSuccessful, beacon, coord1] = testCoordinatesOverlapWithBeacons(coordinates, beaconCoordinates);
             if(testSuccessful){
