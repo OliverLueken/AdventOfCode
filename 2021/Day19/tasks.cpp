@@ -15,34 +15,25 @@ using Coordinate  = std::array<int,3>;
 using Coordinates = std::vector<Coordinate>;
 
 class Rotator{
-    int rotationAxis{0};
-    int faceRotation{0};
-    int rotationCounts{0};
+    static int rotationAxis;
+    static int faceRotation;
+    static int rotationCounts;
 
-    auto rotate(Coordinate& coord) const{
-        auto rotateXY = [&coord](){
-            coord[1] = -std::exchange(coord[0], coord[1]);
-        };
-
-        auto rotateXZ = [&coord](){
-            coord[0] = -std::exchange(coord[2], coord[0]);
-        };
-
-        auto rotateYZ = [&coord](){
-            coord[2] = -std::exchange(coord[1], coord[2]);
-        };
-
-        switch(rotationAxis){
-            break; case 0: rotateXY();
-            break; case 1: rotateXZ();
-            break; case 2: rotateYZ();
-        }
+    auto rotateAroundRotationAxis(Coordinate& coord) const{
+        const auto first  = (4-rotationAxis)%3;
+        const auto second = (3-rotationAxis)%3;
+        coord[first] = -std::exchange(coord[second], coord[first]);
     }
 public:
     bool operator()(Coordinates& coordinates) {
-        if(rotationCounts==23) return false;
+        if(rotationCounts==23){
+            rotationCounts = 0;
+            rotationAxis = 0;
+            faceRotation = 0;
+            return false;
+        }
         for(auto& coord : coordinates){
-            rotate(coord);
+            rotateAroundRotationAxis(coord);
         }
         faceRotation++;
         if(faceRotation>=3) rotationAxis=(rotationAxis+1)%3;
@@ -51,6 +42,10 @@ public:
         return true;
     }
 };
+inline Rotator next_rotation;
+int Rotator::rotationAxis = 0;
+int Rotator::faceRotation = 0;
+int Rotator::rotationCounts = 0;
 
 auto operator+(const Coordinate& lhs, const Coordinate& rhs){
     return Coordinate{ lhs[0]+rhs[0],lhs[1]+rhs[1],lhs[2]+rhs[2] };
@@ -71,8 +66,7 @@ struct std::hash<Coordinate>{
 };
 
 auto dist(const Coordinate y, const Coordinate x) -> unsigned int{
-    Coordinate diff{x[0]-y[0],x[1]-y[1],x[2]-y[2]};
-    return std::abs(diff[0])+std::abs(diff[1])+std::abs(diff[2]);
+    return std::abs(x[0]-y[0])+std::abs(x[1]-y[1])+std::abs(x[2]-y[2]);
 }
 
 
@@ -118,7 +112,7 @@ auto testCoordinatesOverlapWithBeacons(const auto& coordinates, const auto& beac
 
 auto findNewScanner(auto& scanners, auto& beaconCoordinates, auto& scannerCoordinates){
     for(auto& coordinates : scanners ){
-        Rotator rotator{};
+        // Rotator rotator{};
         do{
             const auto [testSuccessful, beacon, coord1] = testCoordinatesOverlapWithBeacons(coordinates, beaconCoordinates);
             if(testSuccessful){
@@ -129,7 +123,7 @@ auto findNewScanner(auto& scanners, auto& beaconCoordinates, auto& scannerCoordi
                 coordinates.clear();
                 break;
             }
-        }while( rotator(coordinates) );
+        }while( next_rotation(coordinates) );
     }
 }
 
