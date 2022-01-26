@@ -64,10 +64,10 @@ namespace Matrix{
 
     public:
         constexpr Matrix() = default;
-        constexpr Matrix(const size_t _n, const size_t _m) : n{_n}, m{_m}, matrix(_n*_m){}
-        constexpr Matrix(const size_t _n, const size_t _m, const T& _value) : n{_n}, m{_m}, matrix(_n*_m, _value){}
+        constexpr Matrix(const size_t _n, const size_t _m)                    : n{_n}, m{_m}, matrix(_n*_m){}
+        constexpr Matrix(const size_t _n, const size_t _m, const T& _value)   : n{_n}, m{_m}, matrix(_n*_m, _value){}
 
-        template<std::forward_iterator I, std::sentinel_for<I> S>
+        template< std::forward_iterator I, std::sentinel_for<I> S >
         requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
         constexpr Matrix(const size_t _n, const size_t _m, I _first, S _last) : n{_n}, m{_m}, matrix(_n*_m){
             assign(_first, _last);
@@ -81,33 +81,34 @@ namespace Matrix{
             assign(_ilist);
         }
 
-        template<std::forward_iterator I, std::sentinel_for<I> S>
+        template< std::forward_iterator I, std::sentinel_for<I> S >
         requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>&>
         constexpr void assign( I first, S last, const size_t offset = 0u ){
-            auto matrixIt = std::begin(matrix)+offset;
-            while( first != last && matrixIt < std::end(matrix)){
-                *matrixIt++ = *first++;
+            if( static_cast<unsigned long>(std::distance(first, last)) > n*m ){
+                last = first;
+                std::advance(last, n*m);
             }
+            std::ranges::copy(first, last, std::begin(matrix)+offset);
         }
 
-        template< std::ranges::forward_range R>
-        constexpr void assign ( R&& range, const size_t offset = 0u ){
-            assign(std::begin(range), std::end(range), offset);
+        template< std::ranges::forward_range R >
+        constexpr void assign( R&& range, const size_t offset = 0u ){
+            assign(std::ranges::begin(range), std::ranges::end(range), offset);
         }
 
         constexpr void assign( std::initializer_list<T> ilist, const size_t offset = 0u ){
             assign(std::begin(ilist), std::end(ilist), offset);
         }
 
-        std::vector<T>& data(){
+        constexpr       std::vector<T>& data()       noexcept {
             return matrix;
         }
 
-        const std::vector<T>& data() const {
+        constexpr const std::vector<T>& data() const noexcept {
             return matrix;
         }
 
-        constexpr std::vector<T>::reference operator()(const size_t i, const size_t j){
+        constexpr       std::vector<T>::reference       operator()(const size_t i, const size_t j)       {
             checkBounds(i,j);
             return matrix[i*m+j];
         }
@@ -117,7 +118,7 @@ namespace Matrix{
             return matrix[i*m+j];
         }
 
-        constexpr std::vector<T>::reference operator()(const Position<size_t> pos){
+        constexpr       std::vector<T>::reference       operator()(const Position<size_t> pos)       {
             const auto& [i,j] = pos;
             checkBounds(i,j);
             return matrix[i*m+j];
