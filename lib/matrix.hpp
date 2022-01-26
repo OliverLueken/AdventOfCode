@@ -265,7 +265,7 @@ namespace Matrix{
     for row and column index (i,j), returns it's valid adjacent neighbor indeces, including diagonals
     */
     template<class T, std::unsigned_integral S = uint32_t>
-    auto getExtendedNeighbors(const Matrix<T>& matrix, const S i, const S j){
+    auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, const S i, const S j){
         std::vector<Position<S>> neighbors{getNeighbors(matrix, i, j)};
         if(i>0 && j>0)                             neighbors.emplace_back(Position{i-1, j-1});
         if(i<matrix.rows()-1 && j>0)               neighbors.emplace_back(Position{i+1, j-1});
@@ -278,7 +278,7 @@ namespace Matrix{
     for row and column index n = i*matrix.columns+j, returns it's valid adjacent neighbor indeces, including diagonals
     */
     template<class T, std::unsigned_integral S = uint32_t>
-    auto getExtendedNeighbors(const Matrix<T>& matrix, const S longIndex){
+    auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, const S longIndex){
         const auto m = matrix.cols();
         const auto i = longIndex/m;
         const auto j = longIndex%m;
@@ -294,10 +294,10 @@ namespace Matrix{
     for row and column index pos=(i,j), returns it's valid adjacent neighbor indeces, including diagonals
     */
     template<class T, class S>
-    auto getExtendedNeighbors(const Matrix<T>& matrix, const Position<S>& pos){
+    auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, const Position<S>& pos){
         const auto i = pos.first;
         const auto j = pos.second;
-        return getExtendedNeighbors(matrix, i, j);
+        return getNeighborsIncludingDiagonals(matrix, i, j);
     }
 
     /*
@@ -305,9 +305,9 @@ namespace Matrix{
     */
     template<class T, std::forward_iterator I>
     requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
-    auto getExtendedNeighbors(const Matrix<T>& matrix, I it){
+    auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, I it){
         const auto longIndex = (size_t) std::ranges::distance(std::begin(matrix), it);
-        return getExtendedNeighbors(matrix, longIndex);
+        return getNeighborsIncludingDiagonals(matrix, longIndex);
     }
 
     template<class T>
