@@ -30,8 +30,8 @@ auto flash(auto& octopiLightLevels){
             octopusLightLevel=-20;
 
             auto neighbors = Matrix::getNeighborsIncludingDiagonals(octopiLightLevels, octopusIt);
-            for(const auto neighbor : neighbors){
-                octopiLightLevels[neighbor]++;
+            for(const auto& neighbor : neighbors){
+                octopiLightLevels(neighbor)++;
             }
         }
     }

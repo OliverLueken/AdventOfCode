@@ -214,7 +214,7 @@ namespace Matrix{
 
 
     /*
-    for row and column index (i,j), returns it's valid adjacent neighbor indeces, not including diagonals
+    for row and column index (i,j), returns its valid adjacent neighbor indices, not including diagonals
     */
     template<class T, std::unsigned_integral S = uint32_t>
     auto getNeighbors(const Matrix<T>& matrix, const S i, const S j){
@@ -227,23 +227,18 @@ namespace Matrix{
     }
 
     /*
-    for row and column index n = i*matrix.columns+j, returns it's valid adjacent neighbor indeces, not including diagonals
+    for row and column index n = i*matrix.columns+j, returns its valid adjacent neighbor indices, not including diagonals
     */
     template<class T, std::unsigned_integral S = uint32_t>
     auto getNeighbors(const Matrix<T>& matrix, const S longIndex){
         const auto m = matrix.cols();
         const auto i = longIndex/m;
         const auto j = longIndex%m;
-        std::vector<S> neighbors{};
-        if(i>0)               neighbors.emplace_back((i-1)*m+j  );
-        if(i<matrix.rows()-1) neighbors.emplace_back((i+1)*m+j  );
-        if(j>0)               neighbors.emplace_back((i  )*m+j-1);
-        if(j<matrix.cols()-1) neighbors.emplace_back((i  )*m+j+1);
-        return neighbors;
+        return getNeighbors(matrix, i, j);
     }
 
     /*
-    for row and column index pos(i,j), returns it's valid adjacent neighbor indeces, not including diagonals
+    for row and column index pos(i,j), returns its valid adjacent neighbor indices, not including diagonals
     */
     template<class T, class S>
     auto getNeighbors(const Matrix<T>& matrix, const Position<S>& pos){
@@ -253,7 +248,7 @@ namespace Matrix{
     }
 
     /*
-    for row and column index *it=(i,j), returns it's valid adjacent neighbor indeces, including diagonals
+    for row and column index *it=(i,j), returns its valid adjacent neighbor indices, including diagonals
     */
     template<class T, std::forward_iterator I>
     requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
@@ -263,7 +258,7 @@ namespace Matrix{
     }
 
     /*
-    for row and column index (i,j), returns it's valid adjacent neighbor indeces, including diagonals
+    for row and column index (i,j), returns its valid adjacent neighbor indices, including diagonals
     */
     template<class T, std::unsigned_integral S = uint32_t>
     auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, const S i, const S j){
@@ -276,23 +271,18 @@ namespace Matrix{
     }
 
     /*
-    for row and column index n = i*matrix.columns+j, returns it's valid adjacent neighbor indeces, including diagonals
+    for row and column index n = i*matrix.columns+j, returns its valid adjacent neighbor indices, including diagonals
     */
     template<class T, std::unsigned_integral S = uint32_t>
     auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, const S longIndex){
         const auto m = matrix.cols();
         const auto i = longIndex/m;
         const auto j = longIndex%m;
-        std::vector<S> neighbors{getNeighbors(matrix, longIndex)};
-        if(i>0 && j>0)                             neighbors.emplace_back((i-1)*m+j-1);
-        if(i<matrix.rows()-1 && j>0)               neighbors.emplace_back((i+1)*m+j-1);
-        if(i>0               && j<matrix.cols()-1) neighbors.emplace_back((i-1)*m+j+1);
-        if(i<matrix.rows()-1 && j<matrix.cols()-1) neighbors.emplace_back((i+1)*m+j+1);
-        return neighbors;
+        return getNeighborsIncludingDiagonals(matrix, i, j);
     }
 
     /*
-    for row and column index pos=(i,j), returns it's valid adjacent neighbor indeces, including diagonals
+    for row and column index pos=(i,j), returns its valid adjacent neighbor indices, including diagonals
     */
     template<class T, class S>
     auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, const Position<S>& pos){
@@ -302,7 +292,7 @@ namespace Matrix{
     }
 
     /*
-    for row and column index *it=(i,j), returns it's valid adjacent neighbor indeces, including diagonals
+    for row and column index *it=(i,j), returns its valid adjacent neighbor indices, including diagonals
     */
     template<class T, std::forward_iterator I>
     requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
