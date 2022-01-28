@@ -318,7 +318,7 @@ namespace Matrix{
     }
 
     template<Container C>
-    auto print(C&& c, const char separator = ' '){
+    auto print(const C& c, const char separator = ' '){
         std::ranges::for_each(c, [separator](const auto& c_){print(c_, separator);});
         std::cout << '\n';
     }
