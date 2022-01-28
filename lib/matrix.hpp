@@ -306,22 +306,30 @@ namespace Matrix{
         rhs.swap(lhs);
     }
 
-    template<class T>
-    void print(T&& v, const char separator = ' '){
-        for(const auto& i : v){
-            std::cout << i << separator;
-        }
+    template<typename T>
+    concept Container = requires (T c){c.begin();};
+
+    template<typename T>
+    concept Printable = requires (T x){ std::cout << x; };
+
+    template<Printable T>
+    void print(const T& value, const char separator = ' '){
+        std::cout << value << separator;
+    }
+
+    template<Container C>
+    auto print(C&& c, const char separator = ' '){
+        std::ranges::for_each(c, [separator](const auto& c_){print(c_, separator);});
         std::cout << '\n';
     }
 
-    template<class T>
-    void print(Matrix<T>& m, const char columnSeparator = '\t') {
+    template<typename T>
+    void print(const Matrix<T>& m, const char columnSeparator = ' ') {
         for(auto i=0u; i<m.rows(); i++){
             print(m.row(i), columnSeparator);
         }
         std::cout << '\n';
     }
-
 }
 
 #endif
