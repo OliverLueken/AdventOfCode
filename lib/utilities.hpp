@@ -192,11 +192,6 @@ namespace Utilities{
     inline constexpr searchAll_ searchAll{};
 
 
-    auto printVec = [](const auto& vec, const std::string delimiter=", "){
-        std::ranges::for_each(vec, [&delimiter](const auto& val){std::cout << val << delimiter;});
-        std::cout << '\n';
-    };
-
 
     /*
     An std::ranges::rotation interface that takes the number of left shifts to be performed
