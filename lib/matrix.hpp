@@ -6,6 +6,7 @@
 #include <ranges>
 #include <algorithm>
 
+#include "utilities.hpp"
 
 namespace Matrix{
 
