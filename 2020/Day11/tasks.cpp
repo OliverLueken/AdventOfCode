@@ -1,173 +1,138 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
+
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
-#include <set>
-#include <tuple>
+#include <array>
 #include <algorithm>
+#include <functional>
 
-//#define triple std::tuple<int,int,int>
-#define pair std::tuple<int,int>
+using Position                  = Utilities::Position<int>;
+using Chairs                    = Matrix::Matrix<char>;
+using VisibleNeighbors          = Matrix::Matrix<int>;
+using getVisibleNeighborsLambda = std::function<VisibleNeighbors(const Chairs&)>;
 
-void printseats(std::vector<std::string>& c){
-  for(auto it:c){
-    std::cout << it << std::endl;
-  }
-  std::cout << "\n\n";
-}
+auto parseInput = [](const auto& input){
+    const auto n = input.size();
+    const auto m = input[0].size();
+    return Chairs(n, m, input | std::views::join);
+};
 
-int countActiveNeighbors(int posx, int posy, std::vector<std::string>& seatingplan){
-  int neighbors=0;
-  int maxx =seatingplan.size()-1;
-  int maxy = seatingplan[0].size()-1;
-  for(int x=std::max(posx-1,0); x<=std::min(posx+1,maxx); x++){
-    for(int y=std::max(posy-1,0); y<=std::min(posy+1,maxy); y++){
+class GameOfLife{
+    bool seatsChanged{true};
+    int neighborTolerance{};
+    size_t N{};
+    getVisibleNeighborsLambda getVisibleNeighbors{};
+    Chairs chairs{};
+    Chairs tempChairs{};
 
-          if(seatingplan[x][y]=='#'){
-            neighbors++;
-      }
-    }
-  }
-  if(seatingplan[posx][posy]=='#') neighbors--;
-  return neighbors;
-}
+    auto playOneRound(){
+        auto getSeatState = [this](const char currentSeat, const int visibleNeighbors){
 
-int countNeighbors(int posx, int posy, std::vector<std::string>& seatingplan){
-  int neighbors=0;
-  int maxx = seatingplan.size();
-  int maxy = seatingplan[0].size();
+            if(currentSeat == '.') return '.';
 
-  //nach oben links
-  for(int i=1; i<=std::min(posx,posy); i++){
-      if(seatingplan[posx-i][posy-i]=='#'){ neighbors++; break;}
-      if(seatingplan[posx-i][posy-i]=='L') break;
-  }
-  //nach unten links
-  for(int i=1; i<=std::min(posx,maxy-posy-1); i++){
-      if(seatingplan[posx-i][posy+i]=='#'){ neighbors++; break;}
-      if(seatingplan[posx-i][posy+i]=='L') break;
-  }
-  //nach links
-  for(int x=posx-1; x>=0; x--){
-    if(seatingplan[x][posy]=='#'){ neighbors++; break;}
-    if(seatingplan[x][posy]=='L') break;
-  }
-  //nach oben
-  for(int y=posy-1; y>=0; y--){
-    if(seatingplan[posx][y]=='#'){ neighbors++; break;}
-    if(seatingplan[posx][y]=='L') break;
-  }
-  //nach unten
-  for(int y=posy+1; y<maxy; y++){
-    if(seatingplan[posx][y]=='#'){ neighbors++; break;}
-    if(seatingplan[posx][y]=='L') break;
-  }
-  //nach oben rechts
-  for(int i=1; i<=std::min(maxx-posx-1,posy); i++){
-      if(seatingplan[posx+i][posy-i]=='#'){ neighbors++; break;}
-      if(seatingplan[posx+i][posy-i]=='L') break;
-  }
-    //nach unten rechts
-  for(int i=1; i<=std::min(maxx-posx-1,maxy-posy-1); i++){
-      if(seatingplan[posx+i][posy+i]=='#'){ neighbors++; break;}
-      if(seatingplan[posx+i][posy+i]=='L') break;
-  }
-  //nach rechts
-  for(int x=posx+1; x<maxx; x++){
-    if(seatingplan[x][posy]=='#'){ neighbors++; break;}
-    if(seatingplan[x][posy]=='L') break;
-  }
-  return neighbors;
-}
-
-bool update(std::vector<std::string>& seatingplan, int mode){
-  std::set<pair> seatsToOccupie, seatsToFree;
-  //check status of cubes
-  for(int x=0; x<seatingplan.size(); x++){
-    for(int y=0; y<seatingplan[x].size(); y++){
-          //std::cout << "checking (" << x <<", " << y << ", " << z << ")\n";
-          //triple pos = std::make_tuple(x,y,z,w);
-      if(seatingplan[x][y]!='.'){
-        if(mode==1){
-          int neighbors = countActiveNeighbors(x, y, seatingplan);
-          if(seatingplan[x][y]=='#') { //occupied
-            if(neighbors>=4){
-              seatsToFree.insert({x,y});
+            if(currentSeat == 'L'){
+                if (visibleNeighbors==0){
+                    this->seatsChanged = true;
+                    return '#';
+                }
+                return 'L';
             }
-          } else { //is a free seat
-            if(neighbors==0)
-              seatsToOccupie.insert({x,y});
-          }
+            if(visibleNeighbors>=this->neighborTolerance){
+                this->seatsChanged = true;
+                return 'L';
+            }
+            return '#';
+        };
+
+        const auto visibleNeighbors = getVisibleNeighbors(chairs);
+        std::ranges::transform(chairs, visibleNeighbors, std::begin(tempChairs), getSeatState);
+    }
+
+public:
+    GameOfLife(getVisibleNeighborsLambda getVisibleNeighbors_, const Chairs& chairs_, const int param_)
+      : neighborTolerance{param_},
+        N{chairs_.rows()*chairs_.cols()},
+        getVisibleNeighbors{getVisibleNeighbors_},
+        chairs{chairs_},
+        tempChairs{chairs.rows(), chairs.cols()} {
+    }
+
+    void play(){
+        while(seatsChanged){
+            seatsChanged = false;
+            playOneRound();
+            std::swap(tempChairs, chairs);
         }
-        if(mode==2){
-          int neighbors = countNeighbors(x,y, seatingplan);
-          if(seatingplan[x][y]=='#'){
-            if(neighbors>=5)
-              seatsToFree.insert({x,y});
-          }
-          else if(neighbors==0)
-            seatsToOccupie.insert({x,y});
+    }
+
+    auto getOccupiedSeats(){
+        return std::ranges::count(chairs, '#');
+    }
+};
+
+
+
+auto getVisibleNeighbors1 = [](const Chairs& chairs){
+    Matrix::Matrix<int> visibleNeighbors{chairs.rows(), chairs.cols(), 0};
+    for(auto index = 0u; index<chairs.rows()*chairs.cols(); ++index){
+        if(chairs[index]=='#'){
+            std::ranges::for_each( getNeighborsIncludingDiagonals(visibleNeighbors, index),
+                [&visibleNeighbors](const auto& neighbor){
+                    ++visibleNeighbors(neighbor);
+                }
+            );
         }
-      }
     }
-  }
+    return visibleNeighbors;
+};
 
+auto getVisibleNeighbors2 = [](const Chairs& chairs){
+    const auto [n, m] = chairs.size();
+    auto isInBounds = [n, m](const auto& position){
+        const auto& [i,j] = position;
+        return 0<=i && std::less{}(i,n) && 0<=j && std::less{}(j,m);
+    };
 
-  //printcubes(cubesToDeactivate);
-  //deactivate cubes
-  for(auto pos:seatsToFree){
-    seatingplan[std::get<0>(pos)][std::get<1>(pos)]='L';
-  }
-
-  //printcubes(cubesToActivate);
-  //activate cubes
-  for(auto pos:seatsToOccupie){
-    seatingplan[std::get<0>(pos)][std::get<1>(pos)]='#';
-  }
-
-  return (seatsToFree.size()>0 || seatsToOccupie.size()>0);
-}
-
-
-void seatingsystem(std::vector<std::string>& seatingplan, int& result, int mode){
-  int i;
-  for(i=0; i<1000; i++){
-    bool hadchanges = update(seatingplan, mode);
-    if(!hadchanges) break;
-  }
-
-  int occupiedseats=0;
-  for(int i=0; i<seatingplan.size(); i++)
-    for(int j=0; j<seatingplan[i].size(); j++){
-      if(seatingplan[i][j]=='#') occupiedseats++;
+    VisibleNeighbors visibleNeighbors{n, m, 0};
+    constexpr std::array<Position, 8> directions{{ {-1,-1}, {0,-1}, {1,-1}, {-1,0}, {1,0}, {-1,1}, {0,1}, {1,1} }};
+    for(auto index = 0u; index<n*m; ++index){
+        if(chairs[index] == '#'){
+            const Position currentPos{index/m, index%m};
+            auto incrementVisibleSeat = [isInBounds, &visibleNeighbors, &chairs, &currentPos](const auto& direction){
+                auto pos = currentPos;
+                do{
+                    pos = pos+direction;
+                    if(!isInBounds(pos)) return;
+                }while(chairs(pos) == '.');
+                ++visibleNeighbors(pos);
+            };
+            std::ranges::for_each(directions, incrementVisibleSeat);
+        }
     }
-  result=occupiedseats;
-}
+    return visibleNeighbors;
+};
 
-std::vector<std::string> readfile(std::string file){
-  std::string line;
-  std::ifstream input(file);
-  std::vector<std::string> lines;
+auto getNumberOfOccupiedSeats = [](const auto& chairs, const auto neighborTolerance, auto& getVisibleNeighbors){
+    GameOfLife gameOfLife{ getVisibleNeighbors, chairs, neighborTolerance };
+    gameOfLife.play();
+    return gameOfLife.getOccupiedSeats();
+};
 
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(line);
-    	}
-      input.close();
-    }
-  else{
-    std::cout << "Unable to open file\n";
-  }
-  return lines;
-}
 
 int main(){
-  std::vector<std::string> input=readfile("input.txt");
-  std::vector<std::string> seatingplan2 = input;
+    const auto chairs = parseInput(readFile::vectorOfStrings());
 
-  int result1, result2;
-  seatingsystem(input, result1, 1);
-  seatingsystem(seatingplan2, result2, 2);
-  std::cout << result1 << "\n";
-  std::cout << result2 << "\n";
+    //Task 1
+    const auto numberOfOccupiedSeats1 = getNumberOfOccupiedSeats(chairs, 4, getVisibleNeighbors1);
+    std::cout << "With the first ruleset, there are " << numberOfOccupiedSeats1 << " seats occupied.\n";
+
+    //Task 2
+    const auto numberOfOccupiedSeats2 = getNumberOfOccupiedSeats(chairs, 5, getVisibleNeighbors2);
+    std::cout << "With the second ruleset, there are " << numberOfOccupiedSeats2 << " seats occupied.\n";
+
+    VerifySolution::verifySolution(numberOfOccupiedSeats1, numberOfOccupiedSeats2);
 }
