@@ -1,146 +1,91 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/verifySolution.hpp"
+
 #include <algorithm>
+#include <iostream>
+#include <complex>
 #include <cmath>
-const double pi = std::acos(-1);
 
-void navigate(std::vector<std::string> input, int& result1){
-  int dir=0;
-  int x=0, y=0;
-  for(auto it:input){
-    //std::cout << it << std::endl;
-    char c = it[0];
-    int val = stoi(it.substr(1,50));
-    if(c=='F'){
-      switch(dir){
-        case 0:{
-          c='E';
-          break;
-        }
-        case 90:{
-          c='S';
-          break;
-        }
-        case 180:{
-          c='W';
-          break;
-        }
-        case 270:{
-          c='N';
-          break;
-        }
-      }
-    }
 
-    switch(c){
-      case 'E':{
-        x+=val;
-        break;
-      }
-      case 'N':{
-        y+=val;
-        break;
-      }
-      case 'W':{
-        x-=val;
-        break;
-      }
-      case 'S':{
-        y-=val;
-        break;
-      }
-      case 'L':{
-        dir=360+dir-val;
-        dir%=360;
-        break;
-      }
-      case 'R':{
-        dir+=val;
-        dir%=360;
-      }
+using Position = Utilities::Position<int>;
 
-    }
-    //std::cout << x << ", " << y << ", " << dir << std::endl << std::endl;
-  }
-  result1=std::abs(x)+std::abs(y);
-}
-void navigate2(std::vector<std::string> input, double& result2){
-  int dir=0;
-  double x=0, y=0;
-  double wx=10, wy=1;
-
-  for(auto it:input){
-    std::cout << it << std::endl;
-    char c = it[0];
-    int val = stoi(it.substr(1,50));
-
-    switch(c){
-      case 'E':{
-        wx+=val;
-        break;
-      }
-      case 'N':{
-        wy+=val;
-        break;
-      }
-      case 'W':{
-        wx-=val;
-        break;
-      }
-      case 'S':{
-        wy-=val;
-        break;
-      }
-      case 'L':{
-        double a=wx, b=wy;
-        wx=std::cos(val*pi/180)*a+std::sin(-val*pi/180)*b;
-        wy=std::sin(val*pi/180)*a+std::cos(val*pi/180)*b;
-        break;
-      }
-      case 'R':{
-        double a=wx, b=wy;
-        wx=std::cos(-val*pi/180)*a+std::sin(val*pi/180)*b;
-        wy=std::sin(-val*pi/180)*a+std::cos(-val*pi/180)*b;
-        break;
-      }
-      case 'F':{
-        x+=val*wx;
-        y+=val*wy;
-      }
-
-    }
-    std::cout << x << ", " << y << std::endl;
-    std::cout << wx << ", " << wy << std::endl<<std::endl;
-  }
-  result2=std::abs(x)+std::abs(y);
+auto parseInput(const auto& input) {
+    std::vector<std::pair<char, int>> navigationInstructions;
+    std::ranges::transform(
+        input, std::back_inserter(navigationInstructions), [](const auto& row) {
+            return std::make_pair(row[0], std::stoi(row.substr(1)));
+        });
+    return navigationInstructions;
 }
 
-std::vector<std::string> readfile(std::string file){
-  std::string line;
-  std::ifstream input(file);
-  std::vector<std::string> lines;
+auto moveShip(const auto& navigationInstructions){
 
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(line);
-    	}
-      input.close();
+    using namespace std::complex_literals;
+    std::complex<int> facingDirection{1};
+    std::complex<int> shipPos{0};
+
+    for(const auto& [c, val] : navigationInstructions){
+        switch(c){
+            break; case 'N':
+                shipPos+=std::complex<int>{0,val};
+            break; case 'S':
+                shipPos-=std::complex<int>{0,val};
+            break; case 'E':
+                shipPos+=val;
+            break; case 'W':
+                shipPos-=val;
+            break; case 'L':
+                facingDirection*=std::exp(std::complex{0.,  val*std::numbers::pi/180});
+            break; case 'R':
+                facingDirection*=std::exp(std::complex{0., -val*std::numbers::pi/180});
+            break; case 'F':
+                shipPos+=facingDirection*val;
+        }
     }
-  else{
-    std::cout << "Unable to open file\n";
-  }
-  return lines;
+    return std::abs(shipPos.real()) + std::abs(shipPos.imag());
 }
 
-int main(){
-  std::vector<std::string> input=readfile("input.txt");
+auto moveShip2(const auto& navigationInstructions){
 
-  int result1; double result2=1;
-  navigate(input, result1);
-  navigate2(input, result2);
+    using namespace std::complex_literals;
+    std::complex<double> shipPos{0};
+    std::complex<double> waypointPos{10,1};
 
-  std::cout << result1 << "\n";
-  std::cout << result2 << "\n";
+    for(const auto& [c, val] : navigationInstructions){
+        switch(c){
+            break; case 'N':
+                waypointPos+=std::complex<double>{0,val};
+            break; case 'S':
+                waypointPos-=std::complex<double>{0,val};
+            break; case 'E':
+                waypointPos+=val;
+            break; case 'W':
+                waypointPos-=val;
+            break; case 'L':
+                waypointPos*=std::exp(std::complex{0.,  val*std::numbers::pi/180});
+            break; case 'R':
+                waypointPos*=std::exp(std::complex{0., -val*std::numbers::pi/180});
+            break; case 'F':
+                shipPos+=waypointPos*std::complex<double>{0,val};
+        }
+    }
+    return static_cast<int>(std::nearbyint(std::abs(shipPos.real()) + std::abs(shipPos.imag())));
+}
+
+int main() {
+    const auto navigationInstructions = parseInput(readFile::vectorOfStrings());
+
+    // Task 1
+    const auto distanceTraveled1 = moveShip(navigationInstructions);
+    std::cout << "With the first interpretation, the ship traveled " << distanceTraveled1
+              << " units.\n";
+
+    // Task 2
+    const auto distanceTraveled2 = moveShip2(navigationInstructions);
+    std::cout << "With the second ruleset, the ship traveled " << distanceTraveled2
+              << " units.\n";
+
+    VerifySolution::verifySolution(distanceTraveled1, distanceTraveled2);
 }
