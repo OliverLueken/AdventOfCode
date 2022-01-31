@@ -1,104 +1,115 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
 #include <algorithm>
-#include <cmath>
-#include <cstdint>
-#include <map>
+#include <ranges>
+#include <bitset>
+#include <string>
 
-void dock(std::vector<std::string>& input, uint64_t& result){
-  uint64_t mask1 = 0, mask0=0;
+struct MaskAndMemoryInput{
+    std::string mask{};
+    std::vector<std::pair<uint64_t, std::bitset<36>>> memory{};
+};
 
-  std::vector<uint64_t> mem(1,0);
-  for(auto lineit=input.begin(); lineit!=input.end(); lineit++){
-    if(lineit->at(1)=='a'){
-      mask1 = 0;
-      mask0 = 0;
-      for(size_t i=lineit->find('=')+2; i<lineit->size(); i++){
-        mask1<<=1;
-        mask0<<=1;
-        if((*lineit)[i]=='1') mask1+=1;
-        if((*lineit)[i]!='0') mask0+=1;
-      }
-    }
-    else{
-      int pos=stoi(lineit->substr(lineit->find('[')+1,lineit->find(']')));
-      if(pos>=mem.size()) mem.resize(pos+1,0);
-      mem[pos] = stoll(lineit->substr(lineit->find('=')+2));
-      mem[pos]|=mask1;
-      mem[pos]&=mask0;
-      }
-  }
+auto dock_version1(const auto& maskAndMemoryInput) {
 
-  for(auto i:mem){
-    result+=i;
-  }
-}
+    auto makeMask = [](auto mask, const auto val){
+        std::ranges::replace(mask, 'X', val);
+        return std::bitset<36>{mask};
+    };
 
-void dock2(std::vector<std::string>& input, uint64_t& result){
-  std::string mask;
-  std::vector<uint64_t> allpos(0);
-  std::map<uint64_t,int> mem;
-  for(auto lineit=input.begin(); lineit!=input.end(); lineit++){
-    // std::cout << *lineit << std::endl;
-    if(lineit->at(1)=='a'){
-      mask=lineit->substr(lineit->find('=')+2);
-    }
-    else{
-      int data = stol(lineit->substr(lineit->find('=')+2));
+    std::unordered_map<uint64_t, std::bitset<36>> addressToValue{};
 
-      allpos.resize(0);
-      allpos.push_back(stol(lineit->substr(lineit->find('[')+1,lineit->find(']'))));
-      int p=0;
-      for(int i=mask.size()-1; i>=0; i--){
-        int currcount = allpos.size();
-        uint64_t m=1ul<<p;
-        for(int pos=0; pos<currcount; pos++){
-          if(mask[i]=='X') {
-            allpos.push_back(allpos[pos]);
-            allpos[pos]^=m;
-          }
-          if(mask[i]=='1') allpos[pos]|=m;
+    for(const auto& MaskAndMemoryInput : maskAndMemoryInput){
+        const auto mask0 = makeMask(MaskAndMemoryInput.mask, '0');
+        const auto mask1 = makeMask(MaskAndMemoryInput.mask, '1');
+
+        for(const auto& [address, val] : MaskAndMemoryInput.memory){
+            addressToValue[address] = (val | mask0 ) & mask1;
         }
-        p++;
-      }
-
-      for(auto& pos:allpos){
-        mem[pos]=data;
-      }
     }
-  }
 
-  for(const auto& [key,value]:mem){
-    result+=value;
-  }
+    return Utilities::sum(addressToValue | std::views::values, 0ul, [](const auto& val){return val.to_ulong();});
 }
 
-std::vector<std::string> readfile(std::string file){
-  std::string line;
-  std::ifstream input(file);
-  std::vector<std::string> lines;
+auto addFlipped(auto& memoryAddresses, const auto pos){
+    memoryAddresses.reserve(memoryAddresses.size()*2);
+    const auto endIt = std::end(memoryAddresses);
+    std::ranges::transform(std::begin(memoryAddresses), endIt, std::back_inserter(memoryAddresses), [pos](auto address){
+        address.flip(pos);
+        return address;
+    });
+}
 
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(line);
-    	}
-      input.close();
+auto applyMask(auto& memoryAddresses, const auto pos){
+    std::ranges::for_each(memoryAddresses, [pos](auto& address){
+        address.set(pos, true);
+    });
+}
+
+auto buildMemoryAddresses(const auto& mask, const auto address){
+    std::vector<std::bitset<36>> memoryAddresses{address};
+
+    for(auto pos = 0; const auto& c : mask | std::views::reverse){
+        switch(c){
+            break; case 'X': addFlipped(memoryAddresses, pos);
+            break; case '1': applyMask (memoryAddresses, pos);
+        }
+        ++pos;
     }
-  else{
-    std::cout << "Unable to open file\n";
-  }
-  return lines;
+    return memoryAddresses;
+}
+
+auto addValueToAddresses(const auto& memoryAddresses, const auto& data, auto& addressToValue){
+    const auto val = data.to_ulong();
+    for (auto& address : memoryAddresses) {
+        addressToValue[address] = val;
+    }
+}
+
+auto dock_version2(const auto& maskAndMemoryInput) {
+    std::unordered_map<std::bitset<36>, uint64_t> addressToValue;
+
+    for(const auto& MaskAndMemoryInput : maskAndMemoryInput){
+        const auto& mask = MaskAndMemoryInput.mask;
+        for(const auto& [startingAddress, value] : MaskAndMemoryInput.memory){
+            const auto memoryAddresses = buildMemoryAddresses(mask, startingAddress);
+            addValueToAddresses(memoryAddresses, value, addressToValue);
+        }
+    }
+
+    return Utilities::sum(addressToValue | std::views::values, 0ul);
+}
+
+auto parseInput(const auto& input){
+    std::vector<MaskAndMemoryInput> maskAndMemoryInput{};
+    for(const auto& row : input){
+        auto split = Utilities::splitOnEach(row, "[= ");
+        if(split.size()==2){
+            maskAndMemoryInput.emplace_back( std::move(split[1]) );
+        }
+        else{
+            maskAndMemoryInput.back().memory.emplace_back(std::stoul(split[1]), std::stoul(split[2]));
+        }
+
+    }
+    return maskAndMemoryInput;
 }
 
 int main(){
-  std::vector<std::string> input=readfile("input.txt");
+    const auto maskAndMemoryInput = parseInput(readFile::vectorOfStrings());
 
-  uint64_t result1=0, result2=0;
-  dock(input, result1);
-  dock2(input, result2);
+    //Task 1
+    const auto dock_version1_sum = dock_version1(maskAndMemoryInput);
+    std::cout << "The sum of all values in the memory is " << dock_version1_sum <<  ".\n";
 
-  std::cout << result1 << "\n";
-  std::cout << result2 << "\n";
+    //Task 2
+    const auto dock_version2_sum = dock_version2(maskAndMemoryInput);
+    std::cout << "With version 2, the sum of all values in the memory is " << dock_version2_sum <<  ".\n";
+
+    VerifySolution::verifySolution(dock_version1_sum, dock_version2_sum);
 }
