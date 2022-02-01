@@ -34,7 +34,7 @@ int main() {
     std::cout << "The 2020th number spoken is " << spokenNumber2020 << ".\n";
 
     // Task 2
-    const auto spokenNumber30000000 = getLastNumberSpoken(input, 30000000);
+    const auto spokenNumber30000000 = getLastNumberSpoken(input, 30'000'000);
     std::cout << "The 30.000.000th number spoken is " << spokenNumber30000000 << ".\n";
 
     VerifySolution::verifySolution(spokenNumber2020, spokenNumber30000000);
