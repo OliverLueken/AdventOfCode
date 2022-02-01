@@ -8,6 +8,7 @@
 #include <vector>
 #include <limits.h>
 #include <ranges>
+#include <cstdlib>
 
 #include "utilities.hpp"
 
@@ -18,6 +19,7 @@ namespace readFile{
         std::stringstream stream{};
         if(!file.is_open()){
             std::cout << "Could not open " + filename + ".\n";
+            std::exit(EXIT_FAILURE);
         }
         else{
             stream << file.rdbuf();
