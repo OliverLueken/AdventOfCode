@@ -1,46 +1,41 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
+
+#include "../../lib/verifySolution.hpp"
+
 #include <algorithm>
-#include <cmath>
-#include <cstdint>
-#include <map>
+#include <iostream>
+#include <unordered_map>
+#include <vector>
 
-void rambictus(std::vector<int>& n, int& result, int num){
-  std::map<int, int> lastseenat;
-  for(int i=0; i<n.size()-1; i++) lastseenat[n[i]]=i+1;
-
-  int last=n.back();
-  int next;
-  for(int i=n.size()+1; i<=num; i++){
-    auto it=lastseenat.find(last);
-    if(it==lastseenat.end()){
-      //std::cout << "new\n";
-      lastseenat[last]=i-1;
-      next=0;
+auto getNext = [](const auto& lastSeenAtRound, const auto last, const auto round){
+    if(lastSeenAtRound.contains(last)) {
+        return round - lastSeenAtRound.at(last);
     }
-    else{
-      //std::cout << "repeat\n";
-      next=i-1-lastseenat[last];
-      lastseenat[last]=i-1;
+    return 0;
+};
 
+auto getLastNumberSpoken = [](const auto& n, int num) {
+    std::unordered_map<int, int> lastSeenAtRound;
+    for(auto round=0u; round<n.size()-1; ++round) lastSeenAtRound[n[round]] = round+1;
+
+    auto last = n.back();
+    for(auto round=static_cast<int>(n.size()); round<num; ++round) {
+        const auto next = getNext(lastSeenAtRound, last, round);
+        lastSeenAtRound[last] = round;
+        last = next;
     }
-    last=next;
-    //std::cout << last << std::endl;
-  }
-  result=last;
-}
+    return last;
+};
 
+int main() {
+    const auto input = std::vector<int>{1, 20, 8, 12, 0, 14};
 
-int main(){
-  //std::vector<int> input = {0,3,6};
-   std::vector<int> input = {1,20,8,12,0,14};//{0,3,6};
+    // Task 1
+    const auto spokenNumber2020 = getLastNumberSpoken(input, 2020);
+    std::cout << "The 2020th number spoken is " << spokenNumber2020 << ".\n";
 
-  int result1=0, result2=0;
-  rambictus(input, result1, 2020);
-  rambictus(input, result2, 30000000);
+    // Task 2
+    const auto spokenNumber30000000 = getLastNumberSpoken(input, 30000000);
+    std::cout << "The 30.000.000th number spoken is " << spokenNumber30000000 << ".\n";
 
-  std::cout << result1 << "\n";
-  std::cout << result2 << "\n";
+    VerifySolution::verifySolution(spokenNumber2020, spokenNumber30000000);
 }
