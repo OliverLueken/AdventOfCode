@@ -1,231 +1,171 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+
+#include <algorithm>
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
-#include <algorithm>
-#include <cmath>
-#include <regex>
-#include <boost/algorithm/string.hpp>
+#include <ranges>
+#include <unordered_map>
 
-typedef std::map<std::string, std::vector<std::pair<int,int>>> type_rules;
+using ValidFieldRange = std::vector<std::pair<int,int>>;
+using Ticket = std::vector<int>;
 
+auto getRules = [](const auto& input, const auto numberOfRuleFields){
+    auto rules = std::unordered_map<std::string, ValidFieldRange>{};
 
-int result1=0; long result2=0;
-
-void print(const std::map<std::string, std::vector<bool>>& possibleFieldsForKey){
-  for(const auto& [key, v]: possibleFieldsForKey){
-    std::cout << key << ": ";
-    for(auto b:v) std::cout << b << ", ";
-    std::cout << std::endl;
-  }
-}
-
-void extractInfo(std::vector<std::string> input, std::map<std::string,std::vector<std::pair<int, int>>>& rules,
-                                                 std::vector<std::vector<int>>& tickets){
-  int mode=0;
-  std::regex replace(" or ");
-  for(auto lineit=input.begin(); lineit!=input.end(); lineit++){
-    if(lineit->empty()){
-      lineit++;
-      mode++;
-      continue;
-    }
-    if(mode==0){
-      size_t a=lineit->find(":");
-      std::string field=lineit->substr(0,a);
-      std::string rule = lineit->substr(a+2);
-      rule=std::regex_replace(rule, replace, ",");
-      std::vector<std::string> temprule;
-      boost::split(temprule, rule, boost::is_any_of(",-"));
-
-      std::vector<std::pair<int,int>> valueoffield;
-      for(int i=0; i<temprule.size(); i+=2){
-        valueoffield.push_back({stoi(temprule[i]), stoi(temprule[i+1])});
-      }
-
-      rules[field]=valueoffield;
-    }
-    else{
-      std::vector<std::string> temp;
-      std::vector<int> fieldvalues;
-
-      boost::split(temp, *lineit, boost::is_any_of(","));
-      std::transform(temp.begin(), temp.end(), std::back_inserter(fieldvalues),
-        [](std::string s) -> int {return std::stoi(s);});
-
-      tickets.push_back(fieldvalues);
-      //for(auto i:fieldvalues) std::cout << i << std::endl;
-    }
-  }
-}
-
-bool isValueValidWithField( const int value, const std::string& key, const type_rules& rules){
-  for(const auto& pair:rules.at(key)){
-    if(pair.first <= value && value <= pair.second)
-      return true;
-  }
-  return false;
-}
-
-bool isValidValue(const int value, const type_rules& rules){
-  for(const auto& [key,rule]:rules){
-    if(isValueValidWithField(value, key, rules)){
-      return true;
-    }
-  }
-  return false;
-}
-
-bool isValidTicket(const std::vector<int>& ticket, const type_rules& rules ){
-  bool isValidTicket = true;
-  for(const auto value:ticket){
-    if(!isValidValue(value, rules)){
-      isValidTicket=false;
-      result1+=value;
-    }
-  }
-  return isValidTicket;
-}
-
-
-void filterInvalidTickets(const type_rules& rules, std::vector<std::vector<int>>& tickets){
-  // for(auto& [k,v]:rules){
-  //   std::cout << k << ":";
-  //   for(auto& p:v){
-  //     std::cout <<"\t" << p.first << ", " << p.second << std::endl;
-  //   }
-  // }
-  for(auto ticketit=tickets.begin(); ticketit!=tickets.end(); ){
-    if(!isValidTicket(*ticketit, rules)){
-      ticketit=tickets.erase(ticketit);
-    }
-    else {
-      ticketit++;
-    }
-  }
-  //
-  // for(const auto& t:tickets){
-  //   for(const auto& v:t){
-  //     std::cout << v << ", ";
-  //   }
-  //   std::cout << std::endl;
-  // }
-
-
-}
-
-std::map<std::string, std::vector<bool>> buildBoolTable(const type_rules& rules, const std::vector<std::vector<int>>& tickets){
-  std::map<std::string, std::vector<bool>> table;
-  for(const auto& [key, rule]: rules){
-    std::vector<bool> boolvecforkey;
-    for(int i_value=0; i_value<tickets[0].size(); i_value++){
-      bool allValuesPossible = true;
-      for(const auto& ticket:tickets){
-        if(!isValueValidWithField(ticket[i_value], key, rules)){
-          allValuesPossible=false;
+    for(const auto& row : input | std::views::take(numberOfRuleFields)){
+        const auto split = Utilities::split(row, ':');
+        auto& fieldName  = split[0];
+        const auto tempFieldRange = Utilities::splitOnEach(split[1], " -");
+        ValidFieldRange validFieldRange{};
+        for(auto i=0u; i<tempFieldRange.size(); i+=3){ //3 instead of 2 to skip the 'or'
+            validFieldRange.emplace_back( std::stoi(tempFieldRange[i]), std::stoi(tempFieldRange[i+1]) );
         }
-      }
-      boolvecforkey.push_back(allValuesPossible);
+        rules.emplace(std::move(fieldName), std::move(validFieldRange));
     }
-    table[key]=boolvecforkey;
-  }
-  return table;
-}
+    return rules;
+};
 
-int countPossibleFields(const std::vector<bool>& vec){
-  int n=0;
-  for(const auto& b:vec) if(b) n++;
-  return n;
-}
+auto getTickets = [](const auto& input, const auto numberOfRuleFields){
+    auto tickets = std::vector<Ticket>{};
+    auto addTicket = [&tickets](const auto& row){
+        auto ticketValues = std::vector<int>{};
+        std::ranges::transform(
+            Utilities::split(row, ','),
+            std::back_inserter(ticketValues),
+            [](const auto& value){return std::stoi(value);}
+        );
+        tickets.emplace_back(std::move(ticketValues));
+    };
 
-int findOnlyTrue(const std::vector<bool> v){
-  for(int i=0; i<v.size(); i++) if(v[i]) return i;
-  return -1;
-}
-
-void updateOtherKeys(int i, std::map<std::string, std::vector<bool>>& table){
-  for(auto& [key, vec]:table){
-    vec[i]=false;
-  }
-}
-
-std::map<std::string, int> evaluateTable(std::map<std::string, std::vector<bool>>& table){
-  std::map<std::string, int> a;
-  //std::cout << std::endl;
-  int n=table.size();
-  while(a.size()<n){
-    for(auto tableit=table.begin(); tableit!=table.end();){
-      const std::string& key = tableit->first;
-      std::vector<bool> vec = tableit->second;
-      int n = countPossibleFields(vec);
-      if(n==1){
-
-        int i=findOnlyTrue(vec);
-        a[key]=i;
-        //std::cout << key << ", " << i << std::endl;
-        updateOtherKeys(i, table);
-        tableit=table.erase(tableit);
-        break;
-      }
-      else{
-        tableit++;
-      }
+    addTicket(input[numberOfRuleFields+1]);
+    for(const auto& row : input | std::views::drop(numberOfRuleFields+3)){
+        addTicket(row);
     }
-    //print(table);
-  }
-  return a;
+    return tickets;
+};
+
+auto extractInfo(const auto& input){
+    const auto numberOfRuleFields = 20;
+    auto rules   = getRules  (input, numberOfRuleFields);
+    auto tickets = getTickets(input, numberOfRuleFields);
+
+    return std::make_pair(rules, tickets);
 }
 
-void determineFields(const type_rules& rules, const std::vector<std::vector<int>>& tickets){
-  std::map<std::string, std::vector<bool>> possibleFieldsForKey;
-  possibleFieldsForKey = buildBoolTable(rules, tickets);
+auto isValueSatisfyingRule = [](const int value, const auto& rule){
+    const auto& [key, validRange] = rule;
+    return std::ranges::any_of(validRange, [value](const auto& pair){
+        return Utilities::isBetween(value, pair.first, pair.second+1);
+    });
+};
 
-  //print(possibleFieldsForKey);
 
-  std::map<std::string, int> keyToField;
-  keyToField = evaluateTable(possibleFieldsForKey);
+auto getSumOfInvalidFieldsAndFilterInvalidTickets = [](const auto& rules, auto& tickets) {
+    auto isInvalidValue = [&rules](const int value) {
+        return std::ranges::none_of(rules, [&value](const auto& rule){
+            return isValueSatisfyingRule(value, rule);
+        });
+    };
+    auto sumOfInvalidFields = 0;
+    auto isInValidTicket = [&sumOfInvalidFields, &isInvalidValue](const auto& ticket) {
+        bool isInvalid = false;
+        for (const auto& value : ticket) {
+            if(isInvalidValue(value)) {
+                isInvalid = true;
+                sumOfInvalidFields += value;
+            }
+        }
+        return isInvalid;
+    };
 
-  // for(const auto& [key, v]:keyToField){
-  //   std::cout << key << ": " << v << std::endl;
-  // }
+    std::erase_if(tickets, isInValidTicket);
+    return sumOfInvalidFields;
+};
 
-  result2=1;
-  for(const auto& [key,v]:keyToField){
-    if(key.find("departure")==0){
-      result2*=tickets[0][v];
+
+
+
+auto mapRulesToPossibleFields(const auto& rules, const auto& tickets) {
+    auto getPossibleFieldsForRule = [](const auto& rule, const auto& tickets_){
+        auto possibleFieldsForRule = std::vector<unsigned int>{};
+        for(const auto field : std::views::iota(0u, tickets_[0].size()) ){
+            const auto allValuesPossible = std::ranges::all_of(tickets_, [field, &rule](const auto& ticket){
+                return isValueSatisfyingRule(ticket[field], rule);
+            });
+            if(allValuesPossible) possibleFieldsForRule.push_back(field);
+        }
+        return possibleFieldsForRule;
+    };
+
+    auto ruleToPossibleFieldsMap = std::unordered_map<std::string, std::vector<unsigned int>>{};
+    for (const auto& rule : rules) {
+        ruleToPossibleFieldsMap[rule.first] = getPossibleFieldsForRule(rule, tickets);
     }
-  }
+    return ruleToPossibleFieldsMap;
 }
 
 
-std::vector<std::string> readfile(std::string file){
-  std::string line;
-  std::ifstream input(file);
-  std::vector<std::string> lines;
+auto mapKeysToField = [](const auto& rules, const auto& tickets) {
+    auto ruleToPossibleFieldsMap = mapRulesToPossibleFields(rules, tickets);
+    auto keyToFieldMap = std::unordered_map<std::string, int>{};
 
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(line);
-    	}
-      input.close();
+    auto removeFieldPossibilityFromEveryRule = [](const auto field, auto& ruleToPossibleFieldsMap_){
+        std::ranges::for_each( ruleToPossibleFieldsMap_ | std::views::values, [field](auto& vec){
+            std::erase(vec, field);
+        });
+    };
+    auto ruleHasUniqueField = [&removeFieldPossibilityFromEveryRule, &keyToFieldMap, &ruleToPossibleFieldsMap]
+        (const auto& ruleToPossibleField){
+        const auto [key, vec] = ruleToPossibleField;
+        if (vec.size() == 1) {
+            const auto field = vec[0];
+            keyToFieldMap[key] = field;
+            removeFieldPossibilityFromEveryRule(field, ruleToPossibleFieldsMap);
+            return true;
+        }
+        return false;
+    };
+
+    const auto numberOfKeysToMap = ruleToPossibleFieldsMap.size();
+    auto numberOfDeletedElements = 1lu;
+    while(keyToFieldMap.size() < numberOfKeysToMap && numberOfDeletedElements > 0){
+        numberOfDeletedElements = std::erase_if( ruleToPossibleFieldsMap, ruleHasUniqueField );
     }
-  else{
-    std::cout << "Unable to open file\n";
-  }
-  return lines;
-}
+    return keyToFieldMap;
+};
 
-int main(){
-  std::vector<std::string> input=readfile("input.txt");
+auto getProductOfDepartureFields = [](const auto& rules, const auto& tickets) {
 
-  type_rules rules;
-  std::vector<std::vector<int>> tickets;
-  extractInfo(input, rules, tickets);
+    const auto keyToFieldMap = mapKeysToField(rules, tickets);
 
-  filterInvalidTickets(rules, tickets);
-  // besttime(input, result2);
-  determineFields(rules, tickets);
+    return std::transform_reduce(
+        std::begin(keyToFieldMap),
+        std::end(keyToFieldMap),
+        1l,
+        std::multiplies<>(),
+        [&tickets](const auto& map){
+            if(map.first.starts_with("departure")){
+                return tickets[0][map.second];
+            }
+            return 1;
+        }
+    );
+};
 
-  std::cout << result1 << "\n";
-  std::cout << result2 << "\n";
+int main() {
+    auto [rules, tickets] = extractInfo(readFile::vectorOfStrings());
+
+    // Task 1
+    const auto sumOfInvalidFields = getSumOfInvalidFieldsAndFilterInvalidTickets(rules, tickets);
+    std::cout << "The sum of the invalid fields is " << sumOfInvalidFields << ".\n";
+
+    // Task 2
+    const auto productOfDepartureFields = getProductOfDepartureFields(rules, tickets);
+    std::cout << "The product of the departure fields is " << productOfDepartureFields << ".\n";
+
+    VerifySolution::verifySolution(sumOfInvalidFields, productOfDepartureFields);
 }
