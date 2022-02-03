@@ -1,131 +1,172 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
+
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
-#include <set>
-#include <tuple>
+#include <array>
+#include <algorithm>
+#include <functional>
+#include <unordered_map>
+#include <unordered_set>
 
-//#define triple std::tuple<int,int,int>
-#define triple std::tuple<int,int,int,int>
-
-void printcubes(std::set<triple>& c){
-  for(auto it:c){
-    std::cout << "(" << std::get<0>(it) << ", " << std::get<1>(it) << ", " << std::get<2>(it) << ")\n";
-  }
-  std::cout << "\n\n";
-}
-
-int countActiveNeighbors(triple pos, std::set<triple>& activeCubes){
-  int neighbors=0;
-  int posx=std::get<0>(pos);
-  int posy=std::get<1>(pos);
-  int posz=std::get<2>(pos);
-  int posw=std::get<3>(pos);
-  for(int x=posx-1; x<=posx+1; x++){
-    for(int y=posy-1; y<=posy+1; y++){
-      for(int z=posz-1; z<=posz+1; z++){
-        for(int w=posw-1; w<=posw+1; w++){
-          triple pos2={x,y,z,w};
-          if(activeCubes.find(pos2)!=activeCubes.end()){
-            neighbors++;
-          }
+template<size_t N>
+struct std::hash<std::array<int, N>>{
+    size_t operator()(const std::array<int, N>& position) const noexcept{
+        size_t hash_=0;
+        for(const auto i : position){
+            hash_=hash_^(i<<1);
         }
-      }
+        return hash_;
     }
-  }
-  if(activeCubes.find(pos)!=activeCubes.end()) neighbors--;
-  return neighbors;
+};
+
+template<size_t N>
+using Population = std::unordered_set<std::array<int,N>>;
+
+template<size_t N>
+using VisibleNeighbors = std::unordered_map<std::array<int,N>, int>;
+
+template<size_t N>
+using getVisibleNeighborsLambda = std::function<VisibleNeighbors<N>(const Population<N>&)>;
+
+
+void printcubes(const auto& c) {
+    const auto n = std::ranges::minmax(c | std::views::elements<0>);
+    const auto m = std::ranges::minmax(c | std::views::elements<1>);
+    const auto k = std::ranges::minmax(c | std::views::elements<2>);
+    std::cout << n.min << ' ' << n.max << '\n';
+    std::cout << m.min << ' ' << m.max << '\n';
+    std::unordered_map<int, Matrix::Matrix<int>> slices{};
+    for(auto i=k.min; i<=k.max; i++){
+        slices[i] = Matrix::Matrix<int>(n.max-n.min+1, m.max-m.min+1);
+    }
+    for (const auto& p : c) {
+        auto& currSlice = slices[p[2]];
+        currSlice(p[0]-n.min, p[1]-m.min)++;
+    }
+    for(const auto& [i, slice] : slices){
+        std::cout << i << '\n';
+        print(slice);
+    }
+    std::cout << "\n\n";
 }
 
-void update(std::set<triple>& activeCubes, triple boundlower, triple boundupper){
-  std::set<triple> cubesToActivate, cubesToDeactivate;
+template<typename getVisibleNeighborsLambda, typename Population>
+class GameOfLife{
+    getVisibleNeighborsLambda getVisibleNeighbors{};
+    Population population{};
+    Population nextPopulation{};
 
-  //check status of cubes
-  for(int x=std::get<0>(boundlower); x<std::get<0>(boundupper); x++){
-    for(int y=std::get<1>(boundlower); y<std::get<1>(boundupper); y++){
-      for(int z=std::get<2>(boundlower); z<std::get<2>(boundupper); z++){
-        for(int w=std::get<3>(boundlower); w<std::get<3>(boundupper); w++){
-          //std::cout << "checking (" << x <<", " << y << ", " << z << ")\n";
-          triple pos = std::make_tuple(x,y,z,w);
-          int neighbors = countActiveNeighbors(pos, activeCubes);
-          //std::cout << neighbors << std::endl;
-          if(activeCubes.find(pos)!=activeCubes.end()) { //active
-            if(neighbors!=2 && neighbors!=3){
-              cubesToDeactivate.insert(pos);
+    auto playOneRound(){
+        auto populateNextPopulation = [this](const auto& visibleNeighborsPair){
+            const auto& [currentObject, numberOfVisibleNeighbors] = visibleNeighborsPair;
+            if(population.contains(currentObject)){
+                if(Utilities::isBetween(numberOfVisibleNeighbors, 2, 4)){
+                    nextPopulation.emplace(currentObject);
+                }
             }
-          } else { //inactive
-            if(neighbors==3)
-              cubesToActivate.insert(pos);
-          }
+            else if(numberOfVisibleNeighbors == 3){
+                nextPopulation.emplace(currentObject);
+            }
+        };
+
+        const auto visibleNeighbors = getVisibleNeighbors(population);
+        std::ranges::for_each(visibleNeighbors, populateNextPopulation);
+    }
+
+public:
+    GameOfLife(getVisibleNeighborsLambda getVisibleNeighbors_, const Population& population_)
+      : getVisibleNeighbors{getVisibleNeighbors_},
+        population{population_},
+        nextPopulation{} {
+    }
+
+    void play(){
+        for(auto i=0; i<6; ++i){
+            playOneRound();
+            std::swap(nextPopulation, population);
+            nextPopulation.clear();
         }
-      }
     }
-  }
-  //printcubes(cubesToDeactivate);
-  //deactivate cubes
-  for(auto pos:cubesToDeactivate){
-    activeCubes.erase(pos);
-  }
 
-  //printcubes(cubesToActivate);
-  //activate cubes
-  for(auto pos:cubesToActivate){
-    activeCubes.insert(pos);
-  }
-}
-
-std::set<triple> initializeCubes(std::vector<std::string>& input){
-  std::set<triple> activeCubes;
-  for(int y=0; y<input.size(); y++){
-    //std::cout << input[y] << std::endl;
-    for(int x=0; x<input[y].size(); x++){
-      if(input[y][x]=='#'){
-        activeCubes.insert(std::make_tuple(x,y,0,0));
-      }
+    auto getOccupiedSeats(){
+        return population.size();
     }
-  }
-  return activeCubes;
+};
+
+template <typename L1, typename L2>
+auto make_GameOfLife(L1 &&l1, L2 &&l2) {
+    return GameOfLife<std::decay_t<L1>, std::decay_t<L2>>
+        (std::forward<L1>(l1), std::forward<L2>(l2));
 }
 
-void conwayCubes(std::vector<std::string>& input, int& result){
-  std::set<triple> activeCubes = initializeCubes(input);
+auto incrementNeighbors = [](const auto& pos, auto& visibleNeighbors){
+    auto incrementNeighbors_ = [&visibleNeighbors](const auto incrementNeighbors__, const auto& pos_, auto it, auto& neighbor){
+        if(it == neighbor.size()){
+            visibleNeighbors[neighbor]++;
+            return;
+        }
+        neighbor[it] = pos_[it]-1;
+        incrementNeighbors__(incrementNeighbors__, pos_, it+1, neighbor);
+        neighbor[it]++;
+        incrementNeighbors__(incrementNeighbors__, pos_, it+1, neighbor);
+        neighbor[it]++;
+        incrementNeighbors__(incrementNeighbors__, pos_, it+1, neighbor);
+    };
 
-  //printcubes(activeCubes);
+    auto neighbor{pos};
+    incrementNeighbors_(incrementNeighbors_, pos, 0lu, neighbor);
+    visibleNeighbors[pos]--;
+};
 
-  int u = input[0].size()+6;
-  triple boundlower = {-6,-6,-6,-6},
-         boundupper = {u,u,u,u};
+template<size_t N>
+auto getVisibleNeighbors = [](const auto& population) {
+    std::unordered_map<std::array<int,N>, int> visibleNeighbors{};
 
-  for(int i=0; i<6; i++){
-    update(activeCubes, boundlower, boundupper);
-    //printcubes(activeCubes);
-  }
-
-  result=activeCubes.size();
-}
-
-std::vector<std::string> readfile(std::string file){
-  std::string line;
-  std::ifstream input(file);
-  std::vector<std::string> lines;
-
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(line);
-    	}
-      input.close();
+    for(const auto& pos : population){
+        incrementNeighbors(pos, visibleNeighbors);
     }
-  else{
-    std::cout << "Unable to open file\n";
-  }
-  return lines;
+    return visibleNeighbors;
+};
+
+
+template<size_t N>
+auto parseInput(const auto& input) {
+    std::unordered_set<std::array<int, N>> activeCubes;
+    for (auto y = 0; y < static_cast<int>(input.size()); y++) {
+        for (auto x = 0; x < static_cast<int>(input[y].size()); x++) {
+            if (input[y][x] == '#') {
+                std::array<int,N> obj{};
+                obj[0] = y;
+                obj[1] = x;
+                activeCubes.insert(obj);
+            }
+        }
+    }
+    return activeCubes;
 }
+
+
+template<size_t N>
+auto getNumberOfActiveCubes = [](){
+    const auto population = parseInput<N>(readFile::vectorOfStrings());
+    auto gameOfLife = make_GameOfLife( getVisibleNeighbors<N>, population );
+    gameOfLife.play();
+    return gameOfLife.getOccupiedSeats();
+};
 
 int main(){
-  std::vector<std::string> input=readfile("input.txt");
 
-  int result;
-  conwayCubes(input, result);
+    //Task 1
+    const auto result1 = getNumberOfActiveCubes<3>();
+    std::cout << "Result1: " << result1 << ".\n";
 
-  std::cout << result << "\n";
+    //Task 2
+    const auto result2 = getNumberOfActiveCubes<4>();
+    std::cout << "Result2: " << result2 << ".\n";
+
+    VerifySolution::verifySolution(result1, result2);
 }
