@@ -1,106 +1,149 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
+
+#include <algorithm>
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
-#include <algorithm>
-#include <cmath>
-#include <regex>
+#include <span>
+#include <memory>
+#include <ranges>
 
-unsigned long long result1=0, result2=0;
 
-std::string innerExpressionltr(std::string ex){
-  size_t a, b;
+struct Expression{
 
-  a=ex.find_first_of("+*");
-  while(a!=std::string::npos){
-    b=ex.find_first_of("+*",a+1);
-    long x,y;
-    x=stol(ex);
-    y=stol(ex.substr(a+1));
-    if(ex[a]=='+'){
-      x=x+y;
+    Expression() = default;
+    Expression(const Expression&) = delete;
+    Expression& operator=(const Expression&) = delete;
+    Expression(Expression&&) = default;
+    Expression& operator=(Expression&&) = default;
+    virtual ~Expression() = default;
+
+    virtual unsigned long long evaluate() = 0;
+    virtual void print(int) = 0;
+};
+
+struct Value : public Expression{
+    unsigned long long val{0};
+
+    Value(auto val_) : val{val_}{}
+
+    unsigned long long evaluate(){
+        return val;
     }
-    else{
-      x=x*y;
+    void print(int n){
+        for(auto i=0; i<n; ++i){
+            std::cerr << '|';
+        }
+        std::cerr << '-' << val << '\n';
     }
-    ex.replace(0, b, std::to_string(x));
-    a=ex.find_first_of("+*");
-  }
-  return ex;
-}
+};
 
+struct Addition : public Expression {
+    std::unique_ptr<Expression> left{};
+    std::unique_ptr<Expression> right{};
 
-std::string innerExpressionPlus(std::string ex){
-  size_t a,b,c;
-  b=ex.find("+");
-  while(b!=std::string::npos){
-    a=ex.find_last_of("+*", b-1);
-    if(a==std::string::npos) a=0;
-    else a=a+2;
-    c=ex.find_first_of("+*",b+1);
+    Addition(auto&& left_, auto&& right_) : left{std::move(left_)}, right{std::move(right_)} {}
 
-    long x,y;
-
-    x=stol(ex.substr(a));
-    y=stol(ex.substr(b+1));
-    x+=y;
-    ex.replace(a,c-1-a, std::to_string(x));
-
-    b=ex.find("+");
-  }
-  return innerExpressionltr(ex);
-}
-
-unsigned long long outerExpression(std::string ex, int mode){
-  const std::regex regex("([(][^()]+[)])"); //matches brackets with stuff in between that's not brackets
-  std::smatch match;
-  while(std::regex_search(ex, match, regex)){
-
-    std::string eval;
-    if(mode==1)
-      eval = innerExpressionltr(match.str().substr(1,match.length()-2));
-    else
-      eval = innerExpressionPlus(match.str().substr(1,match.length()-2));
-    ex.replace(match.position(), match.length(), eval);
-  }
-  unsigned long long result;
-  if(mode==1) result = stoll(innerExpressionltr(ex));
-  else        result = stoll(innerExpressionPlus(ex));
-  return result;
-}
-
-std::vector<std::string> readfile(std::string file){
-  std::string line;
-  std::ifstream input(file);
-  std::vector<std::string> lines;
-
-  if(input.is_open()){
-  	while(getline(input,line)){
-        lines.push_back(line);
-    	}
-      input.close();
+    unsigned long long evaluate(){
+        return left->evaluate() + right->evaluate();
     }
-  else{
-    std::cout << "Unable to open file\n";
-  }
-  return lines;
+    void print(int n){
+        for(auto i=0; i<n; ++i){
+            std::cerr << '|';
+        }
+        std::cerr << '+' << '\n';
+        left->print(n+1);
+        right->print(n+1);
+    }
+};
+
+struct Multiplication : public Expression {
+    std::unique_ptr<Expression> left{};
+    std::unique_ptr<Expression> right{};
+
+    Multiplication(auto&& left_, auto&& right_) : left{std::move(left_)}, right{std::move(right_)} {}
+
+    unsigned long long evaluate(){
+        return left->evaluate() * right->evaluate();
+    }
+    void print(int n){
+        for(auto i=0; i<n; ++i){
+            std::cerr << '|';
+        }
+        std::cerr << '*' << '\n';
+        left->print(n+1);
+        right->print(n+1);
+    }
+};
+
+auto findClosing = [](auto begin, auto end){
+    auto bracketCount = 0l;
+    auto it = begin;
+    while(it!=end){
+        bracketCount-=std::ranges::count(*it, '(');
+        bracketCount+=std::ranges::count(*it, ')');
+        if(bracketCount <= 0){
+            return it;
+        }
+        it++;
+    }
+    return it;
+};
+
+auto buildExpressionTree(auto begin, auto end) -> std::unique_ptr<Expression> {
+    if( std::distance(begin, end) == 1){
+        return std::make_unique<Value>( std::stoul(*begin)  );
+    }
+    auto n = 1l;
+    do{
+        n = 1l;
+        if( begin->back() == ')'){
+            auto closingBracketAt = findClosing(begin, end);
+            n = std::distance(begin, closingBracketAt)+1;
+            // std::cout << "Bracket until " << n << '\n';
+            begin->pop_back();
+            closingBracketAt->erase(0,1);
+        }
+    }while( end == begin+n );
+    auto left  = buildExpressionTree( begin,     begin+n ) ;
+    auto right = buildExpressionTree( begin+n+1, end    ) ;
+    if( (*(begin+n))[0]=='+'){
+        return std::make_unique<Addition>( std::move(left), std::move(right) );
+    }
+    return std::make_unique<Multiplication>( std::move(left), std::move(right) );
 }
 
-void evalAll(std::vector<std::string>& input){
+auto parseInput(const auto& input){
 
-  unsigned long long x;
-  for(auto& ex:input){x=outerExpression(ex,1);
-    result1+=x;
-    x=outerExpression(ex,2);
-    result2+=x;
-  }
+    auto buildExpression = [](const auto& str){
+        // std::cout << str << '\n';
+        // char c; std::cin >> c;
+        auto v_str = Utilities::split(str, ' ');
+        return buildExpressionTree(std::rbegin(v_str), std::rend(v_str));
+    };
+
+    std::vector<std::unique_ptr<Expression>> expressions{};
+    expressions.reserve(input.size());
+    std::ranges::transform(input, std::back_inserter(expressions), buildExpression);
+    return expressions;
 }
 
 int main(){
-  std::vector<std::string> input=readfile("input.txt");
+    const auto a = parseInput(readFile::vectorOfStrings());
 
-  evalAll(input);
-
-  std::cout << result1 << "\n";
-  std::cout << result2 << "\n";
+    //Task 1
+    const auto result1 = Utilities::sum(a, 0ull, [](const auto& ptr){
+        return ptr->evaluate();
+    });
+    std::cout << " " << result1 << " .\n";
+    
+    // //Task 2
+    // const auto result2 = evalAll<2>(input);
+    // std::cout << " " << result2 << " .\n";
+    //
+    // VerifySolution::verifySolution(result1, result2);
 }
