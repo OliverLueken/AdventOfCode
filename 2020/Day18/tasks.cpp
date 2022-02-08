@@ -1,12 +1,10 @@
 
-#include "../../lib/matrix.hpp"
 #include "../../lib/readFile.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/verifySolution.hpp"
 
 #include <algorithm>
 #include <cmath>
-// #include <fstream>
 #include <iostream>
 #include <regex>
 #include <string>
@@ -19,12 +17,9 @@ auto innerExpression(std::string&&);
 
 template<>
 auto innerExpression<leftToRight>(std::string&& ex) {
-    // size_t a, b;
-
     auto a = ex.find_first_of("+*");
     while (a != std::string::npos) {
         const auto b = ex.find_first_of("+*", a + 1);
-        // long x, y;
         auto x = stoul(ex);
         auto y = stoul(ex.substr(a + 1));
         if (ex[a] == '+') {
