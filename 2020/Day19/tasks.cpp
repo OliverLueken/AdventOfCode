@@ -12,11 +12,8 @@
 #include <string>
 #include <vector>
 
-typedef std::vector<std::string> strvec;
 
-unsigned long result1 = 0, result2 = 0;
-
-std::string convertRules(const strvec& rules,
+std::string convertRules(const auto& rules,
                          std::map<int, std::string>& donerules,
                          std::string currrule) {
     // std::cout << currrule << std::endl;
@@ -84,22 +81,22 @@ std::string convertRules(const strvec& rules,
     return rule;
 }
 
-std::regex convertRulesToRegex(strvec& rules) {
+std::regex convertRulesToRegex(auto& rules) {
     std::map<int, std::string> donerules;
     std::string rule = convertRules(rules, donerules, rules[0]);
     std::cout << rule << std::endl;
     return std::regex(rule);
 }
 
-auto countValidMessages(const strvec& messages, const std::regex& rule) {
+auto countValidMessages(const auto& messages, const std::regex& rule) {
     return std::ranges::count_if(messages, [&rule](const auto& message){
         return std::regex_match(message, rule);
     });
 }
 
-auto extractRuleFromMessages(strvec& messages) {
+auto extractRuleFromMessages(auto& messages) {
     std::regex rule;
-    strvec rules;
+    std::vector<std::string> rules;
     for (auto it = messages.begin(); it != messages.end();) {
         // std::cout << *it << std::endl;
         if (it->empty()) {
