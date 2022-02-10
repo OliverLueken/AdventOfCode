@@ -6,13 +6,12 @@
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <cmath>
-// #include <fstream>
 #include <iostream>
 #include <regex>
 #include <string>
 #include <vector>
 
-
+template<bool withTaskTwo>
 std::string convertRules(const auto& rules,
                          std::map<int, std::string>& donerules,
                          std::string currrule) {
@@ -27,8 +26,8 @@ std::string convertRules(const auto& rules,
 
         // std::cout << "\"" << str1 << "\"" << "|" << "\"" << str2 << "\"" <<
         // std::endl;
-        rule = "(" + convertRules(rules, donerules, str1) + "|" +
-               convertRules(rules, donerules, str2) + ")";
+        rule = "(" + convertRules<withTaskTwo>(rules, donerules, str1) + "|" +
+               convertRules<withTaskTwo>(rules, donerules, str2) + ")";
     } else {
         a = currrule.find(" ");
         if (a != std::string::npos) {
@@ -40,7 +39,7 @@ std::string convertRules(const auto& rules,
             // }
             // std::cout << std::endl;
             for (auto str : splitvec) {
-                rule += convertRules(rules, donerules, str);
+                rule += convertRules<withTaskTwo>(rules, donerules, str);
             }
         } else {
             int n;
@@ -54,26 +53,28 @@ std::string convertRules(const auto& rules,
 
             auto it = donerules.find(n);
             if (it != donerules.end()) return it->second;
-            rule = convertRules(rules, donerules, rules.at(n));
+            rule = convertRules<withTaskTwo>(rules, donerules, rules.at(n));
             // //part 2 (not a good solution, but works)
-            // if(n==8) rule+="+";
-            // if(n==11){
-            //   std::string rule42 = convertRules(rules, donerules, "42");
-            //   std::string rule31 = convertRules(rules, donerules, "31");
-            //   std::vector<std::string> t;
-            //   rule=rule42 + rule31;
-            //   t.push_back(rule);
-            //   for(int i=0; i<5; i++){
-            //      rule = rule42 + t.back() + rule31;
-            //      t.push_back(rule);
-            //   }
-            //   rule=t[0];
-            //   for(int i=1; i<t.size(); i++){
-            //     rule=rule + "|" +"(" + t[i] + ")";
-            //   }
-            //   rule = "("+rule+")";
-            //   std::cout << rule << std::endl << std::endl;
-            // }
+            if constexpr(withTaskTwo){
+                if(n==8) rule+="+";
+                if(n==11){
+                  std::string rule42 = convertRules<withTaskTwo>(rules, donerules, "42");
+                  std::string rule31 = convertRules<withTaskTwo>(rules, donerules, "31");
+                  std::vector<std::string> t;
+                  rule=rule42 + rule31;
+                  t.push_back(rule);
+                  for(int i=0; i<5; i++){
+                     rule = rule42 + t.back() + rule31;
+                     t.push_back(rule);
+                  }
+                  rule=t[0];
+                  for(int i=1; i<t.size(); i++){
+                    rule=rule + "|" +"(" + t[i] + ")";
+                  }
+                  rule = "("+rule+")";
+                  std::cout << rule << std::endl << std::endl;
+                }
+            }
             donerules[n] = rule;
         }
     }
@@ -81,9 +82,10 @@ std::string convertRules(const auto& rules,
     return rule;
 }
 
+template<bool withTaskTwo = false>
 std::regex convertRulesToRegex(auto& rules) {
     std::map<int, std::string> donerules;
-    std::string rule = convertRules(rules, donerules, rules[0]);
+    std::string rule = convertRules<withTaskTwo>(rules, donerules, rules[0]);
     std::cout << rule << std::endl;
     return std::regex(rule);
 }
@@ -113,14 +115,15 @@ auto parseInput(auto&& input) {
 
 int main(){
     auto [messages, inputRules] = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
-    const auto rules = convertRulesToRegex(inputRules);
 
     //Task 1
+    const auto rules = convertRulesToRegex<false>(inputRules);
     const auto sumOfSolutionsWithLeftToRight = countValidMessages(messages, rules);
     std::cout << "The sum of the solutions evaluated left to right is " << sumOfSolutionsWithLeftToRight << ".\n";
 
     //Task 2
-    const auto sumOfSolutionsWithAdditionBeforeMultiplication = countValidMessages(messages, rules);
+    auto rules2 = convertRulesToRegex<true>(inputRules);
+    const auto sumOfSolutionsWithAdditionBeforeMultiplication = countValidMessages(messages, rules2);
     std::cout << "The sum of the solutions evaluated with the new rules is " << sumOfSolutionsWithAdditionBeforeMultiplication << ".\n";
 
     VerifySolution::verifySolution(sumOfSolutionsWithLeftToRight, sumOfSolutionsWithAdditionBeforeMultiplication);
