@@ -12,10 +12,66 @@
 #include <unordered_map>
 #include <cassert>
 
+template<bool>
+std::string convertRules(const auto&, auto&, const std::string);
+
+template<bool withTaskTwo>
+std::string innerConversion(const auto& rules, auto& donerules, const std::string currrule){
+    auto a = currrule.find(" ");
+    auto rule = std::string{};
+
+    if (a != std::string::npos) {
+        const auto splitvec = Utilities::split(currrule, ' ');
+
+        // for(auto str:splitvec){
+        //   std::cout << "\"" << str << "\"" << " ";
+        // }
+        // std::cout << std::endl;
+        for (auto str : splitvec) {
+            rule += innerConversion<withTaskTwo>(rules, donerules, str);
+        }
+    } else {
+        int n;
+        try {
+            n = stoi(currrule);
+        } catch (...) {
+            rule = "(" + currrule.substr(1, currrule.size() - 2) + ")";
+            // std::cout << rule << std::endl;
+            return rule;
+        }
+
+        const auto it = donerules.find(n);
+        if (it != donerules.end()) return it->second;
+        rule = convertRules<withTaskTwo>(rules, donerules, rules.at(n));
+        // //part 2 (not a good solution, but works)
+        if constexpr(withTaskTwo){
+            if(n==8) rule+="+";
+            if(n==11){
+              std::string rule42 = innerConversion<withTaskTwo>(rules, donerules, "42");
+              std::string rule31 = innerConversion<withTaskTwo>(rules, donerules, "31");
+              std::vector<std::string> t;
+              rule=rule42 + rule31;
+              t.push_back(rule);
+              for(int i=0; i<5; i++){
+                 rule = rule42 + t.back() + rule31;
+                 t.push_back(rule);
+              }
+              rule=t[0];
+              for(auto i=1ul; i<t.size(); i++){
+                rule=rule + "|" +"(" + t[i] + ")";
+              }
+              rule = "("+rule+")";
+              // std::cout << rule << std::endl << std::endl;
+            }
+        }
+        donerules[n] = rule;
+    }
+    return rule;
+}
+
 template<bool withTaskTwo>
 std::string convertRules(const auto& rules, auto& donerules, const std::string currrule) {
     // std::cout << currrule << std::endl;
-
     auto rule = std::string{};
     auto a = currrule.find("|");
     if (a != std::string::npos) {
@@ -25,58 +81,11 @@ std::string convertRules(const auto& rules, auto& donerules, const std::string c
 
         // std::cout << "\"" << str1 << "\"" << "|" << "\"" << str2 << "\"" <<
         // std::endl;
-        rule = "(" + convertRules<withTaskTwo>(rules, donerules, str1) + "|" +
-               convertRules<withTaskTwo>(rules, donerules, str2) + ")";
+        rule = "(" + innerConversion<withTaskTwo>(rules, donerules, str1) + "|" +
+               innerConversion<withTaskTwo>(rules, donerules, str2) + ")";
     } else {
-        a = currrule.find(" ");
-        if (a != std::string::npos) {
-            const auto splitvec = Utilities::split(currrule, ' ');
-
-            // for(auto str:splitvec){
-            //   std::cout << "\"" << str << "\"" << " ";
-            // }
-            // std::cout << std::endl;
-            for (auto str : splitvec) {
-                rule += convertRules<withTaskTwo>(rules, donerules, str);
-            }
-        } else {
-            int n;
-            try {
-                n = stoi(currrule);
-            } catch (...) {
-                rule = "(" + currrule.substr(1, currrule.size() - 2) + ")";
-                // std::cout << rule << std::endl;
-                return rule;
-            }
-
-            const auto it = donerules.find(n);
-            if (it != donerules.end()) return it->second;
-            rule = convertRules<withTaskTwo>(rules, donerules, rules.at(n));
-            // //part 2 (not a good solution, but works)
-            if constexpr(withTaskTwo){
-                if(n==8) rule+="+";
-                if(n==11){
-                  std::string rule42 = convertRules<withTaskTwo>(rules, donerules, "42");
-                  std::string rule31 = convertRules<withTaskTwo>(rules, donerules, "31");
-                  std::vector<std::string> t;
-                  rule=rule42 + rule31;
-                  t.push_back(rule);
-                  for(int i=0; i<5; i++){
-                     rule = rule42 + t.back() + rule31;
-                     t.push_back(rule);
-                  }
-                  rule=t[0];
-                  for(auto i=1ul; i<t.size(); i++){
-                    rule=rule + "|" +"(" + t[i] + ")";
-                  }
-                  rule = "("+rule+")";
-                  // std::cout << rule << std::endl << std::endl;
-                }
-            }
-            donerules[n] = rule;
-        }
+        rule = innerConversion<withTaskTwo>(rules, donerules, currrule);
     }
-    // std::cout << rule << std::endl;
     return rule;
 }
 
