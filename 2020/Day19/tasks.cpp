@@ -72,7 +72,7 @@ std::string convertRules(const auto& rules,
                     rule=rule + "|" +"(" + t[i] + ")";
                   }
                   rule = "("+rule+")";
-                  std::cout << rule << std::endl << std::endl;
+                  // std::cout << rule << std::endl << std::endl;
                 }
             }
             donerules[n] = rule;
@@ -90,9 +90,11 @@ std::regex convertRulesToRegex(auto& rules) {
     return std::regex(rule);
 }
 
-auto countValidMessages(const auto& messages, const std::regex& rule) {
-    return std::ranges::count_if(messages, [&rule](const auto& message){
-        return std::regex_match(message, rule);
+template<bool isTaskTwo = false>
+auto countValidMessages(const auto& messages, auto& inputRules) {
+    const auto rules = convertRulesToRegex<isTaskTwo>(inputRules);
+    return std::ranges::count_if(messages, [&rules](const auto& message){
+        return std::regex_match(message, rules);
     });
 }
 
@@ -117,13 +119,11 @@ int main(){
     auto [messages, inputRules] = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
 
     //Task 1
-    const auto rules = convertRulesToRegex<false>(inputRules);
-    const auto validTaskOneMessages = countValidMessages(messages, rules);
+    const auto validTaskOneMessages = countValidMessages<false>(messages, inputRules);
     std::cout << "There are " << validTaskOneMessages << " messages matching rule 0.\n";
 
     //Task 2
-    auto rules2 = convertRulesToRegex<true>(inputRules);
-    const auto validTaskTwoMessages = countValidMessages(messages, rules2);
+    const auto validTaskTwoMessages = countValidMessages<true>(messages, inputRules);
     std::cout << "After updating rules 8 and 11, there are " << validTaskTwoMessages << " messages matching rule 0.\n";
 
     VerifySolution::verifySolution(validTaskOneMessages, validTaskTwoMessages);
