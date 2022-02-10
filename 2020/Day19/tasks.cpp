@@ -101,9 +101,8 @@ auto parseInput(auto&& input) {
     messages.reserve(std::distance(it, std::end(input)));
     std::ranges::move(it, std::end(input), std::back_inserter(messages));
 
-    input.resize(std::distance(std::begin(input), it-1));
     std::unordered_map<int, std::string> inputRules{};
-    std::ranges::transform(input, std::inserter(inputRules, std::begin(inputRules)), [](const auto& rule){
+    std::ranges::transform(std::begin(input), it-1, std::inserter(inputRules, std::begin(inputRules)), [](const auto& rule){
         const auto split = Utilities::split(rule, ':');
         return std::make_pair( stoi(split[0]), split[1].substr(1) );
     });
