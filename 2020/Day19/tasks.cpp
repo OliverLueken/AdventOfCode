@@ -4,13 +4,13 @@
 #include "../../lib/verifySolution.hpp"
 
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
 #include <cmath>
 #include <iostream>
 #include <regex>
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <cassert>
 
 template<bool withTaskTwo>
 std::string convertRules(const auto& rules, auto& donerules, std::string currrule) {
@@ -30,9 +30,8 @@ std::string convertRules(const auto& rules, auto& donerules, std::string currrul
     } else {
         a = currrule.find(" ");
         if (a != std::string::npos) {
-            auto splitvec = std::vector<std::string>{};
-
-            boost::split(splitvec, currrule, boost::is_any_of(" "));
+            auto splitvec = Utilities::split(currrule, ' ');
+            
             // for(auto str:splitvec){
             //   std::cout << "\"" << str << "\"" << " ";
             // }
