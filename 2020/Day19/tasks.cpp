@@ -91,12 +91,10 @@ std::regex convertRulesToRegex(strvec& rules) {
     return std::regex(rule);
 }
 
-bool isMessageValid(const std::string& message, const std::regex& rule) {
-    return std::regex_match(message, rule);
-}
-
 auto countValidMessages(const strvec& messages, const std::regex& rule) {
-    return std::ranges::count_if(messages, [&rule](const auto& message){return isMessageValid(message, rule);});
+    return std::ranges::count_if(messages, [&rule](const auto& message){
+        return std::regex_match(message, rule);
+    });
 }
 
 auto extractRuleFromMessages(strvec& messages) {
