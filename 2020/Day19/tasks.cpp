@@ -68,7 +68,7 @@ std::string convertRules(const auto& rules,
                      t.push_back(rule);
                   }
                   rule=t[0];
-                  for(int i=1; i<t.size(); i++){
+                  for(auto i=1ul; i<t.size(); i++){
                     rule=rule + "|" +"(" + t[i] + ")";
                   }
                   rule = "("+rule+")";
@@ -86,7 +86,7 @@ template<bool withTaskTwo = false>
 std::regex convertRulesToRegex(auto& rules) {
     std::map<int, std::string> donerules;
     std::string rule = convertRules<withTaskTwo>(rules, donerules, rules[0]);
-    std::cout << rule << std::endl;
+    // std::cout << rule << std::endl;
     return std::regex(rule);
 }
 
@@ -118,13 +118,13 @@ int main(){
 
     //Task 1
     const auto rules = convertRulesToRegex<false>(inputRules);
-    const auto sumOfSolutionsWithLeftToRight = countValidMessages(messages, rules);
-    std::cout << "The sum of the solutions evaluated left to right is " << sumOfSolutionsWithLeftToRight << ".\n";
+    const auto validTaskOneMessages = countValidMessages(messages, rules);
+    std::cout << "There are " << validTaskOneMessages << " messages matching rule 0.\n";
 
     //Task 2
     auto rules2 = convertRulesToRegex<true>(inputRules);
-    const auto sumOfSolutionsWithAdditionBeforeMultiplication = countValidMessages(messages, rules2);
-    std::cout << "The sum of the solutions evaluated with the new rules is " << sumOfSolutionsWithAdditionBeforeMultiplication << ".\n";
+    const auto validTaskTwoMessages = countValidMessages(messages, rules2);
+    std::cout << "After updating rules 8 and 11, there are " << validTaskTwoMessages << " messages matching rule 0.\n";
 
-    VerifySolution::verifySolution(sumOfSolutionsWithLeftToRight, sumOfSolutionsWithAdditionBeforeMultiplication);
+    VerifySolution::verifySolution(validTaskOneMessages, validTaskTwoMessages);
 }
