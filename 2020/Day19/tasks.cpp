@@ -13,15 +13,15 @@
 #include <cassert>
 
 template<bool withTaskTwo>
-std::string convertRules(const auto& rules, auto& donerules, std::string currrule) {
+std::string convertRules(const auto& rules, auto& donerules, const std::string currrule) {
     // std::cout << currrule << std::endl;
 
     auto rule = std::string{};
     auto a = currrule.find("|");
     if (a != std::string::npos) {
         //std::string str1, str2;
-        auto str1 = currrule.substr(0, a - 1);
-        auto str2 = currrule.substr(a + 2);
+        const auto str1 = currrule.substr(0, a - 1);
+        const auto str2 = currrule.substr(a + 2);
 
         // std::cout << "\"" << str1 << "\"" << "|" << "\"" << str2 << "\"" <<
         // std::endl;
@@ -30,8 +30,8 @@ std::string convertRules(const auto& rules, auto& donerules, std::string currrul
     } else {
         a = currrule.find(" ");
         if (a != std::string::npos) {
-            auto splitvec = Utilities::split(currrule, ' ');
-            
+            const auto splitvec = Utilities::split(currrule, ' ');
+
             // for(auto str:splitvec){
             //   std::cout << "\"" << str << "\"" << " ";
             // }
@@ -49,7 +49,7 @@ std::string convertRules(const auto& rules, auto& donerules, std::string currrul
                 return rule;
             }
 
-            auto it = donerules.find(n);
+            const auto it = donerules.find(n);
             if (it != donerules.end()) return it->second;
             rule = convertRules<withTaskTwo>(rules, donerules, rules.at(n));
             // //part 2 (not a good solution, but works)
