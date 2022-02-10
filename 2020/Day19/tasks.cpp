@@ -4,7 +4,7 @@
 #include "../../lib/verifySolution.hpp"
 
 #include <algorithm>
-// #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string.hpp>
 #include <cmath>
 // #include <fstream>
 #include <iostream>
@@ -101,10 +101,6 @@ auto parseInput(auto&& input) {
     messages.reserve(std::distance(it, std::end(input)));
     std::ranges::move(it, std::end(input), std::back_inserter(messages));
 
-<<<<<<< HEAD
-=======
-    // input.resize(std::distance(std::begin(input), it-1));
->>>>>>> 25c47c12a4220996931a5c17e96fe8ee5f588818
     std::unordered_map<int, std::string> inputRules{};
     std::ranges::transform(std::begin(input), it-1, std::inserter(inputRules, std::begin(inputRules)), [](const auto& rule){
         const auto split = Utilities::split(rule, ':');
