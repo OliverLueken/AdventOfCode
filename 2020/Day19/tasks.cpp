@@ -10,19 +10,18 @@
 #include <regex>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 template<bool withTaskTwo>
-std::string convertRules(const auto& rules,
-                         std::map<int, std::string>& donerules,
-                         std::string currrule) {
+std::string convertRules(const auto& rules, auto& donerules, std::string currrule) {
     // std::cout << currrule << std::endl;
 
-    std::string rule;
-    size_t a = currrule.find("|");
+    auto rule = std::string{};
+    auto a = currrule.find("|");
     if (a != std::string::npos) {
-        std::string str1, str2;
-        str1 = currrule.substr(0, a - 1);
-        str2 = currrule.substr(a + 2);
+        //std::string str1, str2;
+        auto str1 = currrule.substr(0, a - 1);
+        auto str2 = currrule.substr(a + 2);
 
         // std::cout << "\"" << str1 << "\"" << "|" << "\"" << str2 << "\"" <<
         // std::endl;
@@ -31,7 +30,7 @@ std::string convertRules(const auto& rules,
     } else {
         a = currrule.find(" ");
         if (a != std::string::npos) {
-            std::vector<std::string> splitvec;
+            auto splitvec = std::vector<std::string>{};
 
             boost::split(splitvec, currrule, boost::is_any_of(" "));
             // for(auto str:splitvec){
@@ -83,9 +82,9 @@ std::string convertRules(const auto& rules,
 }
 
 template<bool withTaskTwo = false>
-std::regex convertRulesToRegex(auto& rules) {
-    std::map<int, std::string> donerules;
-    std::string rule = convertRules<withTaskTwo>(rules, donerules, rules[0]);
+auto convertRulesToRegex(auto& rules) {
+    auto donerules = std::unordered_map<int, std::string>{};
+    const std::string rule = convertRules<withTaskTwo>(rules, donerules, rules[0]);
     // std::cout << rule << std::endl;
     return std::regex(rule);
 }
@@ -101,11 +100,11 @@ auto countValidMessages(const auto& messages, auto& inputRules) {
 auto parseInput(auto&& input) {
     const auto it = std::ranges::find(input, "")+1;
 
-    std::vector<std::string> messages{};
+    auto messages = std::vector<std::string>{};
     messages.reserve(std::distance(it, std::end(input)));
     std::ranges::move(it, std::end(input), std::back_inserter(messages));
 
-    std::unordered_map<int, std::string> inputRules{};
+    auto inputRules = std::unordered_map<int, std::string> {};
     std::ranges::transform(std::begin(input), it-1, std::inserter(inputRules, std::begin(inputRules)), [](const auto& rule){
         const auto split = Utilities::split(rule, ':');
         return std::make_pair( stoi(split[0]), split[1].substr(1) );
