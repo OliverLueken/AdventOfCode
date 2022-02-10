@@ -54,7 +54,7 @@ std::string convertRules(const auto& rules,
 
             auto it = donerules.find(n);
             if (it != donerules.end()) return it->second;
-            rule = convertRules(rules, donerules, rules[n]);
+            rule = convertRules(rules, donerules, rules.at(n));
             // //part 2 (not a good solution, but works)
             // if(n==8) rule+="+";
             // if(n==11){
@@ -94,37 +94,34 @@ auto countValidMessages(const auto& messages, const std::regex& rule) {
     });
 }
 
-auto extractRuleFromMessages(auto& messages) {
-    std::regex rule;
-    std::vector<std::string> rules;
-    for (auto it = messages.begin(); it != messages.end();) {
-        // std::cout << *it << std::endl;
-        if (it->empty()) {
-            messages.erase(it);
-            break;
-        }
+auto parseInput(auto&& input) {
+    const auto it = std::ranges::find(input, "")+1;
 
-        auto pos = stoul(*it);
-        std::string rulestr = it->substr(it->find(":") + 2);
-        if (pos >= rules.size()) rules.resize(pos + 1);
-        rules[pos] = rulestr;
+    std::vector<std::string> messages{};
+    messages.reserve(std::distance(it, std::end(input)));
+    std::ranges::move(it, std::end(input), std::back_inserter(messages));
 
-        it = messages.erase(it);
-    }
+    input.resize(std::distance(std::begin(input), it-1));
+    std::unordered_map<int, std::string> inputRules{};
+    std::ranges::transform(input, std::inserter(inputRules, std::begin(inputRules)), [](const auto& rule){
+        const auto split = Utilities::split(rule, ':');
+        return std::make_pair( stoi(split[0]), split[1].substr(1) );
+    });
 
-    return convertRulesToRegex(rules);
+    assert(inputRules.contains(0));
+    return std::make_pair( std::move(messages), std::move(inputRules) );
 }
 
 int main(){
-    auto input = readFile::vectorOfStrings("input.txt", '\n', true);
-    const auto rule = extractRuleFromMessages(input);
+    auto [messages, inputRules] = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
+    const auto rules = convertRulesToRegex(inputRules);
 
     //Task 1
-    const auto sumOfSolutionsWithLeftToRight = countValidMessages(input, rule);
+    const auto sumOfSolutionsWithLeftToRight = countValidMessages(messages, rules);
     std::cout << "The sum of the solutions evaluated left to right is " << sumOfSolutionsWithLeftToRight << ".\n";
 
     //Task 2
-    const auto sumOfSolutionsWithAdditionBeforeMultiplication = countValidMessages(input, rule);
+    const auto sumOfSolutionsWithAdditionBeforeMultiplication = countValidMessages(messages, rules);
     std::cout << "The sum of the solutions evaluated with the new rules is " << sumOfSolutionsWithAdditionBeforeMultiplication << ".\n";
 
     VerifySolution::verifySolution(sumOfSolutionsWithLeftToRight, sumOfSolutionsWithAdditionBeforeMultiplication);
