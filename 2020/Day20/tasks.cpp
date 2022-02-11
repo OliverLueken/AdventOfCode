@@ -1,4 +1,9 @@
 
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -105,27 +110,16 @@ void doStuff(strvec& input) {
     result2 = countRoughWater(water) - 15 * sneks;
 }
 
-strvec readfile(std::string file) {
-    std::string line;
-    std::ifstream input(file);
-    strvec lines;
-
-    if (input.is_open()) {
-        while (getline(input, line)) {
-            lines.push_back(line);
-        }
-        input.close();
-    } else {
-        std::cout << "Unable to open file\n";
-    }
-    return lines;
-}
-
-int main() {
-    strvec input = readfile("input.txt");
-
+int main(){
+    auto input = readFile::vectorOfStrings("input.txt", '\n', true);
     doStuff(input);
+    //Task 1
+    const auto fourCornerIDsProduct = result1;
+    std::cout << "The product of the IDs of the four corner tiles is " << fourCornerIDsProduct << ".\n";
 
-    std::cout << result1 << "\n";
-    std::cout << result2 << "\n";
+    //Task 2
+    const auto waterRoughness = result2;
+    std::cout << "There are " << waterRoughness << " # not part of the sea monster .\n";
+
+    VerifySolution::verifySolution(fourCornerIDsProduct, waterRoughness);
 }
