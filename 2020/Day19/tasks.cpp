@@ -62,12 +62,21 @@ std::string convertRules(const auto& rules, auto& donerules, const std::string c
     return rule;
 }
 
+auto makeDoneRules = [](const auto& rules){
+    auto donerules = std::unordered_map<int, std::string>{};
+    for(const auto& [id, rule] : rules){
+        const auto it = std::ranges::find(rule, '"');
+        if(it!=rule.end()){
+            donerules[id] = std::string{*(it+1)};
+        }
+    }
+    return donerules;
+};
+
 template<bool withTaskTwo = false>
 auto convertRulesToRegex(auto& rules) {
-    auto donerules = std::unordered_map<int, std::string>{};
-    donerules[64] = "a"; //hardcoding for now
-    donerules[50] = "b"; //make dynamic later
-    const std::string rule = convertRules<withTaskTwo>(rules, donerules, rules[0]);
+    auto donerules = makeDoneRules(rules);
+    const auto rule = convertRules<withTaskTwo>(rules, donerules, rules[0]);
     return std::regex(rule);
 }
 
