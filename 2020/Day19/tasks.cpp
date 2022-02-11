@@ -17,29 +17,23 @@ std::string convertRules(const auto&, auto&, const std::string);
 
 template<bool withTaskTwo>
 std::string innerConversion(const auto& rules, auto& donerules, const auto n){
-    auto rule = std::string{};
+    if (donerules.contains(n)) return donerules[n];
 
-    const auto it = donerules.find(n);
-    if (it != donerules.end()) return it->second;
-    rule = convertRules<withTaskTwo>(rules, donerules, rules.at(n));
+    auto rule = convertRules<withTaskTwo>(rules, donerules, rules.at(n));
+
     // //part 2 (not a good solution, but works)
     if constexpr(withTaskTwo){
         if(n==8) rule+="+";
         if(n==11){
-          std::string rule42 = innerConversion<withTaskTwo>(rules, donerules, 42);
-          std::string rule31 = innerConversion<withTaskTwo>(rules, donerules, 31);
-          std::vector<std::string> t;
-          rule=rule42 + rule31;
-          t.push_back(rule);
-          for(int i=0; i<5; i++){
-             rule = rule42 + t.back() + rule31;
-             t.push_back(rule);
-          }
-          rule=t[0];
-          for(auto i=1ul; i<t.size(); i++){
-            rule=rule + "|" +"(" + t[i] + ")";
-          }
-          rule = "("+rule+")";
+            const auto rule42 = innerConversion<withTaskTwo>(rules, donerules, 42);
+            const auto rule31 = innerConversion<withTaskTwo>(rules, donerules, 31);
+            auto t = rule42 + rule31;
+            rule="((" + t + ")";
+            for(auto i=0; i<5; i++){
+                t = rule42 + t + rule31;
+                rule+= "|(" + t + ")";
+            }
+            rule += ')';
         }
     }
     donerules[n] = rule;
@@ -74,7 +68,6 @@ auto convertRulesToRegex(auto& rules) {
     donerules[64] = "a"; //hardcoding for now
     donerules[50] = "b"; //make dynamic later
     const std::string rule = convertRules<withTaskTwo>(rules, donerules, rules[0]);
-    // std::cout << rule << std::endl;
     return std::regex(rule);
 }
 
