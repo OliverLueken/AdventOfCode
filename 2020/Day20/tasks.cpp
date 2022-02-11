@@ -20,8 +20,6 @@
 typedef std::vector<std::string> strvec;
 typedef std::pair<int, int> point;
 
-unsigned long result1 = 0, result2 = 0;
-
 std::vector<std::vector<size_t>> getSnekPos() {
     std::string snek1 = "                  # ";
     std::string snek2 = "#    ##    ##    ###";
@@ -91,9 +89,9 @@ int countRoughWater(tile& water) {
     return count;
 }
 
-void doStuff(strvec& input) {
+auto doStuff(strvec& input) {
     picture pic(input);
-    result1 = pic.getCornerProd();
+    const auto result1 = pic.getCornerProd();
 
     tile water = pic.picToTile();
     water.print();
@@ -107,12 +105,13 @@ void doStuff(strvec& input) {
         sneks += findSnakes(water);
         water.rotateLeft();
     }
-    result2 = countRoughWater(water) - 15 * sneks;
+    const auto result2 = countRoughWater(water) - 15 * sneks;
+    return std::make_pair(result1, result2);
 }
 
 int main(){
     auto input = readFile::vectorOfStrings("input.txt", '\n', true);
-    doStuff(input);
+    const auto [result1, result2] = doStuff(input);
     //Task 1
     const auto fourCornerIDsProduct = result1;
     std::cout << "The product of the IDs of the four corner tiles is " << fourCornerIDsProduct << ".\n";
