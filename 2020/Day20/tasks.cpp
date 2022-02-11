@@ -89,10 +89,7 @@ int countRoughWater(tile& water) {
     return count;
 }
 
-auto doStuff(strvec& input) {
-    picture pic(input);
-    const auto result1 = pic.getCornerProd();
-
+auto getWaterRoughness(auto& pic) {
     tile water = pic.picToTile();
     water.print();
     int sneks = 0;
@@ -105,19 +102,18 @@ auto doStuff(strvec& input) {
         sneks += findSnakes(water);
         water.rotateLeft();
     }
-    const auto result2 = countRoughWater(water) - 15 * sneks;
-    return std::make_pair(result1, result2);
+    return countRoughWater(water) - 15 * sneks;
 }
 
 int main(){
-    auto input = readFile::vectorOfStrings("input.txt", '\n', true);
-    const auto [result1, result2] = doStuff(input);
+    auto pic = picture{readFile::vectorOfStrings("input.txt", '\n', true)};
+
     //Task 1
-    const auto fourCornerIDsProduct = result1;
+    const auto fourCornerIDsProduct = pic.getCornerProd();
     std::cout << "The product of the IDs of the four corner tiles is " << fourCornerIDsProduct << ".\n";
 
     //Task 2
-    const auto waterRoughness = result2;
+    const auto waterRoughness = getWaterRoughness(pic);
     std::cout << "There are " << waterRoughness << " # not part of the sea monster .\n";
 
     VerifySolution::verifySolution(fourCornerIDsProduct, waterRoughness);

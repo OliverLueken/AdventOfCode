@@ -33,7 +33,7 @@ std::queue<tile> picture::extractTilesFromInput(strvec& input) const {
     return tiles;
 }
 
-picture::picture(strvec& input) {
+picture::picture(std::vector<std::string>&& input) {
     std::queue<tile> tiles;
     tiles = extractTilesFromInput(input);
     numberOfTiles = tiles.size();

@@ -19,7 +19,7 @@ typedef std::pair<int, int> point;
 
 class picture {
    public:
-    picture(strvec& input);
+    picture(std::vector<std::string>&& input);
 
     long getCornerProd() const;
     void print() const;
