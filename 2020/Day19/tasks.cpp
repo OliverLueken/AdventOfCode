@@ -74,14 +74,14 @@ auto makeDoneRules = [](const auto& rules){
 };
 
 template<bool withTaskTwo = false>
-auto convertRulesToRegex(auto& rules) {
+auto convertRulesToRegex(const auto& rules) {
     auto donerules = makeDoneRules(rules);
-    const auto rule = convertRules<withTaskTwo>(rules, donerules, rules[0]);
+    const auto rule = convertRules<withTaskTwo>(rules, donerules, rules.at(0));
     return std::regex(rule);
 }
 
 template<bool isTaskTwo = false>
-auto countValidMessages(const auto& messages, auto& inputRules) {
+auto countValidMessages(const auto& messages, const auto& inputRules) {
     const auto rules = convertRulesToRegex<isTaskTwo>(inputRules);
     return std::ranges::count_if(messages, [&rules](const auto& message){
         return std::regex_match(message, rules);
@@ -106,7 +106,7 @@ auto parseInput(auto&& input) {
 }
 
 int main(){
-    auto [messages, inputRules] = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
+    const auto [messages, inputRules] = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
 
     //Task 1
     const auto validTaskOneMessages = countValidMessages<false>(messages, inputRules);
