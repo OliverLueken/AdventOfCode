@@ -4,7 +4,6 @@
 #include "../../lib/verifySolution.hpp"
 
 #include <algorithm>
-#include <cmath>
 #include <iostream>
 #include <regex>
 #include <string>
@@ -12,71 +11,76 @@
 #include <unordered_map>
 #include <cassert>
 
-template<bool>
-std::string convertRules(const auto&, auto&, const std::string);
 
 template<bool withTaskTwo>
-std::string innerConversion(const auto& rules, auto& donerules, const auto n){
-    if (donerules.contains(n)) return donerules[n];
+std::string convertRule(const auto& inputRules, auto& convertedRules, const auto n){
+    if (convertedRules.contains(n)) return convertedRules[n];
 
-    auto rule = convertRules<withTaskTwo>(rules, donerules, rules.at(n));
+    auto brokenDownRule = std::vector<std::vector<int>>{};
+    std::ranges::transform( Utilities::split( inputRules.at(n), '|'), std::back_inserter(brokenDownRule), [](const auto& ruleSequence){
+        auto ruleNumbers = std::vector<int>{};
+        std::ranges::transform(Utilities::split(ruleSequence, ' '), std::back_inserter(ruleNumbers), [](const auto& stringNumber){
+            return std::stoi(stringNumber);
+        });
+        return ruleNumbers;
+    });
 
-    // //part 2 (not a good solution, but works)
+
+    auto convertSubRule = [&inputRules, &convertedRules](const auto& ruleSequence) -> std::string {
+        auto convertedSubRule = std::string{'('};
+        convertedSubRule.reserve(50);
+        std::ranges::for_each(ruleSequence, [&convertedSubRule, &inputRules, &convertedRules](const auto ruleNumber){
+            convertedSubRule += convertRule<withTaskTwo>(inputRules, convertedRules, ruleNumber);
+        });
+        convertedSubRule += ')';
+        return convertedSubRule;
+    };
+
+    auto convertedRule = std::string{'('};
+    convertedRule.reserve(50);
+    std::ranges::for_each(
+        brokenDownRule | std::views::take(brokenDownRule.size()-1),
+        [&convertedRule, &convertSubRule](const auto& subRule){
+            convertedRule += convertSubRule(subRule) + '|';
+        }
+    );
+    convertedRule += convertSubRule(brokenDownRule.back()) + ')';
+
+    // for Task 2 (not a good solution, but works)
     if constexpr(withTaskTwo){
-        if(n==8) rule+="+";
+        if(n==8) convertedRule+="+";
         if(n==11){
-            const auto rule42 = innerConversion<withTaskTwo>(rules, donerules, 42);
-            const auto rule31 = innerConversion<withTaskTwo>(rules, donerules, 31);
+            const auto rule42 = convertRule<withTaskTwo>(inputRules, convertedRules, 42);
+            const auto rule31 = convertRule<withTaskTwo>(inputRules, convertedRules, 31);
             auto t = rule42 + rule31;
-            rule="((" + t + ")";
+            convertedRule="((" + t + ')';
             for(auto i=0; i<5; i++){
                 t = rule42 + t + rule31;
-                rule+= "|(" + t + ")";
+                convertedRule+= "|(" + t + ')';
             }
-            rule += ')';
+            convertedRule += ')';
         }
     }
-    donerules[n] = rule;
-    return rule;
+    convertedRules[n] = convertedRule;
+    return convertedRule;
 }
 
-template<bool withTaskTwo>
-std::string convertRules(const auto& rules, auto& donerules, const std::string currrule) {
-    auto rule = std::string{};
-    auto brokenDownRule = std::vector<std::vector<std::string>>{};
-    std::ranges::transform( Utilities::split( currrule, '|'), std::back_inserter(brokenDownRule), [](const auto& ruleSequence){
-        return Utilities::split(ruleSequence, ' ');
-    });
-    rule+='(';
-    for(const auto& ruleSequence : brokenDownRule){
-        rule+='(';
-        for(const auto& ruleNumber : ruleSequence){
-            rule+=innerConversion<withTaskTwo>(rules, donerules, std::stoi(ruleNumber));
-        }
-        rule+=')';
-        if(ruleSequence != brokenDownRule.back()){
-            rule+='|';
-        }
-    }
-    rule+=')';
-    return rule;
-}
 
-auto makeDoneRules = [](const auto& rules){
-    auto donerules = std::unordered_map<int, std::string>{};
-    for(const auto& [id, rule] : rules){
+auto makeConvertedRules = [](const auto& inputRules){
+    auto convertedRules = std::unordered_map<int, std::string>{};
+    for(const auto& [id, rule] : inputRules){
         const auto it = std::ranges::find(rule, '"');
         if(it!=rule.end()){
-            donerules[id] = std::string{*(it+1)};
+            convertedRules[id] = std::string{*(it+1)};
         }
     }
-    return donerules;
+    return convertedRules;
 };
 
 template<bool withTaskTwo = false>
-auto convertRulesToRegex(const auto& rules) {
-    auto donerules = makeDoneRules(rules);
-    const auto rule = convertRules<withTaskTwo>(rules, donerules, rules.at(0));
+auto convertRulesToRegex(const auto& inputRules) {
+    auto convertedRules = makeConvertedRules(inputRules);
+    const auto rule = convertRule<withTaskTwo>(inputRules, convertedRules, 0);
     return std::regex(rule);
 }
 
@@ -89,14 +93,14 @@ auto countValidMessages(const auto& messages, const auto& inputRules) {
 }
 
 auto parseInput(auto&& input) {
-    const auto it = std::ranges::find(input, "")+1;
+    const auto messagesStartIt = std::ranges::find(input, "")+1;
 
     auto messages = std::vector<std::string>{};
-    messages.reserve(std::distance(it, std::end(input)));
-    std::ranges::move(it, std::end(input), std::back_inserter(messages));
+    messages.reserve(std::distance(messagesStartIt, std::end(input)));
+    std::ranges::move(messagesStartIt, std::end(input), std::back_inserter(messages));
 
     auto inputRules = std::unordered_map<int, std::string> {};
-    std::ranges::transform(std::begin(input), it-1, std::inserter(inputRules, std::begin(inputRules)), [](const auto& rule){
+    std::ranges::transform(std::begin(input), messagesStartIt-1, std::inserter(inputRules, std::begin(inputRules)), [](const auto& rule){
         const auto split = Utilities::split(rule, ':');
         return std::make_pair( stoi(split[0]), split[1].substr(1) );
     });
