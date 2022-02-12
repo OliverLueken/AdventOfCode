@@ -8,14 +8,10 @@ CPPWARNINGS = -Wall -Wpedantic -Wextra -Wconversion
 CPPSANITIZER = -fsanitize=undefined,address
 CPPFLAGS = -std=c++20 -O3 $(CPPWARNINGS)
 
-all: tasks.out tasks.o Tile.o Picture.o
+all: tasks.out
 
-tasks.out: tasks.o Tile.o Picture.o
-	$(CPP) -o tasks.out tasks.o Tile.o Picture.o $(CPPFLAGS) $(CPPWARNINGS) $(CPPSANITIZER)
-
-tasks.o: tasks.cpp Tile.hpp Picture.hpp
-Picture.o: Picture.hpp Picture.cpp Tile.hpp
-Tile.o: Tile.hpp Tile.cpp
+tasks.out: tasks.cpp Picture.hpp Picture.cpp Tile.hpp Tile.cpp
+	$(CPP) tasks.cpp Picture.cpp Tile.cpp -o tasks.out $(CPPFLAGS) $(CPPWARNINGS) $(CPPSANITIZER)
 
 .PHONY = clean
 clean:
