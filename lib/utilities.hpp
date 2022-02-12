@@ -290,23 +290,26 @@ namespace Utilities{
         return (T(0) < val) - (val < T(0));
     }
 
-    auto solveCRM = [](const std::vector<std::pair<int,int>>& n_and_b_pairs){
-        const auto getXi = [](const auto& N, const auto& n){
-            for(auto x=0u; std::cmp_less(x,n) ; ++x){
-                if((x*N)%n==1) return x;
+    struct solveCRM_{
+        auto operator()(const std::vector<std::pair<int,int>>& n_and_b_pairs){
+            const auto getXi = [](const auto& N, const auto& n){
+                for(auto x=0u; std::cmp_less(x,n) ; ++x){
+                    if((x*N)%n==1) return x;
+                }
+                return 0u;
+            };
+            const auto& n_range = n_and_b_pairs | std::views::elements<0>;
+            const auto N = std::reduce(std::begin(n_range), std::end(n_range), 1ul, std::multiplies<>());
+            auto x = 0ul;
+            for(const auto& p : n_and_b_pairs){
+                const auto N_i = N/p.first;
+                const auto x_i = getXi(N_i, p.first);
+                x+=x_i*N_i*p.second;
             }
-            return 0u;
-        };
-        const auto& n_range = n_and_b_pairs | std::views::elements<0>;
-        const auto N = std::reduce(std::begin(n_range), std::end(n_range), 1ul, std::multiplies<>());
-        auto x = 0ul;
-        for(const auto& p : n_and_b_pairs){
-            const auto N_i = N/p.first;
-            const auto x_i = getXi(N_i, p.first);
-            x+=x_i*N_i*p.second;
+            return x%N;
         }
-        return x%N;
     };
+    inline constexpr solveCRM_ solveCRM;
 }
 
 template<class T>
