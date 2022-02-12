@@ -105,32 +105,22 @@ auto getWaterRoughness(auto& pic) {
 }
 
 
-auto extractTilesFromInput(const auto& input) {
+auto extractTilesFromInput(auto&& input) {
     std::queue<tile> tiles;
-    std::vector<std::string> tilepart;
-    int id{};
-    for (auto& str : input) {
-        if (str.find("Tile") != std::string::npos) {
-            tilepart.clear();
-            id = stoi(str.substr(str.find(" ") + 1));
-            continue;
+    for(auto it = std::begin(input); it<=std::end(input); ++it){
+        const auto id = std::stoi(Utilities::split(*it)[1]);
+        ++it;
+        std::vector<std::string> tempTile{};
+        while(!it->empty() && it!=std::end(input)){
+            tempTile.emplace_back(std::move(*it));
+            ++it;
         }
-        if (str.empty()) {
-            tile t(id, tilepart);
-            // t.print();
-            tiles.push(t);
-            continue;
-        }
-        tilepart.push_back(str);
+        tiles.emplace(id, tempTile);
     }
-    tile t(id, tilepart);
-    // t.print();
-    tiles.push(t);
-
     return tiles;
 }
 
-auto parseInput(const auto& input){
+auto parseInput(auto&& input){
     auto tiles = extractTilesFromInput(input);
     return picture{std::move(tiles)};
 }
