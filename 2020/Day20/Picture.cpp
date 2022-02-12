@@ -1,8 +1,8 @@
 
 #include "Picture.hpp"
 
-void picture::printFreepoints() const {
-    for (auto& p : freepoints) {
+void picture::printFreePositions() const {
+    for (auto& p : freePositions) {
         std::cout << p.first << ", " << p.second << std::endl;
     }
     std::cout << std::endl;
@@ -18,7 +18,7 @@ picture::picture(std::queue<tile>&& tiles) {
         // t.print();
         bool inserted = insertTile(t);
         // rint();
-        // printFreepoints();
+        // printFreePositions();
         if (!inserted) {
             tiles.push(t);
         }
@@ -73,10 +73,10 @@ bool picture::insertTile(tile& t) {
 }
 
 bool picture::tryInsert(tile& t) {
-    for (auto it = freepoints.begin(); it != freepoints.end(); it++) {
-        point p = *it;
+    for (auto it = freePositions.begin(); it != freePositions.end(); it++) {
+        Position p = *it;
         // std::cout << p.first << ", " << p.second << std::endl;
-        std::vector<point> neighbors = getNeighbors(p);
+        std::vector<Position> neighbors = getNeighbors(p);
         bool tileFits = true;
         for (auto neighbor : neighbors) {
             tileFits = doesTileFit(t, p, neighbor);
@@ -85,7 +85,7 @@ bool picture::tryInsert(tile& t) {
 
         if (tileFits) {
             field[p] = t;
-            freepoints.erase(it);
+            freePositions.erase(it);
             updateBounds(p);
             updateFreePoints(p);
             return true;
@@ -94,7 +94,7 @@ bool picture::tryInsert(tile& t) {
     return false;
 }
 
-void picture::updateBounds(point& p) {
+void picture::updateBounds(Position& p) {
     int x = p.first, y = p.second;
     minx = std::min(minx, x);
     maxx = std::max(maxx, x);
@@ -104,13 +104,13 @@ void picture::updateBounds(point& p) {
     height = maxy - miny + 1;
 }
 
-std::vector<point> picture::getNeighbors(point p) const {
-    point l = {p.first - 1, p.second};
-    point r = {p.first + 1, p.second};
-    point u = {p.first, p.second + 1};
-    point d = {p.first, p.second - 1};
+std::vector<Position> picture::getNeighbors(Position p) const {
+    Position l = {p.first - 1, p.second};
+    Position r = {p.first + 1, p.second};
+    Position u = {p.first, p.second + 1};
+    Position d = {p.first, p.second - 1};
 
-    std::vector<point> neighbors;
+    std::vector<Position> neighbors;
     if (field.find(l) != field.end()) neighbors.push_back(l);
     if (field.find(r) != field.end()) neighbors.push_back(r);
     if (field.find(u) != field.end()) neighbors.push_back(u);
@@ -119,7 +119,7 @@ std::vector<point> picture::getNeighbors(point p) const {
     return neighbors;
 }
 
-bool picture::doesTileFit(tile& t, point& tp, point& np) const {
+bool picture::doesTileFit(tile& t, Position& tp, Position& np) const {
     tile n = field.at(np);
     if (tp.first < np.first) {  // left
         // std::cout << "left\n";
@@ -146,22 +146,22 @@ bool picture::doesTileFit(tile& t, point& tp, point& np) const {
     return true;
 }
 
-bool picture::outOfBounds(point& p) const {
+bool picture::outOfBounds(Position& p) const {
     if (!maxBoundsFound) return false;
     int x = p.first;
     int y = p.second;
     return x < minx || maxx < x || y < miny || maxy < y;
 }
 
-void picture::updateFreePoints(point& p) {
+void picture::updateFreePoints(Position& p) {
     if (!maxBoundsFound) {
         if (length * height == numberOfTiles) {
             maxBoundsFound = true;
 
-            for (auto it = freepoints.begin(); it != freepoints.end();) {
-                point p_ = *it;
+            for (auto it = freePositions.begin(); it != freePositions.end();) {
+                Position p_ = *it;
                 if (outOfBounds(p_)) {
-                    it = freepoints.erase(it);
+                    it = freePositions.erase(it);
                 } else {
                     it++;
                 }
@@ -169,15 +169,15 @@ void picture::updateFreePoints(point& p) {
         }
     }
 
-    point l = {p.first - 1, p.second};
-    point r = {p.first + 1, p.second};
-    point u = {p.first, p.second + 1};
-    point d = {p.first, p.second - 1};
+    Position l = {p.first - 1, p.second};
+    Position r = {p.first + 1, p.second};
+    Position u = {p.first, p.second + 1};
+    Position d = {p.first, p.second - 1};
 
-    if (!outOfBounds(l) && field.find(l) == field.end()) freepoints.insert(l);
-    if (!outOfBounds(r) && field.find(r) == field.end()) freepoints.insert(r);
-    if (!outOfBounds(u) && field.find(u) == field.end()) freepoints.insert(u);
-    if (!outOfBounds(d) && field.find(d) == field.end()) freepoints.insert(d);
+    if (!outOfBounds(l) && field.find(l) == field.end()) freePositions.insert(l);
+    if (!outOfBounds(r) && field.find(r) == field.end()) freePositions.insert(r);
+    if (!outOfBounds(u) && field.find(u) == field.end()) freePositions.insert(u);
+    if (!outOfBounds(d) && field.find(d) == field.end()) freePositions.insert(d);
 }
 
 tile picture::picToTile() const {

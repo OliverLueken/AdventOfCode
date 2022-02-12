@@ -3,7 +3,7 @@
 #include <iostream>
 
 void tile::rotateLeft() {
-    strvec newdata(data.size());
+    std::vector<std::string> newdata(data.size());
     for (auto& s : data) {
         for (auto i = 0ul; i < s.size(); i++) {
             newdata[s.size() - i - 1].push_back(s[i]);
@@ -13,7 +13,7 @@ void tile::rotateLeft() {
 }
 
 void tile::flip() {
-    strvec newdata;
+    std::vector<std::string> newdata;
     for (auto it = data.rbegin(); it != data.rend(); it++)
         newdata.push_back(*it);
     data = newdata;

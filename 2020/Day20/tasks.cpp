@@ -17,8 +17,7 @@
 #include "Picture.hpp"
 #include "Tile.hpp"
 
-typedef std::vector<std::string> strvec;
-typedef std::pair<int, int> point;
+using Position = Utilities::Position<int>;
 
 std::vector<std::vector<size_t>> getSnekPos() {
     std::string snek1 = "                  # ";
@@ -106,9 +105,9 @@ auto getWaterRoughness(auto& pic) {
 }
 
 
-auto extractTilesFromInput(const strvec& input) {
+auto extractTilesFromInput(const auto& input) {
     std::queue<tile> tiles;
-    strvec tilepart;
+    std::vector<std::string> tilepart;
     int id{};
     for (auto& str : input) {
         if (str.find("Tile") != std::string::npos) {
@@ -132,9 +131,7 @@ auto extractTilesFromInput(const strvec& input) {
 }
 
 auto parseInput(const auto& input){
-    // std::queue<tile> tiles;
     auto tiles = extractTilesFromInput(input);
-
     return picture{std::move(tiles)};
 }
 

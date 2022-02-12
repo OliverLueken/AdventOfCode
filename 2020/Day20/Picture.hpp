@@ -1,6 +1,8 @@
 #ifndef PICTURE_HPP
 #define PICTURE_HPP
 
+#include "../../lib/utilities.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -13,8 +15,7 @@
 
 #include "Tile.hpp"
 
-typedef std::vector<std::string> strvec;
-typedef std::pair<int, int> point;
+using Position = Utilities::Position<int>;
 
 
 class picture {
@@ -27,8 +28,8 @@ class picture {
     tile picToTile() const;
 
    private:
-    std::map<point, tile> field;
-    std::set<point> freepoints;
+    std::map<Position, tile> field;
+    std::set<Position> freePositions;
 
     int maxx, minx, maxy, miny;
     unsigned long length;
@@ -38,12 +39,12 @@ class picture {
 
     bool insertTile(tile& t);
     bool tryInsert(tile& t);
-    std::vector<point> getNeighbors(point p) const;
-    bool doesTileFit(tile& t, point& tp, point& np) const;
-    void updateFreePoints(point& p);
-    void printFreepoints() const;
-    void updateBounds(point& p);
-    bool outOfBounds(point& p) const;
+    std::vector<Position> getNeighbors(Position p) const;
+    bool doesTileFit(tile& t, Position& tp, Position& np) const;
+    void updateFreePoints(Position& p);
+    void printFreePositions() const;
+    void updateBounds(Position& p);
+    bool outOfBounds(Position& p) const;
 };
 //========================== Picture header end ===============================
 

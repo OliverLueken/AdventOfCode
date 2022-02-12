@@ -4,17 +4,15 @@
 #include <string>
 #include <vector>
 
-typedef std::vector<std::string> strvec;
-
 
 //========================== Tile header start =================================
 class tile {
    public:
-    strvec data;
+    std::vector<std::string> data;
     int id;
 
     tile() : data(), id(){};
-    tile(int i, strvec& d) : data(d), id(i){};
+    tile(int i, std::vector<std::string>& d) : data(d), id(i){};
 
     void rotateLeft();
     void flip();
