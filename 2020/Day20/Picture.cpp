@@ -8,34 +8,7 @@ void picture::printFreepoints() const {
     std::cout << std::endl;
 }
 
-std::queue<tile> picture::extractTilesFromInput(strvec& input) const {
-    std::queue<tile> tiles;
-    strvec tilepart;
-    int id{};
-    for (auto& str : input) {
-        if (str.find("Tile") != std::string::npos) {
-            tilepart.clear();
-            id = stoi(str.substr(str.find(" ") + 1));
-            continue;
-        }
-        if (str.empty()) {
-            tile t(id, tilepart);
-            // t.print();
-            tiles.push(t);
-            continue;
-        }
-        tilepart.push_back(str);
-    }
-    tile t(id, tilepart);
-    // t.print();
-    tiles.push(t);
-
-    return tiles;
-}
-
-picture::picture(std::vector<std::string>&& input) {
-    std::queue<tile> tiles;
-    tiles = extractTilesFromInput(input);
+picture::picture(std::queue<tile>&& tiles) {
     numberOfTiles = tiles.size();
     maxBoundsFound = false;
 

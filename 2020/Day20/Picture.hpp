@@ -19,7 +19,7 @@ typedef std::pair<int, int> point;
 
 class picture {
    public:
-    picture(std::vector<std::string>&& input);
+    picture(std::queue<tile>&& input);
 
     long getCornerProd() const;
     void print() const;
@@ -37,7 +37,6 @@ class picture {
     bool maxBoundsFound;
 
     bool insertTile(tile& t);
-    std::queue<tile> extractTilesFromInput(strvec& input) const;
     bool tryInsert(tile& t);
     std::vector<point> getNeighbors(point p) const;
     bool doesTileFit(tile& t, point& tp, point& np) const;

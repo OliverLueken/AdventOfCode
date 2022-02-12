@@ -105,8 +105,41 @@ auto getWaterRoughness(auto& pic) {
     return countRoughWater(water) - 15 * sneks;
 }
 
+
+auto extractTilesFromInput(const strvec& input) {
+    std::queue<tile> tiles;
+    strvec tilepart;
+    int id{};
+    for (auto& str : input) {
+        if (str.find("Tile") != std::string::npos) {
+            tilepart.clear();
+            id = stoi(str.substr(str.find(" ") + 1));
+            continue;
+        }
+        if (str.empty()) {
+            tile t(id, tilepart);
+            // t.print();
+            tiles.push(t);
+            continue;
+        }
+        tilepart.push_back(str);
+    }
+    tile t(id, tilepart);
+    // t.print();
+    tiles.push(t);
+
+    return tiles;
+}
+
+auto parseInput(const auto& input){
+    // std::queue<tile> tiles;
+    auto tiles = extractTilesFromInput(input);
+
+    return picture{std::move(tiles)};
+}
+
 int main(){
-    auto pic = picture{readFile::vectorOfStrings("input.txt", '\n', true)};
+    auto pic = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
 
     //Task 1
     const auto fourCornerIDsProduct = pic.getCornerProd();
