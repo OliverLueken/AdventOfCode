@@ -13,18 +13,13 @@ picture::picture(std::queue<tile>&& tiles) {
     maxBoundsFound = false;
 
     while (!tiles.empty()) {
-        tile t = tiles.front();
+        auto tile = tiles.front();
         tiles.pop();
-        // t.print();
-        bool inserted = insertTile(t);
-        // rint();
-        // printFreePositions();
+        const auto inserted = insertTile(tile);
         if (!inserted) {
-            tiles.push(t);
+            tiles.push(std::move(tile));
         }
-        // std::cin.get();
     }
-    // print();
 }
 
 long picture::getCornerProd() const {
@@ -45,56 +40,50 @@ void picture::print() const {
     std::cout << "Printing picture done\n\n";
 }
 
-bool picture::insertTile(tile& t) {
+bool picture::insertTile(tile& tile) {
     if (field.empty()) {
-        std::pair<int, int> origin = {0, 0};
-        field[origin] = t;
-        maxx = 0;
-        minx = 0;
-        miny = 0;
-        maxy = 0;
-        length = 1;
-        height = 1;
+        const auto origin = Position{0, 0};
+        field[origin] = tile;
         updateFreePoints(origin);
         return true;
     }
     for (int i = 0; i < 4; i++) {
-        bool inserted = tryInsert(t);
+        bool inserted = tryInsert(tile);
         if (inserted) return true;
-        t.rotateLeft();
+        tile.rotateLeft();
     }
-    t.flip();
+    tile.flip();
     for (int i = 0; i < 4; i++) {
-        bool inserted = tryInsert(t);
+        bool inserted = tryInsert(tile);
         if (inserted) return true;
-        t.rotateLeft();
+        tile.rotateLeft();
     }
     return false;
 }
 
-bool picture::tryInsert(tile& t) {
-    for (auto it = freePositions.begin(); it != freePositions.end(); it++) {
-        Position p = *it;
+bool picture::tryInsert(tile& tile) {
+    for (const auto& p : freePositions) {
+        // Position p = *it;
         // std::cout << p.first << ", " << p.second << std::endl;
-        std::vector<Position> neighbors = getNeighbors(p);
-        bool tileFits = true;
-        for (auto neighbor : neighbors) {
-            tileFits = doesTileFit(t, p, neighbor);
+        const auto neighbors = getNeighbors(p);
+        auto tileFits = true;
+        for (const auto& neighbor : neighbors) {
+            tileFits = doesTileFit(tile, p, neighbor);
             if (!tileFits) break;
         }
 
         if (tileFits) {
-            field[p] = t;
-            freePositions.erase(it);
+            field[p] = std::move(tile);
             updateBounds(p);
             updateFreePoints(p);
+            freePositions.erase(p);
             return true;
         }
     }
     return false;
 }
 
-void picture::updateBounds(Position& p) {
+void picture::updateBounds(const Position& p) {
     int x = p.first, y = p.second;
     minx = std::min(minx, x);
     maxx = std::max(maxx, x);
@@ -104,7 +93,7 @@ void picture::updateBounds(Position& p) {
     height = maxy - miny + 1;
 }
 
-std::vector<Position> picture::getNeighbors(Position p) const {
+std::vector<Position> picture::getNeighbors(const Position& p) const {
     Position l = {p.first - 1, p.second};
     Position r = {p.first + 1, p.second};
     Position u = {p.first, p.second + 1};
@@ -119,7 +108,7 @@ std::vector<Position> picture::getNeighbors(Position p) const {
     return neighbors;
 }
 
-bool picture::doesTileFit(tile& t, Position& tp, Position& np) const {
+bool picture::doesTileFit(const tile& t, const Position& tp, const Position& np) const {
     tile n = field.at(np);
     if (tp.first < np.first) {  // left
         // std::cout << "left\n";
@@ -153,7 +142,7 @@ bool picture::outOfBounds(Position& p) const {
     return x < minx || maxx < x || y < miny || maxy < y;
 }
 
-void picture::updateFreePoints(Position& p) {
+void picture::updateFreePoints(const Position& p) {
     if (!maxBoundsFound) {
         if (length * height == numberOfTiles) {
             maxBoundsFound = true;

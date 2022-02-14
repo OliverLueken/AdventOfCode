@@ -31,19 +31,22 @@ class picture {
     std::map<Position, tile> field;
     std::set<Position> freePositions;
 
-    int maxx, minx, maxy, miny;
-    unsigned long length;
-    unsigned long height;
+    int maxx{0};
+    int minx{0};
+    int maxy{0};
+    int miny{0};
+    unsigned long length{1};
+    unsigned long height{1};
     unsigned long numberOfTiles;
     bool maxBoundsFound;
 
     bool insertTile(tile& t);
     bool tryInsert(tile& t);
-    std::vector<Position> getNeighbors(Position p) const;
-    bool doesTileFit(tile& t, Position& tp, Position& np) const;
-    void updateFreePoints(Position& p);
+    std::vector<Position> getNeighbors(const Position& p) const;
+    bool doesTileFit(const tile& t, const Position& tp, const Position& np) const;
+    void updateFreePoints(const Position& p);
     void printFreePositions() const;
-    void updateBounds(Position& p);
+    void updateBounds(const Position& p);
     bool outOfBounds(Position& p) const;
 };
 //========================== Picture header end ===============================
