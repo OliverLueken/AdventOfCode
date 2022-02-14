@@ -63,16 +63,11 @@ bool picture::insertTile(tile& tile) {
 
 bool picture::tryInsert(tile& tile) {
     for (const auto& p : freePositions) {
-        // Position p = *it;
-        // std::cout << p.first << ", " << p.second << std::endl;
-        const auto neighbors = getNeighbors(p);
-        auto tileFits = true;
-        for (const auto& neighbor : neighbors) {
-            tileFits = doesTileFit(tile, p, neighbor);
-            if (!tileFits) break;
-        }
+        const auto tileFits = doesTileFit(tile, p);
 
         if (tileFits) {
+            std::cout << "Tile " << tile.id << " fits.\n";
+            tile.print();
             field[p] = std::move(tile);
             updateBounds(p);
             updateFreePoints(p);
@@ -93,45 +88,40 @@ void picture::updateBounds(const Position& p) {
     height = maxy - miny + 1;
 }
 
-std::vector<Position> picture::getNeighbors(const Position& p) const {
-    Position l = {p.first - 1, p.second};
-    Position r = {p.first + 1, p.second};
-    Position u = {p.first, p.second + 1};
-    Position d = {p.first, p.second - 1};
+bool picture::doesTileFit(const tile& t, const Position& p) const {
+    Position l = {p.first - 1, p.second    };
+    Position r = {p.first + 1, p.second    };
+    Position u = {p.first    , p.second + 1};
+    Position d = {p.first    , p.second - 1};
 
-    std::vector<Position> neighbors;
-    if (field.find(l) != field.end()) neighbors.push_back(l);
-    if (field.find(r) != field.end()) neighbors.push_back(r);
-    if (field.find(u) != field.end()) neighbors.push_back(u);
-    if (field.find(d) != field.end()) neighbors.push_back(d);
-
-    return neighbors;
-}
-
-bool picture::doesTileFit(const tile& t, const Position& tp, const Position& np) const {
-    tile n = field.at(np);
-    if (tp.first < np.first) {  // left
-        // std::cout << "left\n";
+    if (field.contains(l)){
+        tile n = field.at(l);
+        auto fits = true;
         for (auto i = 0ul; i < t.data.size(); i++) {
-            if (t.data[i].back() != n.data[i].front()) return false;
+            if (t.data[i].front() != n.data[i].back()){
+                fits = false;
+            };
         }
-    } else {
-        if (tp.first > np.first) {  // right
-            // std::cout << "right\n";
-            for (auto i = 0ul; i < t.data.size(); i++) {
-                if (n.data[i].back() != t.data[i].front()) return false;
-            }
-        } else {
-            if (tp.second > np.second) {  // up
-                // std::cout << "up\n";
-                return t.data.back() == n.data.front();
-            } else {  // down
-                // std::cout << "down\n";
-                return t.data.front() == n.data.back();
-            }
-        }
+        if(!fits) return false;
     }
-
+    if (field.contains(r)){
+        tile n = field.at(r);
+        auto fits = true;
+        for (auto i = 0ul; i < t.data.size(); i++) {
+            if (t.data[i].back() != n.data[i].front()){
+                fits = false;
+            };
+        }
+        if(!fits) return false;
+    }
+    if (field.contains(u)){
+        tile n = field.at(u);
+        if(t.data.front() != n.data.back()) return false;
+    }
+    if (field.contains(d)){
+        tile n = field.at(d);
+        if(t.data.back() != n.data.front()) return false;
+    }
     return true;
 }
 

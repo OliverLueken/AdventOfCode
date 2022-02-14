@@ -42,8 +42,7 @@ class picture {
 
     bool insertTile(tile& t);
     bool tryInsert(tile& t);
-    std::vector<Position> getNeighbors(const Position& p) const;
-    bool doesTileFit(const tile& t, const Position& tp, const Position& np) const;
+    bool doesTileFit(const tile& t, const Position& tp) const;
     void updateFreePoints(const Position& p);
     void printFreePositions() const;
     void updateBounds(const Position& p);
