@@ -317,9 +317,6 @@ namespace Matrix{
     void print(const T& value, const char separator = ' '){
         std::cout << value << separator;
     }
-    void print(const std::string& value, const char separator = ' '){
-        std::cout << value << separator;
-    }
 
     template<Container C>
     auto print(const C& c, const char separator = ' '){
