@@ -2,6 +2,7 @@
 #define PICTURE_HPP
 
 #include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
 
 #include <algorithm>
 #include <cmath>

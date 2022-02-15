@@ -4,15 +4,17 @@
 #include <string>
 #include <vector>
 
+#include "../../lib/matrix.hpp"
+
 
 //========================== Tile header start =================================
-class tile {
+class tile : public Matrix::Matrix<char> {
    public:
-    std::vector<std::string> data;
-    int id;
+    int id{};
 
-    tile() : data(), id(){};
-    tile(int i, std::vector<std::string>& d) : data(d), id(i){};
+    tile() = default;
+    tile(       unsigned long rows, unsigned long cols)                 : Matrix::Matrix<char>(rows, cols),    id(0){};
+    tile(int i, unsigned long rows, unsigned long cols, std::string& d) : Matrix::Matrix<char>(rows, cols, d), id(i){};
 
     void rotateLeft();
     void flip();

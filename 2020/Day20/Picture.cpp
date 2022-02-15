@@ -41,6 +41,7 @@ void picture::print() const {
 }
 
 bool picture::insertTile(tile& tile) {
+
     if (field.empty()) {
         const auto origin = Position{0, 0};
         field[origin] = tile;
@@ -64,10 +65,7 @@ bool picture::insertTile(tile& tile) {
 bool picture::tryInsert(tile& tile) {
     for (const auto& p : freePositions) {
         const auto tileFits = doesTileFit(tile, p);
-
         if (tileFits) {
-            std::cout << "Tile " << tile.id << " fits.\n";
-            tile.print();
             field[p] = std::move(tile);
             updateBounds(p);
             updateFreePoints(p);
@@ -94,33 +92,47 @@ bool picture::doesTileFit(const tile& t, const Position& p) const {
     Position u = {p.first    , p.second + 1};
     Position d = {p.first    , p.second - 1};
 
+    const auto [n,m] = t.size();
+
     if (field.contains(l)){
-        tile n = field.at(l);
+        tile neighborTile = field.at(l);
         auto fits = true;
-        for (auto i = 0ul; i < t.data.size(); i++) {
-            if (t.data[i].front() != n.data[i].back()){
+        for(auto i = 0ul; i < n; ++i) {
+            if( t(i,0) != neighborTile(i,m-1) ){
                 fits = false;
             };
         }
         if(!fits) return false;
     }
     if (field.contains(r)){
-        tile n = field.at(r);
+        tile neighborTile = field.at(r);
         auto fits = true;
-        for (auto i = 0ul; i < t.data.size(); i++) {
-            if (t.data[i].back() != n.data[i].front()){
+        for (auto i = 0ul; i < n; ++i) {
+            if(t(i,m-1) != neighborTile(i,0) ){
                 fits = false;
             };
         }
         if(!fits) return false;
     }
     if (field.contains(u)){
-        tile n = field.at(u);
-        if(t.data.front() != n.data.back()) return false;
+        tile neighborTile = field.at(u);
+        auto fits = true;
+        for (auto i = 0ul; i < m; ++i) {
+            if(t(0, i) != neighborTile(n-1,i) ){
+                fits = false;
+            };
+        }
+        if(!fits) return false;
     }
     if (field.contains(d)){
-        tile n = field.at(d);
-        if(t.data.back() != n.data.front()) return false;
+        tile neighborTile = field.at(d);
+        auto fits = true;
+        for (auto i = 0ul; i < m; ++i) {
+            if(t(n-1, i) != neighborTile(0,i) ){
+                fits = false;
+            };
+        }
+        if(!fits) return false;
     }
     return true;
 }
@@ -160,18 +172,16 @@ void picture::updateFreePoints(const Position& p) {
 }
 
 tile picture::picToTile() const {
-    tile water;
-    // auto tileLength = field.at({0, 0}).data.at(0).size();
-    auto tileHeight = field.at({0, 0}).data.size();
-    for (int y = maxy; y >= miny; y--) {
-        for (auto tiley = 1ul; tiley < tileHeight - 1; tiley++) {
-            std::string s;
-
-            for (int x = minx; x <= maxx; x++) {
-                std::string tilestr = field.at({x, y}).data.at(tiley);
-                s.append(tilestr.substr(1, tilestr.size() - 2));
+    auto [tileHeight, tileLength] = field.begin()->second.size();
+    auto water = tile{ (maxy-miny+1)*(tileHeight-2), (maxx-minx+1)*(tileHeight-2) };
+    for(auto tiley = maxy; tiley>=miny; --tiley){
+        for(auto y = 0ul; y<tileHeight-2; ++y){
+            for(auto tilex = minx; tilex<=maxx; ++tilex){
+                const auto& tile = field.at({tilex, tiley});
+                for(auto x = 0ul; x<tileHeight-2; ++x){
+                    water( (maxy-tiley)*(tileHeight-2)+y, (tilex-minx)*(tileHeight-2)+x ) = tile(y+1, x+1);
+                }
             }
-            water.data.push_back(s);
         }
     }
     return water;

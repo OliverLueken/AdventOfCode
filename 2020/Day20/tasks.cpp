@@ -50,22 +50,24 @@ std::vector<std::vector<size_t>> getSnekPos() {
     return pos;
 }
 
-bool isSnek(auto x, auto y, std::vector<size_t>& snekpos, tile& water) {
-    std::string s = water.data[y].substr(x);
+bool isSnek(auto x, auto y, std::vector<size_t>& snekpos, auto& water) {
+    // std::string s = water.data[y].substr(x);
 
     for (size_t i : snekpos) {
-        if (s[i] != '#') return false;
+        if( water(y, x+i) != '#' ) return false;
+        // if (s[i] != '#') return false;
     }
     return true;
 }
 
-int findSnakes(tile& water) {
+int findSnakes(auto& water) {
     std::vector<std::vector<size_t>> pos = getSnekPos();
     int sneks = 0;
-    for (auto y = 0ul; y < water.data.size() - 2; y++) {
-        for (auto x = 0ul; x < water.data[y].size() - 19; x++) {
+    const auto [n,m] = water.size();
+    for (auto y = 0ul; y < n-2; y++) {
+        for (auto x = 0ul; x < m - 19; x++) {
             // std::cout << "findSnakes: " << x << ", " << y << std::endl;
-            bool isSnake = isSnek(x, y, pos[0], water) &&
+            bool isSnake = isSnek(x, y,     pos[0], water) &&
                            isSnek(x, y + 1, pos[1], water) &&
                            isSnek(x, y + 2, pos[2], water);
 
@@ -75,22 +77,24 @@ int findSnakes(tile& water) {
     return sneks;
 }
 
-int countRoughWater(tile& water) {
-    int count = 0;
-    for (auto y = 0ul; y < water.data.size(); y++) {
-        std::string s = water.data[y];
-        size_t p = s.find("#");
-        while (p != std::string::npos) {
-            count++;
-            p = s.find("#", p + 1);
-        }
-    }
-    return count;
+auto countRoughWater(auto& water) {
+    return std::ranges::count(water, '#');
+    // int count = 0;
+    // const auto [n,m] = water.size();
+    // for (auto y = 0ul; y < n; y++) {
+    //     std::string s = water.data[y];
+    //     size_t p = s.find("#");
+    //     while (p != std::string::npos) {
+    //         count++;
+    //         p = s.find("#", p + 1);
+    //     }
+    // }
+    // return count;
 }
 
 auto getWaterRoughness(auto& pic) {
-    tile water = pic.picToTile();
-    water.print();
+    auto water = pic.picToTile();
+    // print(water);
     int sneks = 0;
     for (int i = 0; i < 4; i++) {
         sneks += findSnakes(water);
@@ -110,12 +114,21 @@ auto extractTilesFromInput(auto&& input) {
     for(auto it = std::begin(input); it<=std::end(input); ++it){
         const auto id = std::stoi(Utilities::split(*it)[1]);
         ++it;
-        std::vector<std::string> tempTile{};
+        // std::vector<std::string> tempTile{};
+        std::string tempTileData{};
+        auto rows = 0;
+        const auto cols = it->size();
         while(!it->empty() && it!=std::end(input)){
-            tempTile.emplace_back(std::move(*it));
+            ++rows;
+            tempTileData+=std::move(*it);
+            // tempTile.emplace_back(std::move(*it));
             ++it;
         }
-        tiles.emplace(id, tempTile);
+        // std::cout << rows << ' ' << cols << '\n';
+        // std::cout << id << '\n';
+        // std::cout << tempTileData << '\n';
+        // tiles.emplace(id, tempTile);
+        tiles.emplace(id, rows, cols, tempTileData);
     }
     return tiles;
 }
