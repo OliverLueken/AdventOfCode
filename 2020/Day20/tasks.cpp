@@ -67,10 +67,6 @@ int findSnakes(auto& water) {
     return sneks;
 }
 
-auto countRoughWater(auto& water) {
-    return std::ranges::count(water, '#');
-}
-
 auto getWaterRoughness(auto& pic) {
     auto water = pic.picToTile();
     int sneks = 0;
@@ -83,7 +79,7 @@ auto getWaterRoughness(auto& pic) {
         sneks += findSnakes(water);
         water.rotateLeft();
     }
-    return countRoughWater(water) - 15 * sneks;
+    return std::ranges::count(water, '#') - 15 * sneks;
 }
 
 
