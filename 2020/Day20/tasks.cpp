@@ -44,15 +44,15 @@ std::vector<std::vector<size_t>> getSnekPos() {
     return pos;
 }
 
-bool isSnek(auto x, auto y, std::vector<size_t>& snekpos, auto& water) {
-    for (size_t i : snekpos) {
+bool isSnek(const auto x, const auto y, const auto& snekpos, const auto& water) {
+    for (const auto i : snekpos) {
         if( water(y, x+i) != '#' ) return false;
     }
     return true;
 }
 
-int findSnakes(auto& water) {
-    std::vector<std::vector<size_t>> pos = getSnekPos();
+int findSnakes(const auto& water) {
+    const std::vector<std::vector<size_t>> pos = getSnekPos();
     int sneks = 0;
     const auto [n,m] = water.size();
     for (auto y = 0ul; y < n-2; y++) {
@@ -67,7 +67,7 @@ int findSnakes(auto& water) {
     return sneks;
 }
 
-auto getWaterRoughness(auto& pic) {
+auto getWaterRoughness(const auto& pic) {
     auto water = pic.picToTile();
     int sneks = 0;
     for (int i = 0; i < 4; i++) {
@@ -79,7 +79,7 @@ auto getWaterRoughness(auto& pic) {
         sneks += findSnakes(water);
         water.rotateLeft();
     }
-    return std::ranges::count(water, '#') - 15 * sneks;
+    return std::ranges::count(water, '#') - 15*sneks;
 }
 
 
@@ -107,7 +107,7 @@ auto parseInput(auto&& input){
 }
 
 int main(){
-    auto pic = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
+    const auto pic = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
 
     //Task 1
     const auto fourCornerIDsProduct = pic.getCornerProd();
