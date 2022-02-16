@@ -1,12 +1,6 @@
 
 #include "Picture.hpp"
 
-void picture::printFreePositions() const {
-    for (auto& p : freePositions) {
-        std::cout << p.first << ", " << p.second << std::endl;
-    }
-    std::cout << std::endl;
-}
 
 picture::picture(std::queue<tile>&& tiles) {
     numberOfTiles = tiles.size();

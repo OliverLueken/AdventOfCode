@@ -43,7 +43,6 @@ class picture {
     bool tryInsert(tile& t);
     bool doesTileFit(const tile& t, const Position& tp) const;
     void updateFreePoints(const Position& p);
-    void printFreePositions() const;
     void updateBounds(const Position& p);
     bool outOfBounds(Position& p) const;
 };
