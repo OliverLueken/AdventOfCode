@@ -5,14 +5,12 @@
 #include "../../lib/matrix.hpp"
 
 #include <algorithm>
-#include <cmath>
-#include <fstream>
 #include <iostream>
-#include <queue>
-#include <regex>
-#include <set>
+#include <unordered_set>
+#include <unordered_map>
 #include <string>
 #include <vector>
+#include <queue>
 
 #include "Tile.hpp"
 
@@ -29,8 +27,8 @@ class picture {
     tile picToTile() const;
 
    private:
-    std::map<Position, tile> field;
-    std::set<Position> freePositions;
+    std::unordered_map<Position, tile> field;
+    std::unordered_set<Position> freePositions;
 
     int maxx{0};
     int minx{0};
