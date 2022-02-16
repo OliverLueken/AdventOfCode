@@ -13,6 +13,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "Picture.hpp"
 #include "Tile.hpp"
@@ -30,11 +31,12 @@ auto getSnekPos() {
         size_t p;
         p = snek[i].find('#');
         while (p != std::string::npos) {
-            pos[i].push_back(p);
+            pos.emplace(std::make_pair(i, p));
             p = snek[i].find('#', p + 1);
         }
     };
-    std::array<std::vector<size_t>, 3> pos{};
+
+    std::unordered_set<Position> pos{};
     addSnekPositions(pos, 0);
     addSnekPositions(pos, 1);
     addSnekPositions(pos, 2);
@@ -42,10 +44,10 @@ auto getSnekPos() {
 }
 
 bool isSnek(const auto x, const auto y, const auto& snekpos, const auto& water) {
-    for (const auto i : snekpos) {
-        if( water(y, x+i) != '#' ) return false;
-    }
-    return true;
+    return std::ranges::all_of(snekpos, [x, y, &water](const auto& pos){
+        const auto& [posy, posx] = pos;
+        return water(y+posy, x+posx) == '#';
+    });
 }
 
 int findSnakes(const auto& water) {
@@ -54,9 +56,7 @@ int findSnakes(const auto& water) {
     const auto [n,m] = water.size();
     for (auto y = 0ul; y < n-2; y++) {
         for (auto x = 0ul; x < m - 19; x++) {
-            bool isSnake = isSnek(x, y,     pos[0], water) &&
-                           isSnek(x, y + 1, pos[1], water) &&
-                           isSnek(x, y + 2, pos[2], water);
+            auto isSnake = isSnek(x, y, pos, water);
 
             if (isSnake) sneks++;
         }
