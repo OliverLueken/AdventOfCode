@@ -19,28 +19,25 @@
 
 using Position = Utilities::Position<int>;
 
-std::vector<std::vector<size_t>> getSnekPos() {
-    std::string snek1 = "                  # ";
-    std::string snek2 = "#    ##    ##    ###";
-    std::string snek3 = " #  #  #  #  #  #   ";
+auto getSnekPos() {
+    const auto snek = std::array<std::string, 3>{
+        "                  # ",
+        "#    ##    ##    ###",
+        " #  #  #  #  #  #   "
+    };
 
-    std::vector<std::vector<size_t>> pos(3);
-    size_t p;
-    p = snek1.find("#");
-    while (p != std::string::npos) {
-        pos[0].push_back(p);
-        p = snek1.find("#", p + 1);
-    }
-    p = snek2.find("#");
-    while (p != std::string::npos) {
-        pos[1].push_back(p);
-        p = snek2.find("#", p + 1);
-    }
-    p = snek3.find("#");
-    while (p != std::string::npos) {
-        pos[2].push_back(p);
-        p = snek3.find("#", p + 1);
-    }
+    auto addSnekPositions = [&snek](auto& pos, const auto i){
+        size_t p;
+        p = snek[i].find('#');
+        while (p != std::string::npos) {
+            pos[i].push_back(p);
+            p = snek[i].find('#', p + 1);
+        }
+    };
+    std::array<std::vector<size_t>, 3> pos{};
+    addSnekPositions(pos, 0);
+    addSnekPositions(pos, 1);
+    addSnekPositions(pos, 2);
     return pos;
 }
 
@@ -52,7 +49,7 @@ bool isSnek(const auto x, const auto y, const auto& snekpos, const auto& water) 
 }
 
 int findSnakes(const auto& water) {
-    const std::vector<std::vector<size_t>> pos = getSnekPos();
+    const auto pos = getSnekPos();
     int sneks = 0;
     const auto [n,m] = water.size();
     for (auto y = 0ul; y < n-2; y++) {
