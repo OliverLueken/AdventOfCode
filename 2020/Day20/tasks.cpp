@@ -50,8 +50,7 @@ bool isSnek(const auto x, const auto y, const auto& snekpos, const auto& water) 
     });
 }
 
-int countSnakes(const auto& water) {
-    static const auto pos = getSnekPos();
+int countSnakes(const auto& water, const auto& pos) {
     auto sneks = 0;
     const auto [n,m] = water.size();
     for (auto y = 0ul; y < n-2; ++y) {
@@ -64,17 +63,20 @@ int countSnakes(const auto& water) {
 
 auto getWaterRoughness(const auto& pic) {
     auto water = pic.picToTile();
-    int sneks = 0;
-    for (int i = 0; i < 4; i++) {
-        sneks += countSnakes(water);
-        water.rotateLeft();
-    }
+    auto rotatingSearch = [](auto& water, const auto& snekPos){
+        int sneks = 0;
+        for (int i = 0; i < 4; i++) {
+            sneks += countSnakes(water, snekPos);
+            water.rotateLeft();
+        }
+        return sneks;
+    };
+    auto sneks = 0;
+    const auto snekPos = getSnekPos();
+    sneks += rotatingSearch(water, snekPos);
     water.flip();
-    for (int i = 0; i < 4; i++) {
-        sneks += countSnakes(water);
-        water.rotateLeft();
-    }
-    return std::ranges::count(water, '#') - 15*sneks;
+    sneks += rotatingSearch(water, snekPos);
+    return std::ranges::count(water, '#') - snekPos.size()*sneks;
 }
 
 
