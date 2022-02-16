@@ -27,9 +27,8 @@ class picture {
     tile picToTile() const;
 
    private:
-    std::unordered_map<Position, tile> field;
-    std::unordered_set<Position> freePositions;
 
+    bool maxBoundsFound{false};
     int maxx{0};
     int minx{0};
     int maxy{0};
@@ -37,14 +36,16 @@ class picture {
     unsigned long length{1};
     unsigned long height{1};
     unsigned long numberOfTiles;
-    bool maxBoundsFound;
+    
+    std::unordered_map<Position, tile> field{};
+    std::unordered_set<Position> freePositions{};
 
     bool insertTile(tile& t);
     bool tryInsert(tile& t);
     bool doesTileFit(const tile& t, const Position& tp) const;
     void updateFreePoints(const Position& p);
     void updateBounds(const Position& p);
-    bool outOfBounds(Position& p) const;
+    // bool outOfBounds(Position& p) const;
 };
 //========================== Picture header end ===============================
 

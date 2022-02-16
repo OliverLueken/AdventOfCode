@@ -131,38 +131,30 @@ bool picture::doesTileFit(const tile& t, const Position& p) const {
     return true;
 }
 
-bool picture::outOfBounds(Position& p) const {
-    if (!maxBoundsFound) return false;
-    int x = p.first;
-    int y = p.second;
-    return x < minx || maxx < x || y < miny || maxy < y;
-}
 
 void picture::updateFreePoints(const Position& p) {
-    if (!maxBoundsFound) {
-        if (length * height == numberOfTiles) {
-            maxBoundsFound = true;
+    auto isInBounds = [this](const Position& p) {
+        if (!this->maxBoundsFound) return true;
+        const auto [x, y] = p;
+        return Utilities::isBetween(x, this->minx, this->maxx+1)
+            && Utilities::isBetween(y, this->miny, this->maxy+1);
+    };
 
-            for (auto it = freePositions.begin(); it != freePositions.end();) {
-                Position p_ = *it;
-                if (outOfBounds(p_)) {
-                    it = freePositions.erase(it);
-                } else {
-                    it++;
-                }
-            }
-        }
+    if (!maxBoundsFound && length * height == numberOfTiles) {
+        maxBoundsFound = true;
+        std::erase_if(freePositions, std::not_fn(isInBounds));
     }
 
-    Position l = {p.first - 1, p.second};
-    Position r = {p.first + 1, p.second};
-    Position u = {p.first, p.second + 1};
-    Position d = {p.first, p.second - 1};
+    auto addToFreePositions = [this, &isInBounds](auto&& p){
+        if(isInBounds(p)){
+            this->freePositions.emplace(std::move(p));
+        }
+    };
 
-    if (!outOfBounds(l) && field.find(l) == field.end()) freePositions.insert(l);
-    if (!outOfBounds(r) && field.find(r) == field.end()) freePositions.insert(r);
-    if (!outOfBounds(u) && field.find(u) == field.end()) freePositions.insert(u);
-    if (!outOfBounds(d) && field.find(d) == field.end()) freePositions.insert(d);
+    addToFreePositions( Position{p.first - 1, p.second    } );
+    addToFreePositions( Position{p.first + 1, p.second    } );
+    addToFreePositions( Position{p.first    , p.second + 1} );
+    addToFreePositions( Position{p.first    , p.second - 1} );
 }
 
 tile picture::picToTile() const {
