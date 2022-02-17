@@ -82,42 +82,60 @@ void picture::updateBounds(const Position& p) {
 
 enum Side{left, right, up, down};
 
-auto fitsWith = [](const auto side, const auto& tile, const auto& pos, const auto& field){
+template<Side>
+auto fitsWith = [](const auto& tile, const auto& pos, const auto& field){
+    return true;
+};
+
+template<>
+auto fitsWith<Side::left> = [](const auto& tile, const auto& pos, const auto& field){
     const auto [n,m] = tile.size();
-    switch(side){
-    break; case Side::left:{
-        const auto neighborPos = Position{pos.first - 1, pos.second    };
-        if (field.contains(neighborPos)){
-            const auto& neighborTile = field.at(neighborPos);
-            return std::ranges::equal( tile.col(0), neighborTile.col(m-1) );
-        }}
-    break; case Side::right:{
-        const auto neighborPos = Position{pos.first + 1, pos.second    };
-        if (field.contains(neighborPos)){
-            const auto& neighborTile = field.at(neighborPos);
-            return std::ranges::equal( tile.col(m-1), neighborTile.col(0) );
-        }}
-    break; case Side::up:{
-        const auto neighborPos = Position{pos.first    , pos.second + 1};
-        if (field.contains(neighborPos)){
-            const auto& neighborTile = field.at(neighborPos);
-            return std::ranges::equal( tile.row(0), neighborTile.row(n-1) );
-        }}
-    break; case Side::down:{
-        const auto neighborPos = Position{pos.first    , pos.second - 1};
-        if (field.contains(neighborPos)){
-            const auto& neighborTile = field.at(neighborPos);
-            return std::ranges::equal( tile.row(n-1), neighborTile.row(0) );
-        }}
+    const auto neighborPos = Position{pos.first - 1, pos.second    };
+    if (field.contains(neighborPos)){
+        const auto& neighborTile = field.at(neighborPos);
+        return std::ranges::equal( tile.col(0), neighborTile.col(m-1) );
+    }
+    return true;
+};
+
+template<>
+auto fitsWith<Side::right> = [](const auto& tile, const auto& pos, const auto& field){
+    const auto [n,m] = tile.size();
+    const auto neighborPos = Position{pos.first + 1, pos.second    };
+    if (field.contains(neighborPos)){
+        const auto& neighborTile = field.at(neighborPos);
+        return std::ranges::equal( tile.col(m-1), neighborTile.col(0) );
+    }
+    return true;
+};
+
+template<>
+auto fitsWith<Side::up> = [](const auto& tile, const auto& pos, const auto& field){
+    const auto [n,m] = tile.size();
+    const auto neighborPos = Position{pos.first    , pos.second + 1};
+    if (field.contains(neighborPos)){
+        const auto& neighborTile = field.at(neighborPos);
+        return std::ranges::equal( tile.row(0), neighborTile.row(n-1) );
+    }
+    return true;
+};
+
+template<>
+auto fitsWith<Side::down> = [](const auto& tile, const auto& pos, const auto& field){
+    const auto [n,m] = tile.size();
+    const auto neighborPos = Position{pos.first    , pos.second - 1};
+    if (field.contains(neighborPos)){
+        const auto& neighborTile = field.at(neighborPos);
+        return std::ranges::equal( tile.row(n-1), neighborTile.row(0) );
     }
     return true;
 };
 
 bool picture::doesTileFit(const tile& t, const Position& p) const {
-    const auto sides = std::array<Side, 4>{Side::left, Side::right, Side::up, Side::down};
-    return std::ranges::all_of(sides, [&t, &p, this](const auto& side){
-        return fitsWith(side, t, p, this->field);
-    });
+    return fitsWith<Side::left >(t, p, this->field)
+        && fitsWith<Side::right>(t, p, this->field)
+        && fitsWith<Side::up   >(t, p, this->field)
+        && fitsWith<Side::down >(t, p, this->field);
 }
 
 
