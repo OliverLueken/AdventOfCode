@@ -84,56 +84,33 @@ enum Side{left, right, up, down};
 
 auto fitsWith = [](const auto side, const auto& tile, const auto& pos, const auto& field){
     const auto [n,m] = tile.size();
-    auto neighborPos = Position{pos.first - 1, pos.second    };
-    auto fits = true;
     switch(side){
-    break; case Side::left:
-        neighborPos = {pos.first - 1, pos.second    };
+    break; case Side::left:{
+        const auto neighborPos = Position{pos.first - 1, pos.second    };
         if (field.contains(neighborPos)){
             const auto& neighborTile = field.at(neighborPos);
-            for(auto i = 0ul; i < n; ++i) {
-                if( tile(i,0) != neighborTile(i,m-1) ){
-                    fits = false;
-                };
-            }
-        }
-        return fits;
-    break; case Side::right:
-
-        neighborPos = {pos.first + 1, pos.second    };
+            return std::ranges::equal( tile.col(0), neighborTile.col(m-1) );
+        }}
+    break; case Side::right:{
+        const auto neighborPos = Position{pos.first + 1, pos.second    };
         if (field.contains(neighborPos)){
             const auto& neighborTile = field.at(neighborPos);
-            for (auto i = 0ul; i < n; ++i) {
-                if(tile(i,m-1) != neighborTile(i,0) ){
-                    fits = false;
-                };
-            }
-        }
-        return fits;
-    break; case Side::up:
-        neighborPos = {pos.first    , pos.second + 1};
+            return std::ranges::equal( tile.col(m-1), neighborTile.col(0) );
+        }}
+    break; case Side::up:{
+        const auto neighborPos = Position{pos.first    , pos.second + 1};
         if (field.contains(neighborPos)){
             const auto& neighborTile = field.at(neighborPos);
-            for (auto i = 0ul; i < m; ++i) {
-                if(tile(0, i) != neighborTile(n-1,i) ){
-                    fits = false;
-                };
-            }
-        }
-        return fits;
-    break; case Side::down:
-        neighborPos = {pos.first    , pos.second - 1};
+            return std::ranges::equal( tile.row(0), neighborTile.row(n-1) );
+        }}
+    break; case Side::down:{
+        const auto neighborPos = Position{pos.first    , pos.second - 1};
         if (field.contains(neighborPos)){
             const auto& neighborTile = field.at(neighborPos);
-            for (auto i = 0ul; i < m; ++i) {
-                if(tile(n-1, i) != neighborTile(0,i) ){
-                    fits = false;
-                };
-            }
-        }
-        return fits;
+            return std::ranges::equal( tile.row(n-1), neighborTile.row(0) );
+        }}
     }
-    return fits;
+    return true;
 };
 
 bool picture::doesTileFit(const tile& t, const Position& p) const {
