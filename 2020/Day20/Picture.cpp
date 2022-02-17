@@ -166,14 +166,14 @@ void picture::updateFreePoints(const Position& p) {
 
 tile picture::picToTile() const {
     auto [tileHeight, tileLength] = field.begin()->second.size();
-    auto water = tile{ (maxy-miny+1)*(tileHeight-2), (maxx-minx+1)*(tileHeight-2) };
-    for(auto tiley = maxy; tiley>=miny; --tiley){
-        for(auto y = 0ul; y<tileHeight-2; ++y){
-            for(auto tilex = minx; tilex<=maxx; ++tilex){
-                const auto& tile = field.at({tilex, tiley});
-                for(auto x = 0ul; x<tileHeight-2; ++x){
-                    water( (maxy-tiley)*(tileHeight-2)+y, (tilex-minx)*(tileHeight-2)+x ) = tile(y+1, x+1);
-                }
+    auto water = tile{ (maxy-miny+1)*(tileHeight-2), (maxx-minx+1)*(tileLength-2) };
+    for(const auto& [tilePos, tile] : field){
+        const auto& [tilex, tiley] = tilePos;
+        const auto yoffset = (maxy-tiley)*(tileHeight-2)-1;
+        const auto xoffset = (tilex-minx)*(tileLength-2)-1;
+        for(auto y = 1ul; y<tileHeight-1; ++y){
+            for(auto x = 1ul; x<tileLength-1; ++x){
+                water( yoffset+y, xoffset+x ) = tile(y, x);
             }
         }
     }
