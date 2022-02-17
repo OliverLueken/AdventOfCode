@@ -1,6 +1,7 @@
 
 #include "Picture.hpp"
 
+#include <ranges>
 
 picture::picture(std::queue<tile>&& tiles) {
     numberOfTiles = tiles.size();
