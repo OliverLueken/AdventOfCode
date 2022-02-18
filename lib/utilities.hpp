@@ -291,7 +291,7 @@ namespace Utilities{
     }
 
     struct solveCRM_{
-        auto operator()(const std::vector<std::pair<int,int>>& n_and_b_pairs){
+        auto operator()(const std::vector<std::pair<int,int>>& n_and_b_pairs) const {
             const auto getXi = [](const auto& N, const auto& n){
                 for(auto x=0u; std::cmp_less(x,n) ; ++x){
                     if((x*N)%n==1) return x;
