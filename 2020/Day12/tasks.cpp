@@ -54,7 +54,7 @@ auto moveShip2(const auto& navigationInstructions){
     std::complex<double> waypointPos{10,1};
 
     for(const auto& [c, val_] : navigationInstructions){
-        auto val = static_cast<double>(val_);
+        const auto val = static_cast<double>(val_);
         switch(c){
             break; case 'N':
                 waypointPos+=std::complex<double>{0,val};
