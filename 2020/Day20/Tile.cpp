@@ -1,14 +1,16 @@
 #include "Tile.hpp"
 
 #include <iostream>
+#include <ranges>
 
 void tile::rotateLeft() {
     const auto [n, m] = size();
-    Matrix<char> newData{m, n};
+    auto newData = Matrix<char>{m, n};
     for(auto i = 0u; i<m; ++i){
-        for(auto j=0u; j<n; ++j){
-            newData(m-1-i, j) = this->operator()(j, i);
-        }
+        std::ranges::copy(
+            this->row(i) | std::views::reverse,
+            newData.col(i).begin()
+        );
     }
     std::swap(data(), newData.data());
 }
