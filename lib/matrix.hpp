@@ -177,17 +177,17 @@ namespace Matrix{
 
         template<class Iter>
         struct ColumnIteratorTemplate : public Iter{
-            ColumnIteratorTemplate() = default;   //subrange needs this
-            ColumnIteratorTemplate(Iter _it, size_t _m)
+            constexpr ColumnIteratorTemplate() = default;   //subrange needs this
+            constexpr ColumnIteratorTemplate(Iter _it, size_t _m)
                 : Iter{_it}, m{_m} {}
 
-            ColumnIteratorTemplate&  operator++()      { Iter::operator+=(m); return *this; }
-            ColumnIteratorTemplate   operator++(int)   { ColumnIteratorTemplate tmp = *this; ++(*this); return tmp; }
-            ColumnIteratorTemplate&  operator+=(size_t j) { Iter::operator+=(j*m); return *this; }
+            constexpr ColumnIteratorTemplate&  operator++()      { Iter::operator+=(m); return *this; }
+            constexpr ColumnIteratorTemplate   operator++(int)   { ColumnIteratorTemplate tmp = *this; ++(*this); return tmp; }
+            constexpr ColumnIteratorTemplate&  operator+=(size_t j) { Iter::operator+=(j*m); return *this; }
 
-            ColumnIteratorTemplate& operator--()      { Iter::operator-=(m); return *this; }
-            ColumnIteratorTemplate  operator--(int)   { ColumnIteratorTemplate tmp = *this; --(*this); return tmp; }
-            ColumnIteratorTemplate& operator-=(size_t j) { Iter::operator-=(j*m); return *this; }
+            constexpr ColumnIteratorTemplate& operator--()      { Iter::operator-=(m); return *this; }
+            constexpr ColumnIteratorTemplate  operator--(int)   { ColumnIteratorTemplate tmp = *this; --(*this); return tmp; }
+            constexpr ColumnIteratorTemplate& operator-=(size_t j) { Iter::operator-=(j*m); return *this; }
         private:
             size_t m;
         };
@@ -197,11 +197,11 @@ namespace Matrix{
         using ColumnIterator      = ColumnIteratorTemplate<Iterator>;
         using ConstColumnIterator = ColumnIteratorTemplate<ConstIterator>;
 
-        ColumnIterator columnBegin(size_t j) { return ColumnIterator(matrix.begin()+j, m); }
-        ColumnIterator columnEnd  (size_t j) { return ColumnIterator(matrix.end()  +j, m); }
+        constexpr ColumnIterator columnBegin(size_t j) { return ColumnIterator(matrix.begin()+j, m); }
+        constexpr ColumnIterator columnEnd  (size_t j) { return ColumnIterator(matrix.end()  +j, m); }
 
-        ConstColumnIterator cColumnBegin(size_t j) const { return ConstColumnIterator(matrix.cbegin()+j, m); }
-        ConstColumnIterator cColumnEnd  (size_t j) const { return ConstColumnIterator(matrix.cend()  +j, m); }
+        constexpr ConstColumnIterator cColumnBegin(size_t j) const { return ConstColumnIterator(matrix.cbegin()+j, m); }
+        constexpr ConstColumnIterator cColumnEnd  (size_t j) const { return ConstColumnIterator(matrix.cend()  +j, m); }
 
         [[nodiscard]] constexpr auto col(const size_t j) {
             checkColBound(j);
