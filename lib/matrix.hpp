@@ -5,6 +5,7 @@
 #include <vector>
 #include <ranges>
 #include <algorithm>
+#include <span>
 
 #include "utilities.hpp"
 
@@ -174,16 +175,42 @@ namespace Matrix{
             return matrix | std::views::drop(i*m) | std::views::take(m);
         }
 
+        template<class Iter>
+        struct ColumnIteratorTemplate : public Iter{
+            ColumnIteratorTemplate() = default;   //subrange needs this
+            ColumnIteratorTemplate(Iter _it, size_t _m)
+                : Iter{_it}, m{_m} {}
+
+            ColumnIteratorTemplate&  operator++()      { Iter::operator+=(m); return *this; }
+            ColumnIteratorTemplate   operator++(int)   { ColumnIteratorTemplate tmp = *this; ++(*this); return tmp; }
+            ColumnIteratorTemplate&  operator+=(size_t j) { Iter::operator+=(j*m); return *this; }
+
+            ColumnIteratorTemplate& operator--()      { Iter::operator-=(m); return *this; }
+            ColumnIteratorTemplate  operator--(int)   { ColumnIteratorTemplate tmp = *this; --(*this); return tmp; }
+            ColumnIteratorTemplate& operator-=(size_t j) { Iter::operator-=(j*m); return *this; }
+        private:
+            size_t m;
+        };
+
+        using Iterator            = std::vector<T>::iterator;
+        using ConstIterator       = std::vector<T>::const_iterator;
+        using ColumnIterator      = ColumnIteratorTemplate<Iterator>;
+        using ConstColumnIterator = ColumnIteratorTemplate<ConstIterator>;
+
+        ColumnIterator columnBegin(size_t j) { return ColumnIterator(matrix.begin()+j, m); }
+        ColumnIterator columnEnd  (size_t j) { return ColumnIterator(matrix.end()  +j, m); }
+
+        ConstColumnIterator cColumnBegin(size_t j) const { return ConstColumnIterator(matrix.cbegin()+j, m); }
+        ConstColumnIterator cColumnEnd  (size_t j) const { return ConstColumnIterator(matrix.cend()  +j, m); }
+
         [[nodiscard]] constexpr auto col(const size_t j) {
             checkColBound(j);
-            auto mthElement = [m=this->m, i=0](const auto&) mutable { return i++%m==0; };
-            return matrix | std::views::drop(j) | std::views::filter(mthElement);
+            return std::ranges::subrange{columnBegin(j), columnEnd(j)};
         }
 
         [[nodiscard]] constexpr auto col(const size_t j) const {
             checkColBound(j);
-            auto mthElement = [m=this->m, i=0](const auto&) mutable { return i++%m==0; };
-            return matrix | std::views::drop(j) | std::views::filter(mthElement);
+            return std::ranges::subrange(cColumnBegin(j), cColumnEnd(j));
         }
 
         constexpr void resize(const size_t nn, const size_t mm){
