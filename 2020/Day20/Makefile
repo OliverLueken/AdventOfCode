@@ -4,7 +4,7 @@ SHELL = /bin/sh
 
 CPP = g++
 CPPDEBUG = -g
-CPPWARNINGS = -Wall -Wpedantic -Wextra -Wconversion
+CPPWARNINGS = -Wall -Wpedantic -Wextra -Wconversion -Wshadow
 CPPSANITIZER = -fsanitize=undefined,address
 CPPFLAGS = -std=c++20 -O3 $(CPPWARNINGS)
 
