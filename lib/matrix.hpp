@@ -16,23 +16,23 @@ namespace Matrix{
 
     template<class T>
     class Matrix{
-        size_t n{0};
-        size_t m{0};
+        size_t _n{0};
+        size_t _m{0};
         std::vector<T> matrix{};
 
         constexpr void checkRowBound(const size_t i) const {
-            if(i>=n) throw std::out_of_range("Row index too large. Got "
+            if(i>=_n) throw std::out_of_range("Row index too large. Got "
                                             + std::to_string(i)
                                             + ", expected index in intervall [0,"
-                                            + std::to_string(n)
+                                            + std::to_string(_n)
                                             + ")\n" );
         }
 
         constexpr void checkColBound(const size_t j) const {
-            if(j>=m) throw std::out_of_range("Column index too large. Got "
+            if(j>=_m) throw std::out_of_range("Column index too large. Got "
                                             + std::to_string(j)
                                             + ", expected index in intervall [0,"
-                                            + std::to_string(m)
+                                            + std::to_string(_m)
                                             + ")\n" );
         }
 
@@ -44,51 +44,51 @@ namespace Matrix{
         constexpr void fillResizedMatrix(const size_t nn, const size_t mm, std::vector<T>&& newMatrix){
             auto newMatrixIt = std::begin(newMatrix);
             auto matrixIt = std::begin(matrix);
-            const auto min = std::min(m, mm);
+            const auto min = std::min(_m, mm);
             while(matrixIt != std::end(matrix) && newMatrixIt != std::end(newMatrix)){
                 auto j=0u;
                 while(j < min){
                     *newMatrixIt++ = std::move(*matrixIt++);
                     j++;
                 }
-                if(m > mm){
-                    std::advance(matrixIt, m-mm);
+                if(_m > mm){
+                    std::advance(matrixIt, _m-mm);
                 }
                 else{
-                    std::advance(newMatrixIt, mm-m);
+                    std::advance(newMatrixIt, mm-_m);
                 }
             }
 
             std::swap(matrix, newMatrix);
-            n=nn;
-            m=mm;
+            _n=nn;
+            _m=mm;
         }
 
     public:
         constexpr Matrix() = default;
-        constexpr Matrix(const size_t _n, const size_t _m)                    : n{_n}, m{_m}, matrix(_n*_m){}
-        constexpr Matrix(const size_t _n, const size_t _m, const T& _value)   : n{_n}, m{_m}, matrix(_n*_m, _value){}
+        constexpr Matrix(const size_t __n, const size_t __m)                    : _n{__n}, _m{__m}, matrix(__n*__m){}
+        constexpr Matrix(const size_t __n, const size_t __m, const T& _value)   : _n{__n}, _m{__m}, matrix(__n*__m, _value){}
 
         template< std::forward_iterator I, std::sentinel_for<I> S >
         requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
-        constexpr Matrix(const size_t _n, const size_t _m, I _first, S _last) : n{_n}, m{_m}, matrix(_n*_m){
+        constexpr Matrix(const size_t __n, const size_t __m, I _first, S _last) : _n{__n}, _m{__m}, matrix(__n*__m){
             assign(_first, _last);
         }
 
         template< std::ranges::forward_range R>
-        constexpr Matrix(const size_t _n, const size_t _m, R&& _range) : n{_n}, m{_m}, matrix(_n*_m){
+        constexpr Matrix(const size_t __n, const size_t __m, R&& _range) : _n{__n}, _m{__m}, matrix(__n*__m){
             assign(_range);
         }
-        constexpr Matrix(const size_t _n, const size_t _m, std::initializer_list<T> _ilist) : n{_n}, m{_m}, matrix(_n*_m){
+        constexpr Matrix(const size_t __n, const size_t __m, std::initializer_list<T> _ilist) : _n{__n}, _m{__m}, matrix(__n*__m){
             assign(_ilist);
         }
 
         template< std::forward_iterator I, std::sentinel_for<I> S >
         requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>&>
         constexpr void assign( I first, S last, const size_t offset = 0u ){
-            if( static_cast<unsigned long>(std::distance(first, last)) > n*m ){
+            if( static_cast<unsigned long>(std::distance(first, last)) > _n*_m ){
                 last = first;
-                std::advance(last, n*m);
+                std::advance(last, _n*_m);
             }
             std::ranges::copy(first, last, std::begin(matrix)+offset);
         }
@@ -112,24 +112,24 @@ namespace Matrix{
 
         constexpr       std::vector<T>::reference       operator()(const size_t i, const size_t j)       {
             checkBounds(i,j);
-            return matrix[i*m+j];
+            return matrix[i*_m+j];
         }
 
         constexpr const std::vector<T>::const_reference operator()(const size_t i, const size_t j) const {
             checkBounds(i,j);
-            return matrix[i*m+j];
+            return matrix[i*_m+j];
         }
 
         constexpr       std::vector<T>::reference       operator()(const Position<size_t> pos)       {
             const auto& [i,j] = pos;
             checkBounds(i,j);
-            return matrix[i*m+j];
+            return matrix[i*_m+j];
         }
 
         constexpr const std::vector<T>::const_reference operator()(const Position<size_t> pos) const {
             const auto& [i,j] = pos;
             checkBounds(i,j);
-            return matrix[i*m+j];
+            return matrix[i*_m+j];
         }
 
         constexpr std::vector<T>::reference operator[](const size_t longIndex){
@@ -154,42 +154,42 @@ namespace Matrix{
         [[nodiscard]] constexpr auto crend  () const noexcept{ return matrix.crend  (); }
 
         [[nodiscard]] constexpr auto size() const {
-            return std::make_pair(n, m);
+            return std::make_pair(_n, _m);
         }
 
         [[nodiscard]] constexpr size_t rows() const noexcept{
-            return n;
+            return _n;
         }
 
         [[nodiscard]] constexpr size_t cols() const noexcept{
-            return m;
+            return _m;
         }
 
         [[nodiscard]] constexpr auto row(const size_t i) {
             checkRowBound(i);
-            return matrix | std::views::drop(i*m) | std::views::take(m);
+            return matrix | std::views::drop(i*_m) | std::views::take(_m);
         }
 
         [[nodiscard]] constexpr auto row(const size_t i) const {
             checkRowBound(i);
-            return matrix | std::views::drop(i*m) | std::views::take(m);
+            return matrix | std::views::drop(i*_m) | std::views::take(_m);
         }
 
         template<class Iter>
         struct ColumnIteratorTemplate : public Iter{
             constexpr ColumnIteratorTemplate() = default;   //subrange needs this
-            constexpr ColumnIteratorTemplate(Iter _it, size_t _m)
-                : Iter{_it}, m{_m} {}
+            constexpr ColumnIteratorTemplate(Iter _it, size_t __m)
+                : Iter{_it}, _m{__m} {}
 
-            constexpr ColumnIteratorTemplate&  operator++()      { Iter::operator+=(m); return *this; }
+            constexpr ColumnIteratorTemplate&  operator++()      { Iter::operator+=(_m); return *this; }
             constexpr ColumnIteratorTemplate   operator++(int)   { ColumnIteratorTemplate tmp = *this; ++(*this); return tmp; }
-            constexpr ColumnIteratorTemplate&  operator+=(size_t j) { Iter::operator+=(j*m); return *this; }
+            constexpr ColumnIteratorTemplate&  operator+=(size_t j) { Iter::operator+=(j*_m); return *this; }
 
-            constexpr ColumnIteratorTemplate& operator--()      { Iter::operator-=(m); return *this; }
+            constexpr ColumnIteratorTemplate& operator--()      { Iter::operator-=(_m); return *this; }
             constexpr ColumnIteratorTemplate  operator--(int)   { ColumnIteratorTemplate tmp = *this; --(*this); return tmp; }
-            constexpr ColumnIteratorTemplate& operator-=(size_t j) { Iter::operator-=(j*m); return *this; }
+            constexpr ColumnIteratorTemplate& operator-=(size_t j) { Iter::operator-=(j*_m); return *this; }
         private:
-            size_t m;
+            size_t _m;
         };
 
         using Iterator            = std::vector<T>::iterator;
@@ -197,11 +197,11 @@ namespace Matrix{
         using ColumnIterator      = ColumnIteratorTemplate<Iterator>;
         using ConstColumnIterator = ColumnIteratorTemplate<ConstIterator>;
 
-        constexpr ColumnIterator columnBegin(size_t j) { return ColumnIterator(matrix.begin()+j, m); }
-        constexpr ColumnIterator columnEnd  (size_t j) { return ColumnIterator(matrix.end()  +j, m); }
+        constexpr ColumnIterator columnBegin(size_t j) { return ColumnIterator(matrix.begin()+j, _m); }
+        constexpr ColumnIterator columnEnd  (size_t j) { return ColumnIterator(matrix.end()  +j, _m); }
 
-        constexpr ConstColumnIterator cColumnBegin(size_t j) const { return ConstColumnIterator(matrix.cbegin()+j, m); }
-        constexpr ConstColumnIterator cColumnEnd  (size_t j) const { return ConstColumnIterator(matrix.cend()  +j, m); }
+        constexpr ConstColumnIterator cColumnBegin(size_t j) const { return ConstColumnIterator(matrix.cbegin()+j, _m); }
+        constexpr ConstColumnIterator cColumnEnd  (size_t j) const { return ConstColumnIterator(matrix.cend()  +j, _m); }
 
         [[nodiscard]] constexpr auto col(const size_t j) {
             checkColBound(j);
@@ -214,9 +214,9 @@ namespace Matrix{
         }
 
         constexpr void resize(const size_t nn, const size_t mm){
-            if(nn*mm == n*m){
-                n = nn;
-                m = mm;
+            if(nn*mm == _n*_m){
+                _n = nn;
+                _m = mm;
                 return;
             }
             std::vector<T> newMatrix(nn*mm);
@@ -224,9 +224,9 @@ namespace Matrix{
         }
 
         constexpr void resize(const size_t nn, const size_t mm, const T& value){
-            if(nn*mm == n*m){
-                n = nn;
-                m = mm;
+            if(nn*mm == _n*_m){
+                _n = nn;
+                _m = mm;
                 return;
             }
             std::vector<T> newMatrix(nn*mm, value);
@@ -235,8 +235,8 @@ namespace Matrix{
 
         void swap(Matrix<T>& newMatrix) noexcept {
             std::swap(matrix, newMatrix.data());
-            std::swap(n, newMatrix.n);
-            std::swap(m, newMatrix.m);
+            std::swap(_n, newMatrix._n);
+            std::swap(_m, newMatrix._m);
         }
     };
 
@@ -255,13 +255,13 @@ namespace Matrix{
     }
 
     /*
-    for row and column index n = i*matrix.columns+j, returns its valid adjacent neighbor indices, not including diagonals
+    for row and column index _n = i*matrix.columns+j, returns its valid adjacent neighbor indices, not including diagonals
     */
     template<class T, std::unsigned_integral S = uint32_t>
     auto getNeighbors(const Matrix<T>& matrix, const S longIndex){
-        const auto m = matrix.cols();
-        const auto i = longIndex/m;
-        const auto j = longIndex%m;
+        const auto _m = matrix.cols();
+        const auto i = longIndex/_m;
+        const auto j = longIndex%_m;
         return getNeighbors(matrix, i, j);
     }
 
@@ -299,13 +299,13 @@ namespace Matrix{
     }
 
     /*
-    for row and column index n = i*matrix.columns+j, returns its valid adjacent neighbor indices, including diagonals
+    for row and column index _n = i*matrix.columns+j, returns its valid adjacent neighbor indices, including diagonals
     */
     template<class T, std::unsigned_integral S = uint32_t>
     auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, const S longIndex){
-        const auto m = matrix.cols();
-        const auto i = longIndex/m;
-        const auto j = longIndex%m;
+        const auto _m = matrix.cols();
+        const auto i = longIndex/_m;
+        const auto j = longIndex%_m;
         return getNeighborsIncludingDiagonals(matrix, i, j);
     }
 
@@ -352,9 +352,9 @@ namespace Matrix{
     }
 
     template<typename T>
-    void print(const Matrix<T>& m, const char columnSeparator = ' ') {
-        for(auto i=0u; i<m.rows(); i++){
-            print(m.row(i), columnSeparator);
+    void print(const Matrix<T>& _m, const char columnSeparator = ' ') {
+        for(auto i=0u; i<_m.rows(); i++){
+            print(_m.row(i), columnSeparator);
         }
         std::cout << '\n';
     }
