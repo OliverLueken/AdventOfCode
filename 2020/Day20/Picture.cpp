@@ -141,9 +141,9 @@ bool picture::doesTileFit(const tile& t, const Position& p) const {
 
 
 void picture::updateFreePoints(const Position& p) {
-    auto isInBounds = [this](const Position& p) {
+    auto isInBounds = [this](const Position& pos) {
         if (!this->maxBoundsFound) return true;
-        const auto [x, y] = p;
+        const auto [x, y] = pos;
         return Utilities::isBetween(x, this->minx, this->maxx+1)
             && Utilities::isBetween(y, this->miny, this->maxy+1);
     };
@@ -153,9 +153,9 @@ void picture::updateFreePoints(const Position& p) {
         std::erase_if(freePositions, std::not_fn(isInBounds));
     }
 
-    auto addToFreePositions = [this, &isInBounds](auto&& p){
-        if(isInBounds(p)){
-            this->freePositions.emplace(std::move(p));
+    auto addToFreePositions = [this, &isInBounds](auto&& pos){
+        if(isInBounds(pos)){
+            this->freePositions.emplace(std::move(pos));
         }
     };
 
