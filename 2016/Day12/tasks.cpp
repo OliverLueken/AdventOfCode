@@ -42,6 +42,17 @@ struct Instruction{
     virtual void execute() = 0;
 };
 
+struct set : public Instruction {
+    int source{};
+    int destinationOffset{};
+    set(auto* _computerPtr, int _source, int _destinationOffset)
+        : Instruction{_computerPtr}, source{_source}, destinationOffset{_destinationOffset}{}
+    void execute() override {
+        programPtr->reg[destinationOffset] = source;
+        programPtr->programPosition++;
+    }
+};
+
 struct cpy : public Instruction {
     std::variant<int, int*> source;
     int* destination{nullptr};
@@ -105,7 +116,7 @@ Computer::Computer(const std::vector<std::string>& input){
         }
         else if(split[0] == "cpy"){
             if(std::isdigit(split[1][0])){
-                program.emplace_back(std::make_unique<cpy>(this, std::stoi(split[1]),  &reg[0]+split[2][0]-'a' ));
+                program.emplace_back(std::make_unique<set>(this, std::stoi(split[1]),  split[2][0]-'a' ));
             }
             else{
                 program.emplace_back(std::make_unique<cpy>(this, &reg[0]+split[1][0]-'a',  &reg[0]+split[2][0]-'a' ));
