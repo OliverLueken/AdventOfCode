@@ -5,12 +5,8 @@
 #include "../../lib/matrix.hpp"
 
 #include <algorithm>
-#include <cmath>
-#include <fstream>
 #include <iostream>
 #include <queue>
-#include <regex>
-#include <set>
 #include <string>
 #include <vector>
 #include <unordered_set>
@@ -82,18 +78,22 @@ auto getWaterRoughness(const auto& pic) {
 
 
 auto extractTilesFromInput(auto&& input) {
-    std::queue<tile> tiles;
-    for(auto it = std::begin(input); it<=std::end(input); ++it){
-        const auto id = std::stoi(Utilities::split(*it)[1]);
-        ++it;
+    auto getTileData = [&input](auto& it){
+        const auto cols = it->size();
         std::string tempTileData{};
         auto rows = 0;
-        const auto cols = it->size();
         while(!it->empty() && it!=std::end(input)){
             ++rows;
             tempTileData+=std::move(*it);
             ++it;
         }
+        return std::make_tuple(rows, cols, std::move(tempTileData));
+    };
+    std::queue<tile> tiles;
+    for(auto it = std::begin(input); it<=std::end(input); ++it){
+        const auto id = std::stoi(Utilities::split(*it)[1]);
+        ++it;
+        const auto [rows, cols, tempTileData] = getTileData(it);
         tiles.emplace(id, rows, cols, tempTileData);
     }
     return tiles;
@@ -113,7 +113,7 @@ int main(){
 
     //Task 2
     const auto waterRoughness = getWaterRoughness(pic);
-    std::cout << "There are " << waterRoughness << " # not part of the sea monster .\n";
+    std::cout << "There are " << waterRoughness << " # not part of the sea monster.\n";
 
     VerifySolution::verifySolution(fourCornerIDsProduct, waterRoughness);
 }
