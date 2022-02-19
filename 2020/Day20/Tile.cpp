@@ -17,8 +17,6 @@ void tile::rotateLeft() {
 void tile::flip() {
     const auto [n, m] = size();
     for(auto i = 0u; i<n/2; ++i){
-        for(auto j=0u; j<m; ++j){
-            std::swap(this->operator()(i,j), this->operator()(n-1-i, j));
-        }
+        std::ranges::swap_ranges(row(i), row(n-i-1));
     }
 }
