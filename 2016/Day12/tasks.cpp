@@ -82,10 +82,8 @@ struct jnz : public Instruction{
     int offset{0};
     jnz(Computer* _programPtr, int _register, int _offset) : Instruction{_programPtr}, regOffset{_register}, offset{_offset}{}
     void execute() override{
-        //std::cerr << regOffset << ' ' << offset << '\n';
         if(programPtr->reg[regOffset]!=0) programPtr->programPosition+=offset;
         else programPtr->programPosition++;
-        //std::cerr << "Exit\n";
     }
 };
 
