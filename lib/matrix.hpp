@@ -165,16 +165,6 @@ namespace Matrix{
             return _m;
         }
 
-        [[nodiscard]] constexpr auto row(const size_t i) {
-            checkRowBound(i);
-            return matrix | std::views::drop(i*_m) | std::views::take(_m);
-        }
-
-        [[nodiscard]] constexpr auto row(const size_t i) const {
-            checkRowBound(i);
-            return matrix | std::views::drop(i*_m) | std::views::take(_m);
-        }
-
         template<class Iter>
         struct ColumnIteratorTemplate : public Iter{
             constexpr ColumnIteratorTemplate() = default;   //subrange needs this
@@ -196,12 +186,20 @@ namespace Matrix{
         using ConstIterator       = std::vector<T>::const_iterator;
         using ColumnIterator      = ColumnIteratorTemplate<Iterator>;
         using ConstColumnIterator = ColumnIteratorTemplate<ConstIterator>;
+        using RowIterator         = Iterator;
+        using ConstRowIterator    = ConstIterator;
 
         constexpr ColumnIterator columnBegin(size_t j) { return ColumnIterator(matrix.begin()+j, _m); }
         constexpr ColumnIterator columnEnd  (size_t j) { return ColumnIterator(matrix.end()  +j, _m); }
 
         constexpr ConstColumnIterator cColumnBegin(size_t j) const { return ConstColumnIterator(matrix.cbegin()+j, _m); }
         constexpr ConstColumnIterator cColumnEnd  (size_t j) const { return ConstColumnIterator(matrix.cend()  +j, _m); }
+
+        constexpr RowIterator rowBegin(size_t i) { return RowIterator(matrix.begin()+_m*i    ); }
+        constexpr RowIterator rowEnd  (size_t i) { return RowIterator(matrix.begin()+_m*(i+1)); }
+
+        constexpr ConstRowIterator cRowBegin(size_t i) const { return ConstRowIterator(matrix.cbegin()+_m*i    ); }
+        constexpr ConstRowIterator cRowEnd  (size_t i) const { return ConstRowIterator(matrix.cbegin()+_m*(i+1)); }
 
         [[nodiscard]] constexpr auto col(const size_t j) {
             checkColBound(j);
@@ -211,6 +209,16 @@ namespace Matrix{
         [[nodiscard]] constexpr auto col(const size_t j) const {
             checkColBound(j);
             return std::ranges::subrange(cColumnBegin(j), cColumnEnd(j));
+        }
+
+        [[nodiscard]] constexpr auto row(const size_t i) {
+            checkRowBound(i);
+            return std::ranges::subrange{rowBegin(i), rowEnd(i)};
+        }
+
+        [[nodiscard]] constexpr auto row(const size_t i) const {
+            checkRowBound(i);
+            return std::ranges::subrange{cRowBegin(i), cRowEnd(i)};
         }
 
         constexpr void resize(const size_t nn, const size_t mm){
