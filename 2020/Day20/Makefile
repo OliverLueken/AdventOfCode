@@ -4,14 +4,16 @@ SHELL = /bin/sh
 
 CPP = g++
 CPPDEBUG = -g
-CPPWARNINGS = -Wall -Wpedantic -Wextra -Wconversion -Wshadow
+CPPWARNINGS = -Wall -Wpedantic -Wextra -Wconversion -Wshadow -Werror
 CPPSANITIZER = -fsanitize=undefined,address
-CPPFLAGS = -std=c++20 -O3 $(CPPWARNINGS)
+CPPFLAGS = -std=c++20 -O3 $(CPPDEBUG) $(CPPWARNINGS) $(CPPSANITIZER)
 
 all: tasks.out
 
-tasks.out: tasks.cpp Picture.hpp Picture.cpp Tile.hpp Tile.cpp
-	$(CPP) tasks.cpp Picture.cpp Tile.cpp -o tasks.out $(CPPFLAGS) $(CPPWARNINGS) $(CPPSANITIZER)
+objects = tasks.o Picture.o Tile.o
+
+tasks.out: $(objects)
+	$(CPP) -o tasks.out $(objects) $(CPPFLAGS)
 
 .PHONY = clean
 clean:
