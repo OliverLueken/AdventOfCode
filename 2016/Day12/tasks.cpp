@@ -42,12 +42,12 @@ struct Instruction{
     virtual void execute() = 0;
 };
 
-struct cpy : public Instruction{
+struct cpy : public Instruction {
     std::variant<int, int*> source;
     int* destination{nullptr};
     cpy(auto* _computerPtr, int* _source, int* _destination) : Instruction{_computerPtr}, source{_source}, destination{_destination}{}
     cpy(auto* _computerPtr, int  _source, int* _destination) : Instruction{_computerPtr}, source{_source}, destination{_destination}{}
-    void execute() override{
+    void execute() override {
         if(source.index()==0){
             *destination = std::get<int>(source);
         }
@@ -58,35 +58,35 @@ struct cpy : public Instruction{
     }
 };
 
-struct inc : public Instruction{
-    int* registerPtr{nullptr};
-    inc(auto* _computerPtr, int* _registerPtr) : Instruction{_computerPtr}, registerPtr{_registerPtr}{}
-    void execute() override{
-        (*registerPtr)++;
+struct inc : public Instruction {
+    int regOffset{};
+    inc(auto* _computerPtr, int _regOffset) : Instruction{_computerPtr}, regOffset{_regOffset}{}
+    void execute() override {
+        programPtr->reg[regOffset]++;
         programPtr->programPosition++;
     }
 };
 
-struct dec : public Instruction{
-    int* registerPtr{nullptr};
-    dec(auto* _computerPtr, int* _registerPtr) : Instruction{_computerPtr}, registerPtr{_registerPtr}{}
-    void execute() override{
-        (*registerPtr)--;
+struct dec : public Instruction {
+    int regOffset{};
+    dec(auto* _computerPtr, int _regOffset) : Instruction{_computerPtr}, regOffset{_regOffset}{}
+    void execute() override {
+        programPtr->reg[regOffset]--;
         programPtr->programPosition++;
     }
 };
 
-struct jnz : public Instruction{
+struct jnz : public Instruction {
     int regOffset{0};
     int offset{0};
-    jnz(Computer* _computerPtr, int _register, int _offset) : Instruction{_computerPtr}, regOffset{_register}, offset{_offset}{}
-    void execute() override{
+    jnz(Computer* _computerPtr, int _regOffset, int _offset) : Instruction{_computerPtr}, regOffset{_regOffset}, offset{_offset}{}
+    void execute() override {
         if(programPtr->reg[regOffset]!=0) programPtr->programPosition+=offset;
         else programPtr->programPosition++;
     }
 };
 
-struct jmp : public Instruction{
+struct jmp : public Instruction {
     int offset{0};
     jmp(Computer* _computerPtr, int _offset) : Instruction{_computerPtr}, offset{_offset}{}
     void execute() override {
@@ -98,10 +98,10 @@ Computer::Computer(const std::vector<std::string>& input){
     for(const auto& row : input){
         const auto split = Utilities::split(row);
         if(split[0] == "inc"){
-            program.emplace_back(std::make_unique<inc>(this, &reg[0]+split[1][0]-'a'));
+            program.emplace_back(std::make_unique<inc>(this, split[1][0]-'a'));
         }
         else if(split[0] == "dec"){
-            program.emplace_back(std::make_unique<dec>(this, &reg[0]+split[1][0]-'a'));
+            program.emplace_back(std::make_unique<dec>(this, split[1][0]-'a'));
         }
         else if(split[0] == "cpy"){
             if(std::isdigit(split[1][0])){
