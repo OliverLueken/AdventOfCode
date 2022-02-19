@@ -147,4 +147,5 @@ int main(){
     const auto registerAfterExecution2 = computer.reg[0];
     std::cout << "With register c starting at 1, the value of the a reg is " << registerAfterExecution2 << ".\n";
 
+    VerifySolution::verifySolution(registerAfterExecution, registerAfterExecution2);
 }
