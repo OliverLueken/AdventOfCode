@@ -104,7 +104,7 @@ struct Computer{
 
     void reset(){
         programPosition = 0;
-        reg = {0,0,0,0};
+        reg.fill(0);
     }
 };
 
