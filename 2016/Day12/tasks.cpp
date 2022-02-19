@@ -55,7 +55,6 @@ struct cpy : public Instruction{
             *destination = *std::get<int*>(source);
         }
         programPtr->programPosition++;
-        //(*programPositionPtr)++;
     }
 };
 
