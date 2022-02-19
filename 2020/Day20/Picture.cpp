@@ -26,15 +26,6 @@ long picture::getCornerProd() const {
     return sum;
 }
 
-void picture::print() const {
-    std::cout << "Printing picture\n";
-    for (auto& [p, t] : field) {
-        std::cout << p.first << ", " << p.second << ": " << t.id << std::endl;
-        t.print();
-    }
-    std::cout << "Printing picture done\n\n";
-}
-
 bool picture::insertTile(tile& tile) {
 
     if (field.empty()) {
@@ -148,7 +139,7 @@ void picture::updateFreePoints(const Position& p) {
             && Utilities::isBetween(y, this->miny, this->maxy+1);
     };
 
-    if (!maxBoundsFound && length * height == numberOfTiles) {
+    if (!maxBoundsFound && length*height == numberOfTiles) {
         maxBoundsFound = true;
         std::erase_if(freePositions, std::not_fn(isInBounds));
     }

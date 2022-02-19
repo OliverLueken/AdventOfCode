@@ -2,7 +2,6 @@
 #define TILE_HPP
 
 #include <string>
-#include <vector>
 
 #include "../../lib/matrix.hpp"
 
@@ -18,7 +17,6 @@ class tile : public Matrix::Matrix<char> {
 
     void rotateLeft();
     void flip();
-    void print() const;
 };
 //========================== Tile header end ===================================
 

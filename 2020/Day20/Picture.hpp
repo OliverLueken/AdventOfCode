@@ -5,7 +5,6 @@
 #include "../../lib/matrix.hpp"
 
 #include <algorithm>
-#include <iostream>
 #include <unordered_set>
 #include <unordered_map>
 #include <string>
@@ -16,14 +15,11 @@
 
 using Position = Utilities::Position<int>;
 
-
 class picture {
    public:
     picture(std::queue<tile>&& input);
 
     long getCornerProd() const;
-    void print() const;
-
     tile picToTile() const;
 
    private:
@@ -36,7 +32,7 @@ class picture {
     unsigned long length{1};
     unsigned long height{1};
     unsigned long numberOfTiles;
-    
+
     std::unordered_map<Position, tile> field{};
     std::unordered_set<Position> freePositions{};
 
@@ -45,9 +41,7 @@ class picture {
     bool doesTileFit(const tile& t, const Position& tp) const;
     void updateFreePoints(const Position& p);
     void updateBounds(const Position& p);
-    // bool outOfBounds(Position& p) const;
 };
-//========================== Picture header end ===============================
 
 
 #endif
