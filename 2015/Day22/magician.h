@@ -17,8 +17,8 @@ public:
     int mana {500};
 
     std::vector<std::unique_ptr<Spell>> spells{};
-    std::vector<unsigned int> battlePlan{std::vector<unsigned int>(10,0)};
-                                                //10 is an arbitrarily choosen number of max rounds, increase if needed
+    std::array<unsigned int, 10> battlePlan{};
+    //10 is an arbitrarily choosen number of max rounds, increase if needed
 
     Magician(Battleground* _battlegroundPtr) : battlegroundPtr{_battlegroundPtr}{
         spells.emplace_back(std::make_unique<MissileSpell> (_battlegroundPtr));

@@ -50,8 +50,11 @@ this sets up all the spells the magician will cast in the battle beforehand
 */
 bool Magician::updateBattlePlan(size_t round){
     do{
-        auto toChangeIt = std::ranges::find_if(std::rbegin(battlePlan)+battlePlan.size()-round-1, std::rend(battlePlan),
-            [](const auto i){return i<4;});
+        const auto toChangeIt = std::ranges::find_if(
+            std::rbegin(battlePlan)+battlePlan.size()-round-1,
+            std::rend(battlePlan),
+            [](const auto i){return i<4u;}
+        );
         if(toChangeIt == std::rend(battlePlan)) return false;
         (*toChangeIt)++;
         std::ranges::fill(std::rbegin(battlePlan), toChangeIt, 0u);
