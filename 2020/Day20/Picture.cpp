@@ -3,7 +3,7 @@
 
 #include <ranges>
 
-picture::picture(std::queue<tile>&& tiles) {
+void picture::insertTiles(std::queue<tile>&& tiles) {
     numberOfTiles = tiles.size();
     maxBoundsFound = false;
 
