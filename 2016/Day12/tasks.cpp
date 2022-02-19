@@ -30,9 +30,9 @@ struct Computer{
 };
 
 struct Instruction{
-    Computer* programPtr{nullptr};
+    Computer* computerPtr{nullptr};
 
-    Instruction(Computer* _computerPtr) : programPtr{_computerPtr}{}
+    Instruction(Computer* _computerPtr) : computerPtr{_computerPtr}{}
     Instruction(const Instruction&) = default;
     Instruction& operator=(const Instruction&) = default;
     Instruction(Instruction&&) = default;
@@ -48,8 +48,8 @@ struct set : public Instruction {
     set(auto* _computerPtr, int _source, int _destinationOffset)
         : Instruction{_computerPtr}, source{_source}, destinationOffset{_destinationOffset}{}
     void execute() override {
-        programPtr->reg[destinationOffset] = source;
-        programPtr->programPosition++;
+        computerPtr->reg[destinationOffset] = source;
+        computerPtr->programPosition++;
     }
 };
 
@@ -59,8 +59,8 @@ struct cpy : public Instruction {
     cpy(auto* _computerPtr, int  _sourceOffset, int _destinationOffset)
         : Instruction{_computerPtr}, sourceOffset{_sourceOffset}, destinationOffset{_destinationOffset}{}
     void execute() override {
-        programPtr->reg[destinationOffset] = programPtr->reg[sourceOffset];
-        programPtr->programPosition++;
+        computerPtr->reg[destinationOffset] = computerPtr->reg[sourceOffset];
+        computerPtr->programPosition++;
     }
 };
 
@@ -68,8 +68,8 @@ struct inc : public Instruction {
     int regOffset{};
     inc(auto* _computerPtr, int _regOffset) : Instruction{_computerPtr}, regOffset{_regOffset}{}
     void execute() override {
-        programPtr->reg[regOffset]++;
-        programPtr->programPosition++;
+        computerPtr->reg[regOffset]++;
+        computerPtr->programPosition++;
     }
 };
 
@@ -77,8 +77,8 @@ struct dec : public Instruction {
     int regOffset{};
     dec(auto* _computerPtr, int _regOffset) : Instruction{_computerPtr}, regOffset{_regOffset}{}
     void execute() override {
-        programPtr->reg[regOffset]--;
-        programPtr->programPosition++;
+        computerPtr->reg[regOffset]--;
+        computerPtr->programPosition++;
     }
 };
 
@@ -87,8 +87,8 @@ struct jnz : public Instruction {
     int offset{0};
     jnz(Computer* _computerPtr, int _regOffset, int _offset) : Instruction{_computerPtr}, regOffset{_regOffset}, offset{_offset}{}
     void execute() override {
-        if(programPtr->reg[regOffset]!=0) programPtr->programPosition+=offset;
-        else programPtr->programPosition++;
+        if(computerPtr->reg[regOffset]!=0) computerPtr->programPosition+=offset;
+        else computerPtr->programPosition++;
     }
 };
 
@@ -96,7 +96,7 @@ struct jmp : public Instruction {
     int offset{0};
     jmp(Computer* _computerPtr, int _offset) : Instruction{_computerPtr}, offset{_offset}{}
     void execute() override {
-        programPtr->programPosition+=offset;
+        computerPtr->programPosition+=offset;
     }
 };
 
