@@ -54,17 +54,12 @@ struct set : public Instruction {
 };
 
 struct cpy : public Instruction {
-    std::variant<int, int*> source;
-    int* destination{nullptr};
-    cpy(auto* _computerPtr, int* _source, int* _destination) : Instruction{_computerPtr}, source{_source}, destination{_destination}{}
-    cpy(auto* _computerPtr, int  _source, int* _destination) : Instruction{_computerPtr}, source{_source}, destination{_destination}{}
+    int sourceOffset{};
+    int destinationOffset{};
+    cpy(auto* _computerPtr, int  _sourceOffset, int _destinationOffset)
+        : Instruction{_computerPtr}, sourceOffset{_sourceOffset}, destinationOffset{_destinationOffset}{}
     void execute() override {
-        if(source.index()==0){
-            *destination = std::get<int>(source);
-        }
-        else{
-            *destination = *std::get<int*>(source);
-        }
+        programPtr->reg[destinationOffset] = programPtr->reg[sourceOffset];
         programPtr->programPosition++;
     }
 };
@@ -119,7 +114,7 @@ Computer::Computer(const std::vector<std::string>& input){
                 program.emplace_back(std::make_unique<set>(this, std::stoi(split[1]),  split[2][0]-'a' ));
             }
             else{
-                program.emplace_back(std::make_unique<cpy>(this, &reg[0]+split[1][0]-'a',  &reg[0]+split[2][0]-'a' ));
+                program.emplace_back(std::make_unique<cpy>(this, split[1][0]-'a',  split[2][0]-'a' ));
             }
         }
         else if(std::isdigit(split[1][0]) ){
