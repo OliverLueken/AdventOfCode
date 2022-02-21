@@ -215,11 +215,11 @@ namespace Matrix{
         [[nodiscard]] constexpr auto  cRowBegin    (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*i    ); }
         [[nodiscard]] constexpr auto  cRowEnd      (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*(i+1)); }
 
-        [[nodiscard]] constexpr auto  rcolumnBegin (size_t j)       noexcept { return ReverseColumnIterator     (matrix. rbegin()+j, _m)   ; }
-        [[nodiscard]] constexpr auto  rcolumnEnd   (size_t j)       noexcept { return ReverseColumnIterator     (matrix. rend()  +j, _m)   ; }
+        [[nodiscard]] constexpr auto  rColumnBegin (size_t j)       noexcept { return ReverseColumnIterator     (matrix. rbegin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto  rColumnEnd   (size_t j)       noexcept { return ReverseColumnIterator     (matrix. rend()  +j, _m)   ; }
 
-        [[nodiscard]] constexpr auto  rcolumnBegin (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crbegin()+j, _m)   ; }
-        [[nodiscard]] constexpr auto  rcolumnEnd   (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crend()  +j, _m)   ; }
+        [[nodiscard]] constexpr auto  rColumnBegin (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crbegin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto  rColumnEnd   (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crend()  +j, _m)   ; }
 
         [[nodiscard]] constexpr auto crColumnBegin (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crbegin()+j, _m)   ; }
         [[nodiscard]] constexpr auto crColumnEnd   (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crend()  +j, _m)   ; }
@@ -243,6 +243,16 @@ namespace Matrix{
             return std::ranges::subrange(cColumnBegin(j), cColumnEnd(j));
         }
 
+        [[nodiscard]] constexpr auto reverseCol(const size_t j) {
+            checkColBound(j);
+            return std::ranges::subrange{rColumnBegin(j), rColumnEnd(j)};
+        }
+
+        [[nodiscard]] constexpr auto reverseCol(const size_t j) const {
+            checkColBound(j);
+            return std::ranges::subrange(crColumnBegin(j), crColumnEnd(j));
+        }
+
         [[nodiscard]] constexpr auto row(const size_t i) {
             checkRowBound(i);
             return std::ranges::subrange{rowBegin(i), rowEnd(i)};
@@ -251,6 +261,16 @@ namespace Matrix{
         [[nodiscard]] constexpr auto row(const size_t i) const {
             checkRowBound(i);
             return std::ranges::subrange{cRowBegin(i), cRowEnd(i)};
+        }
+
+        [[nodiscard]] constexpr auto reverseRow(const size_t i) {
+            checkRowBound(i);
+            return std::ranges::subrange{rRowBegin(i), rRowEnd(i)};
+        }
+
+        [[nodiscard]] constexpr auto reverseRow(const size_t i) const {
+            checkRowBound(i);
+            return std::ranges::subrange{crRowBegin(i), crRowEnd(i)};
         }
 
         constexpr void resize(const size_t nn, const size_t mm){
