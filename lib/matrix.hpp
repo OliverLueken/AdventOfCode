@@ -182,30 +182,56 @@ namespace Matrix{
             size_t _m;
         };
 
-        using Iterator            = std::vector<T>::iterator;
-        using ConstIterator       = std::vector<T>::const_iterator;
-        using ColumnIterator      = ColumnIteratorTemplate<Iterator>;
-        using ConstColumnIterator = ColumnIteratorTemplate<ConstIterator>;
-        using RowIterator         = Iterator;
-        using ConstRowIterator    = ConstIterator;
+        using             Iterator = std::vector<T>::              iterator;
+        using        ConstIterator = std::vector<T>::        const_iterator;
+        using      ReverseIterator = std::vector<T>::      reverse_iterator;
+        using ConstReverseIterator = std::vector<T>::const_reverse_iterator;
 
-        [[nodiscard]] constexpr auto  columnBegin(size_t j)       noexcept { return ColumnIterator     (matrix. begin()+j, _m)   ; }
-        [[nodiscard]] constexpr auto  columnEnd  (size_t j)       noexcept { return ColumnIterator     (matrix. end()  +j, _m)   ; }
+        using             ColumnIterator = ColumnIteratorTemplate<            Iterator>;
+        using        ConstColumnIterator = ColumnIteratorTemplate<       ConstIterator>;
+        using      ReverseColumnIterator = ColumnIteratorTemplate<     ReverseIterator>;
+        using ConstReverseColumnIterator = ColumnIteratorTemplate<ConstReverseIterator>;
 
-        [[nodiscard]] constexpr auto  columnBegin(size_t j) const noexcept { return ConstColumnIterator(matrix.cbegin()+j, _m)   ; }
-        [[nodiscard]] constexpr auto  columnEnd  (size_t j) const noexcept { return ConstColumnIterator(matrix.cend()  +j, _m)   ; }
+        using             RowIterator =             Iterator;
+        using        ConstRowIterator =        ConstIterator;
+        using      ReverseRowIterator =      ReverseIterator;
+        using ConstReverseRowIterator = ConstReverseIterator;
 
-        [[nodiscard]] constexpr auto cColumnBegin(size_t j) const noexcept { return ConstColumnIterator(matrix.cbegin()+j, _m)   ; }
-        [[nodiscard]] constexpr auto cColumnEnd  (size_t j) const noexcept { return ConstColumnIterator(matrix.cend()  +j, _m)   ; }
+        [[nodiscard]] constexpr auto   columnBegin (size_t j)       noexcept { return ColumnIterator     (matrix. begin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto   columnEnd   (size_t j)       noexcept { return ColumnIterator     (matrix. end()  +j, _m)   ; }
 
-        [[nodiscard]] constexpr auto  rowBegin   (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*i    ); }
-        [[nodiscard]] constexpr auto  rowEnd     (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*(i+1)); }
+        [[nodiscard]] constexpr auto   columnBegin (size_t j) const noexcept { return ConstColumnIterator(matrix.cbegin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto   columnEnd   (size_t j) const noexcept { return ConstColumnIterator(matrix.cend()  +j, _m)   ; }
 
-        [[nodiscard]] constexpr auto  rowBegin   (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*i    ); }
-        [[nodiscard]] constexpr auto  rowEnd     (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*(i+1)); }
+        [[nodiscard]] constexpr auto  cColumnBegin (size_t j) const noexcept { return ConstColumnIterator(matrix.cbegin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto  cColumnEnd   (size_t j) const noexcept { return ConstColumnIterator(matrix.cend()  +j, _m)   ; }
 
-        [[nodiscard]] constexpr auto cRowBegin   (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*i    ); }
-        [[nodiscard]] constexpr auto cRowEnd     (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*(i+1)); }
+        [[nodiscard]] constexpr auto   rowBegin    (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*i    ); }
+        [[nodiscard]] constexpr auto   rowEnd      (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*(i+1)); }
+
+        [[nodiscard]] constexpr auto   rowBegin    (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*i    ); }
+        [[nodiscard]] constexpr auto   rowEnd      (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*(i+1)); }
+
+        [[nodiscard]] constexpr auto  cRowBegin    (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*i    ); }
+        [[nodiscard]] constexpr auto  cRowEnd      (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*(i+1)); }
+
+        [[nodiscard]] constexpr auto  rcolumnBegin (size_t j)       noexcept { return ReverseColumnIterator     (matrix. rbegin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto  rcolumnEnd   (size_t j)       noexcept { return ReverseColumnIterator     (matrix. rend()  +j, _m)   ; }
+
+        [[nodiscard]] constexpr auto  rcolumnBegin (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crbegin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto  rcolumnEnd   (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crend()  +j, _m)   ; }
+
+        [[nodiscard]] constexpr auto crColumnBegin (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crbegin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto crColumnEnd   (size_t j) const noexcept { return ConstReverseColumnIterator(matrix.crend()  +j, _m)   ; }
+
+        [[nodiscard]] constexpr auto  rRowBegin    (size_t i)       noexcept { return ReverseRowIterator        (matrix. rbegin()+_m*i    ); }
+        [[nodiscard]] constexpr auto  rRowEnd      (size_t i)       noexcept { return ReverseRowIterator        (matrix. rbegin()+_m*(i+1)); }
+
+        [[nodiscard]] constexpr auto  rRowBegin    (size_t i) const noexcept { return ConstReverseRowIterator   (matrix.crbegin()+_m*i    ); }
+        [[nodiscard]] constexpr auto  rRowEnd      (size_t i) const noexcept { return ConstReverseRowIterator   (matrix.crbegin()+_m*(i+1)); }
+
+        [[nodiscard]] constexpr auto crRowBegin    (size_t i) const noexcept { return ConstReverseRowIterator   (matrix.crbegin()+_m*i    ); }
+        [[nodiscard]] constexpr auto crRowEnd      (size_t i) const noexcept { return ConstReverseRowIterator   (matrix.crbegin()+_m*(i+1)); }
 
         [[nodiscard]] constexpr auto col(const size_t j) {
             checkColBound(j);
