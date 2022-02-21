@@ -189,17 +189,17 @@ namespace Matrix{
         using RowIterator         = Iterator;
         using ConstRowIterator    = ConstIterator;
 
-        constexpr auto  columnBegin(size_t j)       noexcept { return ColumnIterator     (matrix. begin()+j, _m)   ; }
-        constexpr auto  columnEnd  (size_t j)       noexcept { return ColumnIterator     (matrix. end()  +j, _m)   ; }
+        [[nodiscard]] constexpr auto  columnBegin(size_t j)       noexcept { return ColumnIterator     (matrix. begin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto  columnEnd  (size_t j)       noexcept { return ColumnIterator     (matrix. end()  +j, _m)   ; }
 
-        constexpr auto cColumnBegin(size_t j) const noexcept { return ConstColumnIterator(matrix.cbegin()+j, _m)   ; }
-        constexpr auto cColumnEnd  (size_t j) const noexcept { return ConstColumnIterator(matrix.cend()  +j, _m)   ; }
+        [[nodiscard]] constexpr auto cColumnBegin(size_t j) const noexcept { return ConstColumnIterator(matrix.cbegin()+j, _m)   ; }
+        [[nodiscard]] constexpr auto cColumnEnd  (size_t j) const noexcept { return ConstColumnIterator(matrix.cend()  +j, _m)   ; }
 
-        constexpr auto  rowBegin   (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*i    ); }
-        constexpr auto  rowEnd     (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*(i+1)); }
+        [[nodiscard]] constexpr auto  rowBegin   (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*i    ); }
+        [[nodiscard]] constexpr auto  rowEnd     (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*(i+1)); }
 
-        constexpr auto cRowBegin   (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*i    ); }
-        constexpr auto cRowEnd     (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*(i+1)); }
+        [[nodiscard]] constexpr auto cRowBegin   (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*i    ); }
+        [[nodiscard]] constexpr auto cRowEnd     (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*(i+1)); }
 
         [[nodiscard]] constexpr auto col(const size_t j) {
             checkColBound(j);
