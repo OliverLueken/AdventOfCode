@@ -189,17 +189,17 @@ namespace Matrix{
         using RowIterator         = Iterator;
         using ConstRowIterator    = ConstIterator;
 
-        constexpr ColumnIterator columnBegin(size_t j) { return ColumnIterator(matrix.begin()+j, _m); }
-        constexpr ColumnIterator columnEnd  (size_t j) { return ColumnIterator(matrix.end()  +j, _m); }
+        constexpr auto  columnBegin(size_t j)       noexcept { return ColumnIterator     (matrix. begin()+j, _m)   ; }
+        constexpr auto  columnEnd  (size_t j)       noexcept { return ColumnIterator     (matrix. end()  +j, _m)   ; }
 
-        constexpr ConstColumnIterator cColumnBegin(size_t j) const { return ConstColumnIterator(matrix.cbegin()+j, _m); }
-        constexpr ConstColumnIterator cColumnEnd  (size_t j) const { return ConstColumnIterator(matrix.cend()  +j, _m); }
+        constexpr auto cColumnBegin(size_t j) const noexcept { return ConstColumnIterator(matrix.cbegin()+j, _m)   ; }
+        constexpr auto cColumnEnd  (size_t j) const noexcept { return ConstColumnIterator(matrix.cend()  +j, _m)   ; }
 
-        constexpr RowIterator rowBegin(size_t i) { return RowIterator(matrix.begin()+_m*i    ); }
-        constexpr RowIterator rowEnd  (size_t i) { return RowIterator(matrix.begin()+_m*(i+1)); }
+        constexpr auto  rowBegin   (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*i    ); }
+        constexpr auto  rowEnd     (size_t i)       noexcept { return RowIterator        (matrix. begin()+_m*(i+1)); }
 
-        constexpr ConstRowIterator cRowBegin(size_t i) const { return ConstRowIterator(matrix.cbegin()+_m*i    ); }
-        constexpr ConstRowIterator cRowEnd  (size_t i) const { return ConstRowIterator(matrix.cbegin()+_m*(i+1)); }
+        constexpr auto cRowBegin   (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*i    ); }
+        constexpr auto cRowEnd     (size_t i) const noexcept { return ConstRowIterator   (matrix.cbegin()+_m*(i+1)); }
 
         [[nodiscard]] constexpr auto col(const size_t j) {
             checkColBound(j);
