@@ -29,18 +29,14 @@ void readInput(const strvec& input, strsetvec& ingredients, std::vector<strvec>&
         a = s.find("(");
         in = s.substr(0, a - 1);
         al = s.substr(a + 10, s.size() - a - 11);
-        std::cout << in << std::endl << al << std::endl << std::endl;
         strset ingre;
         strvec aller;
         boost::split(ingre, in, boost::is_any_of(" "));
         boost::split(aller, al, boost::is_any_of(","));
 
-        for (auto& str : ingre) std::cout << "\"" << str << "\"" << std::endl;
         for (auto& str : aller){
             boost::trim(str);
-            std::cout << "\"" << str << "\"" << std::endl;
         }
-        std::cout << std::endl;
         ingredients.push_back(ingre);
         allergens.push_back(aller);
     }
@@ -62,14 +58,6 @@ std::map<std::string, std::string> getAllergenToIngredientMap(
         }
     }
 
-    for (auto [allergen, ingredients_] : possibleIngredients){
-        std::cout << allergen << std::endl;
-        for (auto it = ingredients_.begin(); it != ingredients_.end(); it++){
-            std::cout << *it << std::endl;
-        }
-        std::cout << std::endl;
-    }
-
     std::map<std::string, std::string> allergenToIngredient;
     auto size = possibleIngredients.size();
 
@@ -81,7 +69,6 @@ std::map<std::string, std::string> getAllergenToIngredientMap(
                 std::string ingredient = *(it->second.begin());
                 ingredientsToRemove.insert(ingredient);
                 allergenToIngredient[it->first] = ingredient;
-                std::cout << it->first << ": " << ingredient << std::endl;
                 it = possibleIngredients.erase(it);
             } else {
                 it++;
@@ -116,11 +103,9 @@ auto doStuff(strvec& input){
     strsetvec ingredients;
     std::vector<strvec> allergens;
     readInput(input, ingredients, allergens);
-    std::cout << "a\n";
     std::map<std::string, std::string> allergenToIngredient;
     allergenToIngredient = getAllergenToIngredientMap(ingredients, allergens);
 
-    std::cout << "b\n";
     countAllergentFreeIngredients(ingredients, allergenToIngredient);
 
     auto dangerousIngredients = std::string{};
