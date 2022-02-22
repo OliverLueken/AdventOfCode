@@ -6,17 +6,14 @@
 
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
-#include <cmath>
-#include <fstream>
 #include <iostream>
 #include <queue>
-#include <regex>
-#include <set>
 #include <string>
+#include <set>
 #include <vector>
 #include <unordered_set>
+#include <map>
 
-typedef std::pair<int, int> point;
 
 void readInput(const auto& input, auto& ingredients, auto& allergens){
     std::string in, al;
