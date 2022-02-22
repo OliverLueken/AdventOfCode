@@ -17,7 +17,7 @@ struct IngredientList{
     std::vector<std::string> allergens{};
 };
 
-auto readInput(const auto& input){
+auto parseInput(const auto& input){
     auto ingredientLists = std::vector<IngredientList>{};
     for (auto& s : input){
         const auto bracketIt = std::ranges::find(s, '(');
@@ -91,8 +91,7 @@ auto countAllergentFreeIngredients(const auto& ingredientLists, const auto& alle
     return numberOfAllergenFreeIngredients;
 }
 
-auto doStuff(auto& input){
-    auto ingredientLists = readInput(input);
+auto doStuff(auto& ingredientLists){
     auto allergenToIngredient = getAllergenToIngredientMap(ingredientLists);
 
     const auto numberOfAllergenFreeIngredients = countAllergentFreeIngredients(ingredientLists, allergenToIngredient);
@@ -106,10 +105,10 @@ auto doStuff(auto& input){
 }
 
 int main(){
-    auto input = readFile::vectorOfStrings();
+    auto ingredientLists = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto [numberOfAllergenFreeIngredients, dangerousIngredients] = doStuff(input);
+    const auto [numberOfAllergenFreeIngredients, dangerousIngredients] = doStuff(ingredientLists);
     std::cout << "Allergen free ingredients appear " << numberOfAllergenFreeIngredients << " times.\n";
 
     //Task 2
