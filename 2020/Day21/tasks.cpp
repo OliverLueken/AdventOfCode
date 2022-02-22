@@ -9,7 +9,6 @@
 #include <iostream>
 #include <queue>
 #include <string>
-#include <set>
 #include <vector>
 #include <unordered_set>
 #include <map>
@@ -55,7 +54,7 @@ std::map<std::string, std::string> getAllergenToIngredientMap(
     auto size = possibleIngredients.size();
 
     do {
-        std::set<std::string> ingredientsToRemove;
+        std::unordered_set<std::string> ingredientsToRemove;
         for (auto it = possibleIngredients.begin();
              it != possibleIngredients.end();){
             if (it->second.size() == 1){
