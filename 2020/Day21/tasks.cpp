@@ -35,10 +35,10 @@ void readInput(const strvec& input, strsetvec& ingredients, std::vector<strvec>&
         boost::split(ingre, in, boost::is_any_of(" "));
         boost::split(aller, al, boost::is_any_of(","));
 
-        for (auto& s : ingre) std::cout << "\"" << s << "\"" << std::endl;
-        for (auto& s : aller){
-            boost::trim(s);
-            std::cout << "\"" << s << "\"" << std::endl;
+        for (auto& str : ingre) std::cout << "\"" << str << "\"" << std::endl;
+        for (auto& str : aller){
+            boost::trim(str);
+            std::cout << "\"" << str << "\"" << std::endl;
         }
         std::cout << std::endl;
         ingredients.push_back(ingre);
@@ -50,7 +50,7 @@ std::map<std::string, std::string> getAllergenToIngredientMap(
     const strsetvec& ingredients, const std::vector<strvec>& allergens){
     std::map<std::string, std::set<std::string>> possibleIngredients;
 
-    for (int i = 0; i < allergens.size(); i++){
+    for (auto i = 0u; i < allergens.size(); i++){
         for (auto& allergen : allergens.at(i)){
             if (possibleIngredients.find(allergen) ==
                 possibleIngredients.end()){
@@ -62,16 +62,16 @@ std::map<std::string, std::string> getAllergenToIngredientMap(
         }
     }
 
-    for (auto [allergen, ingredients] : possibleIngredients){
+    for (auto [allergen, ingredients_] : possibleIngredients){
         std::cout << allergen << std::endl;
-        for (auto it = ingredients.begin(); it != ingredients.end(); it++){
+        for (auto it = ingredients_.begin(); it != ingredients_.end(); it++){
             std::cout << *it << std::endl;
         }
         std::cout << std::endl;
     }
 
     std::map<std::string, std::string> allergenToIngredient;
-    int size = possibleIngredients.size();
+    auto size = possibleIngredients.size();
 
     do {
         std::set<std::string> ingredientsToRemove;
