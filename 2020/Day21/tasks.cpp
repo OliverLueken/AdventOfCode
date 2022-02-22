@@ -14,7 +14,10 @@
 #include <map>
 
 
-void readInput(const auto& input, auto& ingredients, auto& allergens){
+auto readInput(const auto& input){
+    auto ingredients = std::vector<std::unordered_set<std::string>>{};
+    auto allergens   = std::vector<std::vector<std::string>>{};
+
     std::string in, al;
     size_t a;
     for (auto& s : input){
@@ -32,6 +35,7 @@ void readInput(const auto& input, auto& ingredients, auto& allergens){
         ingredients.push_back(ingre);
         allergens.push_back(aller);
     }
+    return std::make_pair(ingredients, allergens);
 }
 
 std::map<std::string, std::string> getAllergenToIngredientMap(
@@ -92,9 +96,7 @@ auto countAllergentFreeIngredients(const auto& ingredients, const std::map<std::
 }
 
 auto doStuff(auto& input){
-    auto ingredients = std::vector<std::unordered_set<std::string>>{};
-    auto allergens = std::vector<std::vector<std::string>>{};
-    readInput(input, ingredients, allergens);
+    auto [ingredients, allergens] = readInput(input);
     std::map<std::string, std::string> allergenToIngredient;
     allergenToIngredient = getAllergenToIngredientMap(ingredients, allergens);
 
