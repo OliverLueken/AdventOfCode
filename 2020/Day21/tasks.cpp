@@ -1,3 +1,9 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
+
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <cmath>
@@ -106,7 +112,7 @@ void countAllergentFreeIngredients(
     }
 }
 
-void doStuff(strvec& input){
+auto doStuff(strvec& input){
     strsetvec ingredients;
     std::vector<strvec> allergens;
     readInput(input, ingredients, allergens);
@@ -117,32 +123,25 @@ void doStuff(strvec& input){
     std::cout << "b\n";
     countAllergentFreeIngredients(ingredients, allergenToIngredient);
 
+    auto dangerousIngredients = std::string{};
     for (auto& [a, i] : allergenToIngredient){
-        std::cout << i << ",";
+        dangerousIngredients+= i + ",";
     }
-}
-
-strvec readfile(std::string file){
-    std::string line;
-    std::ifstream input(file);
-    strvec lines;
-
-    if (input.is_open()){
-        while (getline(input, line)){
-            lines.push_back(line);
-        }
-        input.close();
-    } else {
-        std::cout << "Unable to open file\n";
-    }
-    return lines;
+    dangerousIngredients.pop_back();
+    return dangerousIngredients;
 }
 
 int main(){
-    strvec input = readfile("input.txt");
+    auto input = readFile::vectorOfStrings();
 
-    doStuff(input);
+    const auto dangerousIngredients = doStuff(input);
 
-    std::cout << result1 << "\n";
-    std::cout << result2 << "\n";
+    //Task 1
+    const auto numberOfAllergenFreeIngredients = result1;
+    std::cout << "Allergen free ingredients appear " << numberOfAllergenFreeIngredients << " times.\n";
+
+    //Task 2
+    std::cout << "The ingredients containing allergens are " << dangerousIngredients << ".\n";
+
+    VerifySolution::verifySolution(numberOfAllergenFreeIngredients, dangerousIngredients);
 }
