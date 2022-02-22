@@ -32,9 +32,8 @@ auto parseInput(const auto& input){
     return ingredientLists;
 }
 
-auto getAllergenToIngredientMap(const auto& ingredientLists){
+auto fillPossibleIngredients(const auto& ingredientLists){
     std::map<std::string, std::unordered_set<std::string>> possibleIngredients;
-
     for (auto i = 0u; i < ingredientLists.size(); i++){
         auto& ingredients = ingredientLists[i].ingredients;
         auto& allergens   = ingredientLists[i].allergens;
@@ -48,6 +47,11 @@ auto getAllergenToIngredientMap(const auto& ingredientLists){
             }
         }
     }
+    return possibleIngredients;
+}
+
+auto getAllergenToIngredientMap(const auto& ingredientLists){
+    auto possibleIngredients = fillPossibleIngredients(ingredientLists);
 
     std::map<std::string, std::string> allergenToIngredient;
     auto size = possibleIngredients.size();
