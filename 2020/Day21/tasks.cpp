@@ -34,8 +34,7 @@ auto readInput(const auto& input){
     return std::make_pair(ingredients, allergens);
 }
 
-std::map<std::string, std::string> getAllergenToIngredientMap(
-    const auto& ingredients, const auto& allergens){
+auto getAllergenToIngredientMap(const auto& ingredients, const auto& allergens){
     std::map<std::string, std::unordered_set<std::string>> possibleIngredients;
 
     for (auto i = 0u; i < allergens.size(); i++){
@@ -78,11 +77,11 @@ std::map<std::string, std::string> getAllergenToIngredientMap(
     return allergenToIngredient;
 }
 
-auto countAllergentFreeIngredients(const auto& ingredients, const std::map<std::string, std::string>& allergenToIngredient){
+auto countAllergentFreeIngredients(const auto& ingredients, const auto& allergenToIngredient){
     auto numberOfAllergenFreeIngredients = 0u;
     for (auto& ingset : ingredients){
         for (auto& ingredient : ingset){
-            bool isAllergenFree = true;
+            auto isAllergenFree = true;
             for (auto& [a, i] : allergenToIngredient)
                 if (ingredient == i) isAllergenFree = false;
             if (isAllergenFree) numberOfAllergenFreeIngredients++;
@@ -93,8 +92,7 @@ auto countAllergentFreeIngredients(const auto& ingredients, const std::map<std::
 
 auto doStuff(auto& input){
     auto [ingredients, allergens] = readInput(input);
-    std::map<std::string, std::string> allergenToIngredient;
-    allergenToIngredient = getAllergenToIngredientMap(ingredients, allergens);
+    auto allergenToIngredient = getAllergenToIngredientMap(ingredients, allergens);
 
     const auto numberOfAllergenFreeIngredients = countAllergentFreeIngredients(ingredients, allergenToIngredient);
 
