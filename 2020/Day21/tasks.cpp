@@ -14,9 +14,10 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
-typedef std::set<std::string> strset;
-typedef std::vector<strset> strsetvec;
+// typedef std::set<std::string> strset;
+typedef std::vector<std::unordered_set<std::string>> strsetvec;
 typedef std::vector<std::string> strvec;
 typedef std::pair<int, int> point;
 
@@ -27,7 +28,7 @@ void readInput(const strvec& input, strsetvec& ingredients, std::vector<strvec>&
         a = s.find("(");
         in = s.substr(0, a - 1);
         al = s.substr(a + 10, s.size() - a - 11);
-        strset ingre;
+        auto ingre = std::unordered_set<std::string>{};
         strvec aller;
         boost::split(ingre, in, boost::is_any_of(" "));
         boost::split(aller, al, boost::is_any_of(","));
@@ -42,7 +43,7 @@ void readInput(const strvec& input, strsetvec& ingredients, std::vector<strvec>&
 
 std::map<std::string, std::string> getAllergenToIngredientMap(
     const strsetvec& ingredients, const std::vector<strvec>& allergens){
-    std::map<std::string, std::set<std::string>> possibleIngredients;
+    std::map<std::string, std::unordered_set<std::string>> possibleIngredients;
 
     for (auto i = 0u; i < allergens.size(); i++){
         for (auto& allergen : allergens.at(i)){
@@ -50,7 +51,7 @@ std::map<std::string, std::string> getAllergenToIngredientMap(
                 possibleIngredients.end()){
                 possibleIngredients[allergen] = ingredients.at(i);
             } else {
-                std::set<std::string> tempingr = ingredients.at(i);
+                std::unordered_set<std::string> tempingr = ingredients.at(i);
                 tempingr.merge(possibleIngredients[allergen]);
             }
         }
