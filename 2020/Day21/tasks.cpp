@@ -20,8 +20,6 @@ typedef std::vector<strset> strsetvec;
 typedef std::vector<std::string> strvec;
 typedef std::pair<int, int> point;
 
-unsigned long result1 = 0, result2 = 0;
-
 void readInput(const strvec& input, strsetvec& ingredients, std::vector<strvec>& allergens){
     std::string in, al;
     size_t a;
@@ -86,17 +84,17 @@ std::map<std::string, std::string> getAllergenToIngredientMap(
     return allergenToIngredient;
 }
 
-void countAllergentFreeIngredients(
-    const strsetvec& ingredients,
-    const std::map<std::string, std::string>& allergenToIngredient){
+auto countAllergentFreeIngredients(const strsetvec& ingredients, const std::map<std::string, std::string>& allergenToIngredient){
+    auto numberOfAllergenFreeIngredients = 0u;
     for (auto& ingset : ingredients){
         for (auto& ingredient : ingset){
             bool isAllergenFree = true;
             for (auto& [a, i] : allergenToIngredient)
                 if (ingredient == i) isAllergenFree = false;
-            if (isAllergenFree) result1++;
+            if (isAllergenFree) numberOfAllergenFreeIngredients++;
         }
     }
+    return numberOfAllergenFreeIngredients;
 }
 
 auto doStuff(strvec& input){
@@ -106,23 +104,21 @@ auto doStuff(strvec& input){
     std::map<std::string, std::string> allergenToIngredient;
     allergenToIngredient = getAllergenToIngredientMap(ingredients, allergens);
 
-    countAllergentFreeIngredients(ingredients, allergenToIngredient);
+    const auto numberOfAllergenFreeIngredients = countAllergentFreeIngredients(ingredients, allergenToIngredient);
 
     auto dangerousIngredients = std::string{};
     for (auto& [a, i] : allergenToIngredient){
         dangerousIngredients+= i + ",";
     }
     dangerousIngredients.pop_back();
-    return dangerousIngredients;
+    return std::make_pair(numberOfAllergenFreeIngredients, dangerousIngredients);
 }
 
 int main(){
     auto input = readFile::vectorOfStrings();
 
-    const auto dangerousIngredients = doStuff(input);
-
     //Task 1
-    const auto numberOfAllergenFreeIngredients = result1;
+    const auto [numberOfAllergenFreeIngredients, dangerousIngredients] = doStuff(input);
     std::cout << "Allergen free ingredients appear " << numberOfAllergenFreeIngredients << " times.\n";
 
     //Task 2
