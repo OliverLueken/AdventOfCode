@@ -18,32 +18,32 @@ struct IngredientList{
 };
 
 auto readInput(const auto& input){
-    auto ingredients = std::vector<std::unordered_set<std::string>>{};
-    auto allergens   = std::vector<std::vector<std::string>>{};
-
+    auto ingredientLists = std::vector<IngredientList>{};
     for (auto& s : input){
         const auto bracketIt = std::ranges::find(s, '(');
         const auto ingre = Utilities::split(std::begin(s), bracketIt, ' ');
         const auto aller = Utilities::splitOnEach(bracketIt + 10, std::end(s), ", )");
 
+
         auto ingreSet = std::unordered_set<std::string>{};
         std::ranges::move(ingre, std::inserter(ingreSet, std::begin(ingreSet)));
-        ingredients.emplace_back(std::move(ingreSet));
-        allergens.emplace_back(std::move(aller));
+        ingredientLists.emplace_back(std::move(ingreSet), std::move(aller));
     }
-    return std::make_pair(ingredients, allergens);
+    return ingredientLists;
 }
 
-auto getAllergenToIngredientMap(const auto& ingredients, const auto& allergens){
+auto getAllergenToIngredientMap(const auto& ingredientLists){
     std::map<std::string, std::unordered_set<std::string>> possibleIngredients;
 
-    for (auto i = 0u; i < allergens.size(); i++){
-        for (auto& allergen : allergens.at(i)){
+    for (auto i = 0u; i < ingredientLists.size(); i++){
+        auto& ingredients = ingredientLists[i].ingredients;
+        auto& allergens   = ingredientLists[i].allergens;
+        for (auto& allergen : allergens){
             if (possibleIngredients.find(allergen) ==
                 possibleIngredients.end()){
-                possibleIngredients[allergen] = ingredients.at(i);
+                possibleIngredients[allergen] = ingredients;
             } else {
-                std::unordered_set<std::string> tempingr = ingredients.at(i);
+                std::unordered_set<std::string> tempingr = ingredients;
                 tempingr.merge(possibleIngredients[allergen]);
             }
         }
@@ -77,9 +77,10 @@ auto getAllergenToIngredientMap(const auto& ingredients, const auto& allergens){
     return allergenToIngredient;
 }
 
-auto countAllergentFreeIngredients(const auto& ingredients, const auto& allergenToIngredient){
+auto countAllergentFreeIngredients(const auto& ingredientLists, const auto& allergenToIngredient){
     auto numberOfAllergenFreeIngredients = 0u;
-    for (auto& ingset : ingredients){
+    for (auto& ingredientList : ingredientLists){
+        auto& ingset = ingredientList.ingredients;
         for (auto& ingredient : ingset){
             auto isAllergenFree = true;
             for (auto& [a, i] : allergenToIngredient)
@@ -91,10 +92,10 @@ auto countAllergentFreeIngredients(const auto& ingredients, const auto& allergen
 }
 
 auto doStuff(auto& input){
-    auto [ingredients, allergens] = readInput(input);
-    auto allergenToIngredient = getAllergenToIngredientMap(ingredients, allergens);
+    auto ingredientLists = readInput(input);
+    auto allergenToIngredient = getAllergenToIngredientMap(ingredientLists);
 
-    const auto numberOfAllergenFreeIngredients = countAllergentFreeIngredients(ingredients, allergenToIngredient);
+    const auto numberOfAllergenFreeIngredients = countAllergentFreeIngredients(ingredientLists, allergenToIngredient);
 
     auto dangerousIngredients = std::string{};
     for (auto& [a, i] : allergenToIngredient){
