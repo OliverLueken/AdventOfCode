@@ -5,7 +5,6 @@
 #include "../../lib/matrix.hpp"
 
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <queue>
 #include <string>
@@ -22,22 +21,15 @@ auto readInput(const auto& input){
     auto ingredients = std::vector<std::unordered_set<std::string>>{};
     auto allergens   = std::vector<std::vector<std::string>>{};
 
-    std::string in, al;
-    size_t a;
     for (auto& s : input){
-        a = s.find("(");
-        in = s.substr(0, a - 1);
-        al = s.substr(a + 10, s.size() - a - 11);
-        auto ingre = std::unordered_set<std::string>{};
-        auto aller = std::vector<std::string>{};
-        boost::split(ingre, in, boost::is_any_of(" "));
-        boost::split(aller, al, boost::is_any_of(","));
+        const auto bracketIt = std::ranges::find(s, '(');
+        const auto ingre = Utilities::split(std::begin(s), bracketIt, ' ');
+        const auto aller = Utilities::splitOnEach(bracketIt + 10, std::end(s), ", )");
 
-        for (auto& str : aller){
-            boost::trim(str);
-        }
-        ingredients.push_back(ingre);
-        allergens.push_back(aller);
+        auto ingreSet = std::unordered_set<std::string>{};
+        std::ranges::move(ingre, std::inserter(ingreSet, std::begin(ingreSet)));
+        ingredients.emplace_back(std::move(ingreSet));
+        allergens.emplace_back(std::move(aller));
     }
     return std::make_pair(ingredients, allergens);
 }
