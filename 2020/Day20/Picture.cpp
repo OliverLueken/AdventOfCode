@@ -3,7 +3,7 @@
 
 #include <ranges>
 
-void picture::insertTiles(std::queue<Tile>&& tiles) {
+void Picture::insertTiles(std::queue<Tile>&& tiles) {
     numberOfTiles = tiles.size();
     maxBoundsFound = false;
 
@@ -17,7 +17,7 @@ void picture::insertTiles(std::queue<Tile>&& tiles) {
     }
 }
 
-long picture::getCornerProd() const {
+long Picture::getCornerProd() const {
     long sum = 1;
     sum *= field.at({minx, miny}).id;
     sum *= field.at({maxx, miny}).id;
@@ -26,7 +26,7 @@ long picture::getCornerProd() const {
     return sum;
 }
 
-bool picture::insertTile(Tile& tile) {
+bool Picture::insertTile(Tile& tile) {
 
     if (field.empty()) {
         const auto origin = Position{0, 0};
@@ -48,7 +48,7 @@ bool picture::insertTile(Tile& tile) {
     return false;
 }
 
-bool picture::tryInsert(Tile& tile) {
+bool Picture::tryInsert(Tile& tile) {
     for (const auto& p : freePositions) {
         const auto tileFits = doesTileFit(tile, p);
         if (tileFits) {
@@ -62,7 +62,7 @@ bool picture::tryInsert(Tile& tile) {
     return false;
 }
 
-void picture::updateBounds(const Position& p) {
+void Picture::updateBounds(const Position& p) {
     int x = p.first, y = p.second;
     minx = std::min(minx, x);
     maxx = std::max(maxx, x);
@@ -123,7 +123,7 @@ auto fitsWith<Side::down> = [](const auto& tile, const auto& pos, const auto& fi
     return true;
 };
 
-bool picture::doesTileFit(const Tile& t, const Position& p) const {
+bool Picture::doesTileFit(const Tile& t, const Position& p) const {
     return fitsWith<Side::left >(t, p, this->field)
         && fitsWith<Side::right>(t, p, this->field)
         && fitsWith<Side::up   >(t, p, this->field)
@@ -131,7 +131,7 @@ bool picture::doesTileFit(const Tile& t, const Position& p) const {
 }
 
 
-void picture::updateFreePoints(const Position& p) {
+void Picture::updateFreePoints(const Position& p) {
     auto isInBounds = [this](const Position& pos) {
         if (!this->maxBoundsFound) return true;
         const auto [x, y] = pos;
@@ -156,7 +156,7 @@ void picture::updateFreePoints(const Position& p) {
     addToFreePositions( Position{p.first    , p.second - 1} );
 }
 
-Tile picture::picToTile() const {
+Tile Picture::picToTile() const {
     auto [tileHeight, tileLength] = field.begin()->second.size();
     auto water = Tile{ (maxy-miny+1)*(tileHeight-2), (maxx-minx+1)*(tileLength-2) };
     for(const auto& [tilePos, tile] : field){

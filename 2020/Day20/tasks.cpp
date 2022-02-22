@@ -107,7 +107,7 @@ auto extractTilesFromInput(auto&& input) {
 
 auto parseInput(auto&& input){
     auto tiles = extractTilesFromInput(input);
-    picture pic{};
+    Picture pic{};
     pic.insertTiles(std::move(tiles));
     return pic;
 }

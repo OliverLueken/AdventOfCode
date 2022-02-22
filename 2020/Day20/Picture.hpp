@@ -15,9 +15,9 @@
 
 using Position = Utilities::Position<int>;
 
-class picture {
+class Picture {
    public:
-    picture() = default;
+    Picture() = default;
 
     void insertTiles(std::queue<Tile>&& input);
     long getCornerProd() const;
