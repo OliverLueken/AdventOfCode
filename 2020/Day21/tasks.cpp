@@ -15,11 +15,10 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
-;
-typedef std::vector<std::string> strvec;
+
 typedef std::pair<int, int> point;
 
-void readInput(const strvec& input, auto& ingredients, std::vector<strvec>& allergens){
+void readInput(const auto& input, auto& ingredients, auto& allergens){
     std::string in, al;
     size_t a;
     for (auto& s : input){
@@ -27,7 +26,7 @@ void readInput(const strvec& input, auto& ingredients, std::vector<strvec>& alle
         in = s.substr(0, a - 1);
         al = s.substr(a + 10, s.size() - a - 11);
         auto ingre = std::unordered_set<std::string>{};
-        strvec aller;
+        auto aller = std::vector<std::string>{};
         boost::split(ingre, in, boost::is_any_of(" "));
         boost::split(aller, al, boost::is_any_of(","));
 
@@ -40,7 +39,7 @@ void readInput(const strvec& input, auto& ingredients, std::vector<strvec>& alle
 }
 
 std::map<std::string, std::string> getAllergenToIngredientMap(
-    const auto& ingredients, const std::vector<strvec>& allergens){
+    const auto& ingredients, const auto& allergens){
     std::map<std::string, std::unordered_set<std::string>> possibleIngredients;
 
     for (auto i = 0u; i < allergens.size(); i++){
@@ -96,9 +95,9 @@ auto countAllergentFreeIngredients(const auto& ingredients, const std::map<std::
     return numberOfAllergenFreeIngredients;
 }
 
-auto doStuff(strvec& input){
+auto doStuff(auto& input){
     auto ingredients = std::vector<std::unordered_set<std::string>>{};
-    std::vector<strvec> allergens;
+    auto allergens = std::vector<std::vector<std::string>>{};
     readInput(input, ingredients, allergens);
     std::map<std::string, std::string> allergenToIngredient;
     allergenToIngredient = getAllergenToIngredientMap(ingredients, allergens);
