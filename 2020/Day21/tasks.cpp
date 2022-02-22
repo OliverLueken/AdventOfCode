@@ -13,6 +13,10 @@
 #include <unordered_set>
 #include <map>
 
+struct IngredientList{
+    std::unordered_set<std::string> ingredients{};
+    std::vector<std::string> allergens{};
+};
 
 auto readInput(const auto& input){
     auto ingredients = std::vector<std::unordered_set<std::string>>{};
