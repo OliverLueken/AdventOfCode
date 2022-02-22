@@ -19,9 +19,9 @@ class picture {
    public:
     picture() = default;
 
-    void insertTiles(std::queue<tile>&& input);
+    void insertTiles(std::queue<Tile>&& input);
     long getCornerProd() const;
-    tile picToTile() const;
+    Tile picToTile() const;
 
    private:
 
@@ -34,12 +34,12 @@ class picture {
     unsigned long height{1};
     unsigned long numberOfTiles;
 
-    std::unordered_map<Position, tile> field{};
+    std::unordered_map<Position, Tile> field{};
     std::unordered_set<Position> freePositions{};
 
-    bool insertTile(tile& t);
-    bool tryInsert(tile& t);
-    bool doesTileFit(const tile& t, const Position& tp) const;
+    bool insertTile(Tile& t);
+    bool tryInsert(Tile& t);
+    bool doesTileFit(const Tile& t, const Position& tp) const;
     void updateFreePoints(const Position& p);
     void updateBounds(const Position& p);
 };

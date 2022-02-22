@@ -2,7 +2,7 @@
 
 #include <ranges>
 
-void tile::rotateLeft() {
+void Tile::rotateLeft() {
     const auto [n, m] = size();
     auto newData = Matrix<char>{m, n};
     for(auto i = 0u; i<m; ++i){
@@ -14,7 +14,7 @@ void tile::rotateLeft() {
     std::swap(data(), newData.data());
 }
 
-void tile::flip() {
+void Tile::flip() {
     const auto [n, m] = size();
     for(auto i = 0u; i<n/2; ++i){
         std::ranges::swap_ranges(row(i), row(n-i-1));

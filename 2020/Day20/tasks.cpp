@@ -94,8 +94,8 @@ auto extractTilesFromInput(auto&& input) {
         }
         return std::make_tuple(rows, cols, std::move(tempTileData));
     };
-    
-    std::queue<tile> tiles;
+
+    std::queue<Tile> tiles;
     for(auto it = std::begin(input); it<=std::end(input); ++it){
         const auto id = std::stoi(Utilities::split(*it)[1]);
         ++it;

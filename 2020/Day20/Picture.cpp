@@ -3,7 +3,7 @@
 
 #include <ranges>
 
-void picture::insertTiles(std::queue<tile>&& tiles) {
+void picture::insertTiles(std::queue<Tile>&& tiles) {
     numberOfTiles = tiles.size();
     maxBoundsFound = false;
 
@@ -26,7 +26,7 @@ long picture::getCornerProd() const {
     return sum;
 }
 
-bool picture::insertTile(tile& tile) {
+bool picture::insertTile(Tile& tile) {
 
     if (field.empty()) {
         const auto origin = Position{0, 0};
@@ -48,7 +48,7 @@ bool picture::insertTile(tile& tile) {
     return false;
 }
 
-bool picture::tryInsert(tile& tile) {
+bool picture::tryInsert(Tile& tile) {
     for (const auto& p : freePositions) {
         const auto tileFits = doesTileFit(tile, p);
         if (tileFits) {
@@ -123,7 +123,7 @@ auto fitsWith<Side::down> = [](const auto& tile, const auto& pos, const auto& fi
     return true;
 };
 
-bool picture::doesTileFit(const tile& t, const Position& p) const {
+bool picture::doesTileFit(const Tile& t, const Position& p) const {
     return fitsWith<Side::left >(t, p, this->field)
         && fitsWith<Side::right>(t, p, this->field)
         && fitsWith<Side::up   >(t, p, this->field)
@@ -156,9 +156,9 @@ void picture::updateFreePoints(const Position& p) {
     addToFreePositions( Position{p.first    , p.second - 1} );
 }
 
-tile picture::picToTile() const {
+Tile picture::picToTile() const {
     auto [tileHeight, tileLength] = field.begin()->second.size();
-    auto water = tile{ (maxy-miny+1)*(tileHeight-2), (maxx-minx+1)*(tileLength-2) };
+    auto water = Tile{ (maxy-miny+1)*(tileHeight-2), (maxx-minx+1)*(tileLength-2) };
     for(const auto& [tilePos, tile] : field){
         const auto& [tilex, tiley] = tilePos;
         const auto yoffset = (maxy-tiley)*(tileHeight-2)-1;
