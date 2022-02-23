@@ -16,24 +16,24 @@
 #include <vector>
 
 using strvec    = std::vector<std::string>;
-using deck      = std::deque<int>;
+using Deck      = std::deque<int>;
 
 auto dealDeck(const strvec& input){
-    auto deal = [](auto begin, auto end){
+    auto make_deck = [](auto begin, auto end){
         auto toInt = [](const auto& s){return std::stoi(s);};
-        auto d = deck{};
-        std::ranges::transform(begin, end, std::back_inserter(d), toInt);
-        return d;
+        auto deck = Deck{};
+        std::ranges::transform(begin, end, std::back_inserter(deck), toInt);
+        return deck;
     };
 
     const auto nextDeckIt = std::ranges::find(input, "Player 2:");
     return std::make_pair(
-        deal(std::begin(input)+1, nextDeckIt),
-        deal(nextDeckIt+1       , std::end(input))
+        make_deck(std::begin(input)+1, nextDeckIt),
+        make_deck(nextDeckIt+1       , std::end(input))
     );
 }
 
-int updateDeck(deck& deck1, deck& deck2, int roundWonBy, int a, int b){
+int updateDeck(Deck& deck1, Deck& deck2, int roundWonBy, int a, int b){
     if(roundWonBy == 1){
         deck1.push_back(a);
         deck1.push_back(b);
@@ -51,22 +51,22 @@ int updateDeck(deck& deck1, deck& deck2, int roundWonBy, int a, int b){
     return 0;
 }
 
-bool deckAlreadyExisted(deck& deck1, deck& deck2, std::set<std::pair<deck, deck>>& existingDecks){
-    std::pair<deck, deck> p = {deck1, deck2};
+bool deckAlreadyExisted(Deck& deck1, Deck& deck2, std::set<std::pair<Deck, Deck>>& existingDecks){
+    std::pair<Deck, Deck> p = {deck1, deck2};
 
     auto it = existingDecks.insert(p);
 
     return !it.second;
 }
 
-deck firstNcards(deck d, auto n){
+Deck firstNcards(Deck d, auto n){
     while (d.size() > n) d.pop_back();
 
     return d;
 }
 
-int playGame2(deck deck1, deck deck2, unsigned long& result2, int depth = 0){
-    std::set<std::pair<deck, deck>> existingDecks;
+int playGame2(Deck deck1, Deck deck2, unsigned long& result2, int depth = 0){
+    std::set<std::pair<Deck, Deck>> existingDecks;
     unsigned int a, b;
     int gameWonBy = 0;
 
@@ -87,8 +87,8 @@ int playGame2(deck deck1, deck deck2, unsigned long& result2, int depth = 0){
         int roundWonBy;
         // Do recursive call?
         if(deck1.size() >= a && deck2.size() >= b){
-            deck deck1copy = firstNcards(deck1, a);
-            deck deck2copy = firstNcards(deck2, b);
+            Deck deck1copy = firstNcards(deck1, a);
+            Deck deck2copy = firstNcards(deck2, b);
             roundWonBy = playGame2(deck1copy, deck2copy, result2, depth + 1);
         }
         else{
@@ -111,7 +111,7 @@ int playGame2(deck deck1, deck deck2, unsigned long& result2, int depth = 0){
     return gameWonBy;
 }
 
-auto playGame1(deck deck1, deck deck2){
+auto playGame1(Deck deck1, Deck deck2){
     int a, b;
     int gameWonBy = 0;
     while (gameWonBy == 0){
