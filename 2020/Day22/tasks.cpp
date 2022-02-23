@@ -18,6 +18,15 @@
 using strvec    = std::vector<std::string>;
 using Deck      = std::deque<int>;
 
+struct Game{
+    Deck deck1{};
+    Deck deck2{};
+};
+
+bool operator<(const Game& game1, const Game& game2) noexcept{
+    return game1.deck1 < game2.deck1 || game1.deck2 < game2.deck2;
+}
+
 auto dealDeck(const strvec& input){
     auto make_deck = [](auto begin, auto end){
         auto toInt = [](const auto& s){return std::stoi(s);};
@@ -27,34 +36,34 @@ auto dealDeck(const strvec& input){
     };
 
     const auto nextDeckIt = std::ranges::find(input, "Player 2:");
-    return std::make_pair(
+    return Game{
         make_deck(std::begin(input)+1, nextDeckIt),
         make_deck(nextDeckIt+1       , std::end(input))
-    );
+    };
 }
 
-int updateDeck(Deck& deck1, Deck& deck2, int roundWonBy, int a, int b){
+int updateDeck(auto& game, int roundWonBy, int a, int b){
     if(roundWonBy == 1){
-        deck1.push_back(a);
-        deck1.push_back(b);
-        if(deck2.empty()){
+        game.deck1.push_back(a);
+        game.deck1.push_back(b);
+        if(game.deck2.empty()){
             return 1;
         }
     }
     else{
-        deck2.push_back(b);
-        deck2.push_back(a);
-        if(deck1.empty()){
+        game.deck2.push_back(b);
+        game.deck2.push_back(a);
+        if(game.deck1.empty()){
             return 2;
         }
     }
     return 0;
 }
 
-bool deckAlreadyExisted(Deck& deck1, Deck& deck2, std::set<std::pair<Deck, Deck>>& existingDecks){
-    std::pair<Deck, Deck> p = {deck1, deck2};
+bool deckAlreadyExisted(auto& game, auto& existingDecks){
+    // std::pair<Deck, Deck> p = {deck1, deck2};
 
-    auto it = existingDecks.insert(p);
+    auto it = existingDecks.insert(game);
 
     return !it.second;
 }
@@ -65,31 +74,32 @@ Deck firstNcards(Deck d, auto n){
     return d;
 }
 
-int playGame2(Deck deck1, Deck deck2, unsigned long& result2, int depth = 0){
-    std::set<std::pair<Deck, Deck>> existingDecks;
+int playGame2(auto game, unsigned long& result2, int depth = 0){
+    std::set<Game> existingDecks;
     unsigned int a, b;
     int gameWonBy = 0;
 
     while(gameWonBy == 0){
 
-        if(deckAlreadyExisted(deck1, deck2, existingDecks)){
+        if(deckAlreadyExisted(game, existingDecks)){
             gameWonBy = 1;
             break;
         }
 
         // Draw
-        a = deck1.front();
-        b = deck2.front();
-        deck1.pop_front();
-        deck2.pop_front();
+        a = game.deck1.front();
+        b = game.deck2.front();
+        game.deck1.pop_front();
+        game.deck2.pop_front();
 
 
         int roundWonBy;
         // Do recursive call?
-        if(deck1.size() >= a && deck2.size() >= b){
-            Deck deck1copy = firstNcards(deck1, a);
-            Deck deck2copy = firstNcards(deck2, b);
-            roundWonBy = playGame2(deck1copy, deck2copy, result2, depth + 1);
+        if(game.deck1.size() >= a && game.deck2.size() >= b){
+            Deck deck1copy = firstNcards(game.deck1, a);
+            Deck deck2copy = firstNcards(game.deck2, b);
+            auto nextGame = Game{deck1copy, deck2copy};
+            roundWonBy = playGame2(nextGame, result2, depth + 1);
         }
         else{
             if (a > b)
@@ -98,51 +108,51 @@ int playGame2(Deck deck1, Deck deck2, unsigned long& result2, int depth = 0){
                 roundWonBy = 2;
         }
 
-        gameWonBy = updateDeck(deck1, deck2, roundWonBy, a, b);
+        gameWonBy = updateDeck(game, roundWonBy, a, b);
     }
 
     if(depth == 0){
-        if(gameWonBy == 2) deck1 = deck2;
-        for(auto i = deck1.size(); i > 0; i--){
-            result2 += i * deck1.front();
-            deck1.pop_front();
+        if(gameWonBy == 2) game.deck1 = game.deck2;
+        for(auto i = game.deck1.size(); i > 0; i--){
+            result2 += i * game.deck1.front();
+            game.deck1.pop_front();
         }
     }
     return gameWonBy;
 }
 
-auto playGame1(Deck deck1, Deck deck2){
+auto playGame1(auto game){
     int a, b;
     int gameWonBy = 0;
     while (gameWonBy == 0){
-        a = deck1.front();
-        b = deck2.front();
-        deck1.pop_front();
-        deck2.pop_front();
+        a = game.deck1.front();
+        b = game.deck2.front();
+        game.deck1.pop_front();
+        game.deck2.pop_front();
 
         bool player1wonRound = a > b;
-        gameWonBy = updateDeck(deck1, deck2, player1wonRound, a, b);
+        gameWonBy = updateDeck(game, player1wonRound, a, b);
     }
 
     auto result1 = 0ul;
-    if(gameWonBy == 2) deck1 = deck2;
-    for(auto i = deck1.size(); i > 0; i--){
-        result1 += i * deck1.front();
-        deck1.pop_front();
+    if(gameWonBy == 2) game.deck1 = game.deck2;
+    for(auto i = game.deck1.size(); i > 0; i--){
+        result1 += i * game.deck1.front();
+        game.deck1.pop_front();
     }
     return result1;
 }
 
 int main(){
-    const auto [deck1, deck2] = dealDeck(readFile::vectorOfStrings());
+    const auto game = dealDeck(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result1 = playGame1(deck1, deck2);
+    const auto result1 = playGame1(game);
     std::cout << result1 << "\n";
 
     //Task 2
     auto result2 = 0ul;
-    playGame2(deck1, deck2, result2);
+    playGame2(game, result2);
     std::cout << result2 << "\n";
 
     VerifySolution::verifySolution(result1, result2);
