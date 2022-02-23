@@ -100,7 +100,7 @@ auto getAllergenToIngredientMap(const auto& ingredientLists){
     return allergenToIngredient;
 }
 
-auto countAllergentFreeIngredients(const auto& ingredientLists, const auto& allergenToIngredient){
+auto countAllergenFreeIngredients(const auto& ingredientLists, const auto& allergenToIngredient){
     auto numberOfAllergenFreeIngredients = 0u;
     for (auto& ingredientList : ingredientLists){
         auto& ingset = ingredientList.ingredients;
@@ -128,7 +128,7 @@ int main(){
 
     //Task 1
     const auto allergenToIngredient = getAllergenToIngredientMap(ingredientLists);
-    const auto numberOfAllergenFreeIngredients = countAllergentFreeIngredients(ingredientLists, allergenToIngredient);
+    const auto numberOfAllergenFreeIngredients = countAllergenFreeIngredients(ingredientLists, allergenToIngredient);
     std::cout << "Allergen free ingredients appear " << numberOfAllergenFreeIngredients << " times.\n";
 
     //Task 2
