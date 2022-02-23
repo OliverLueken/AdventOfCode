@@ -61,30 +61,12 @@ deck firstNcards(deck d, int n){
     return d;
 }
 
-void printdecks(deck d1, deck d2){
-    std::cout << "Deck 1: ";
-    while(d1.size() > 0){
-        std::cout << d1.front() << ", ";
-        d1.pop_front();
-    }
-    std::cout << std::endl;
-
-    std::cout << "Deck 2: ";
-    while(d2.size() > 0){
-        std::cout << d2.front() << ", ";
-        d2.pop_front();
-    }
-    std::cout << std::endl;
-}
-
 int playGame2(deck deck1, deck deck2, int depth = 0){
     std::set<std::pair<deck, deck>> existingDecks;
     int a, b;
     int gameWonBy = 0;
     int round = 1;
     while(gameWonBy == 0){
-        std::cout << "Round " << round << " (Game " << depth + 1 << ")\n";
-        printdecks(deck1, deck2);
 
         if(deckAlreadyExisted(deck1, deck2, existingDecks)){
             gameWonBy = 1;
@@ -97,7 +79,6 @@ int playGame2(deck deck1, deck deck2, int depth = 0){
         deck1.pop_front();
         deck2.pop_front();
 
-        std::cout << a << std::endl << b << std::endl;
 
         int roundWonBy;
         // Do recursive call?
@@ -112,7 +93,6 @@ int playGame2(deck deck1, deck deck2, int depth = 0){
             else
                 roundWonBy = 2;
         }
-        std::cout << "Round won by " << roundWonBy << std::endl << std::endl;
 
         gameWonBy = updateDeck(deck1, deck2, roundWonBy, a, b);
     }
