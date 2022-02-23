@@ -58,7 +58,7 @@ auto getAllergenToIngredientMap(const auto& ingredientLists){
     auto possibleIngredients = fillPossibleIngredients(ingredientLists);
 
     std::map<std::string, std::string> allergenToIngredient;
-    auto size = possibleIngredients.size();
+    const auto numberOfAllergens = possibleIngredients.size();
 
     do {
         std::set<std::string> ingredientsToRemove;
@@ -80,7 +80,7 @@ auto getAllergenToIngredientMap(const auto& ingredientLists){
                 it->second.erase(ingredient);
             }
         }
-    } while (allergenToIngredient.size() < size);
+    } while(allergenToIngredient.size() < numberOfAllergens);
 
     return allergenToIngredient;
 }
