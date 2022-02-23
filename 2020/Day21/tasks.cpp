@@ -9,11 +9,11 @@
 #include <queue>
 #include <string>
 #include <vector>
-#include <unordered_set>
+#include <set>
 #include <map>
 
 struct IngredientList{
-    std::unordered_set<std::string> ingredients{};
+    std::set<std::string> ingredients{};
     std::vector<std::string> allergens{};
 };
 
@@ -25,25 +25,29 @@ auto parseInput(const auto& input){
         const auto aller = Utilities::splitOnEach(bracketIt + 10, std::end(s), ", )");
 
 
-        auto ingreSet = std::unordered_set<std::string>{};
+        auto ingreSet = std::set<std::string>{};
         std::ranges::move(ingre, std::inserter(ingreSet, std::begin(ingreSet)));
         ingredientLists.emplace_back(std::move(ingreSet), std::move(aller));
     }
     return ingredientLists;
 }
 
+template<class Set>
+auto getIntersection(const Set& set1, const Set& set2){
+    auto intersection = Set{};
+    std::ranges::set_intersection(set1, set2, std::inserter(intersection, std::begin(intersection)));
+    return intersection;
+}
+
 auto fillPossibleIngredients(const auto& ingredientLists){
-    std::map<std::string, std::unordered_set<std::string>> possibleIngredients;
-    for (auto i = 0u; i < ingredientLists.size(); i++){
-        auto& ingredients = ingredientLists[i].ingredients;
-        auto& allergens   = ingredientLists[i].allergens;
-        for (auto& allergen : allergens){
-            if (possibleIngredients.find(allergen) ==
-                possibleIngredients.end()){
+    std::map<std::string, std::set<std::string>> possibleIngredients;
+    for( const auto& [ingredients, allergens] : ingredientLists ){
+        for( const auto& allergen : allergens ){
+            if( possibleIngredients.contains(allergen) ){
+                possibleIngredients[allergen] = getIntersection(possibleIngredients[allergen], ingredients);
+            }
+            else{
                 possibleIngredients[allergen] = ingredients;
-            } else {
-                std::unordered_set<std::string> tempingr = ingredients;
-                tempingr.merge(possibleIngredients[allergen]);
             }
         }
     }
@@ -57,7 +61,7 @@ auto getAllergenToIngredientMap(const auto& ingredientLists){
     auto size = possibleIngredients.size();
 
     do {
-        std::unordered_set<std::string> ingredientsToRemove;
+        std::set<std::string> ingredientsToRemove;
         for (auto it = possibleIngredients.begin();
              it != possibleIngredients.end();){
             if (it->second.size() == 1){
