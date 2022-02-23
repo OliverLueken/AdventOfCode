@@ -21,8 +21,6 @@ typedef std::vector<std::string> strvec;
 typedef std::pair<int, int> point;
 typedef std::deque<int> deck;
 
-unsigned long result1 = 0, result2 = 0;
-
 void dealDeck(const strvec& input, deck& deck1, deck& deck2){
     auto i = 1u;
     for(; i < input.size(); i++){
@@ -67,7 +65,7 @@ deck firstNcards(deck d, auto n){
     return d;
 }
 
-int playGame2(deck deck1, deck deck2, int depth = 0){
+int playGame2(deck deck1, deck deck2, unsigned long& result2, int depth = 0){
     std::set<std::pair<deck, deck>> existingDecks;
     unsigned int a, b;
     int gameWonBy = 0;
@@ -91,7 +89,7 @@ int playGame2(deck deck1, deck deck2, int depth = 0){
         if(deck1.size() >= a && deck2.size() >= b){
             deck deck1copy = firstNcards(deck1, a);
             deck deck2copy = firstNcards(deck2, b);
-            roundWonBy = playGame2(deck1copy, deck2copy, depth + 1);
+            roundWonBy = playGame2(deck1copy, deck2copy, result2, depth + 1);
         }
         else{
             if (a > b)
@@ -113,7 +111,7 @@ int playGame2(deck deck1, deck deck2, int depth = 0){
     return gameWonBy;
 }
 
-void playGame1(deck deck1, deck deck2){
+auto playGame1(deck deck1, deck deck2){
     int a, b;
     int gameWonBy = 0;
     while (gameWonBy == 0){
@@ -126,18 +124,22 @@ void playGame1(deck deck1, deck deck2){
         gameWonBy = updateDeck(deck1, deck2, player1wonRound, a, b);
     }
 
+    auto result1 = 0ul;
     if(gameWonBy == 2) deck1 = deck2;
     for(auto i = deck1.size(); i > 0; i--){
         result1 += i * deck1.front();
         deck1.pop_front();
     }
+    return result1;
 }
 
-void doStuff(const strvec& input){
+auto doStuff(const strvec& input){
     deck deck1, deck2;
     dealDeck(input, deck1, deck2);
-    playGame1(deck1, deck2);
-    playGame2(deck1, deck2);
+    const auto result1 = playGame1(deck1, deck2);
+    auto result2 = 0ul;
+    playGame2(deck1, deck2, result2);
+    return std::make_pair(result1, result2);
 }
 
 strvec readfile(std::string file){
@@ -160,7 +162,7 @@ strvec readfile(std::string file){
 int main(){
     strvec input = readfile("input.txt");
 
-    doStuff(input);
+    const auto [result1, result2] = doStuff(input);
 
     std::cout << result1 << "\n";
     std::cout << result2 << "\n";
