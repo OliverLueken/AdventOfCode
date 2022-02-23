@@ -19,11 +19,16 @@ using strvec    = std::vector<std::string>;
 using deck      = std::deque<int>;
 
 void dealDeck(const strvec& input, deck& deck1, deck& deck2){
-    auto toInt = [](const auto& s){return std::stoi(s);};
+    auto deal = [](auto begin, auto end){
+        auto toInt = [](const auto& s){return std::stoi(s);};
+        auto d = deck{};
+        std::ranges::transform(begin, end, std::back_inserter(d), toInt);
+        return d;
+    };
 
     const auto nextDeckIt = std::ranges::find(input, "Player 2:");
-    std::ranges::transform(std::begin(input)+1, nextDeckIt-1   , std::back_inserter(deck1), toInt);
-    std::ranges::transform(nextDeckIt+1       , std::end(input), std::back_inserter(deck2), toInt);
+    deck1 = deal(std::begin(input)+1, nextDeckIt-1);
+    deck2 = deal(nextDeckIt+1       , std::end(input));
 }
 
 int updateDeck(deck& deck1, deck& deck2, int roundWonBy, int a, int b){
