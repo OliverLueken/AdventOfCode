@@ -101,17 +101,13 @@ auto getAllergenToIngredientMap(const auto& ingredientLists){
 }
 
 auto countAllergenFreeIngredients(const auto& ingredientLists, const auto& allergenToIngredient){
-    auto numberOfAllergenFreeIngredients = 0u;
-    for (auto& ingredientList : ingredientLists){
-        auto& ingset = ingredientList.ingredients;
-        for (auto& ingredient : ingset){
-            auto isAllergenFree = true;
-            for (auto& [a, i] : allergenToIngredient)
-                if (ingredient == i) isAllergenFree = false;
-            if (isAllergenFree) numberOfAllergenFreeIngredients++;
-        }
-    }
-    return numberOfAllergenFreeIngredients;
+    auto numberOfAllergenFreeIngredients = [&allergenToIngredient](const auto& ingredientList){
+        auto doesNotContainAllergen = [&allergenToIngredient](const auto& ingredient){
+            return !Utilities::contains( allergenToIngredient | std::views::values, ingredient );
+        };
+        return std::ranges::count_if(ingredientList.ingredients, doesNotContainAllergen);
+    };
+    return Utilities::sum(ingredientLists, 0u, numberOfAllergenFreeIngredients);
 }
 
 auto getDangerousIngredients(const auto& allergenToIngredient){
