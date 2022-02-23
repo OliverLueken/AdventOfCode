@@ -28,7 +28,7 @@ auto dealDeck(const strvec& input){
 
     const auto nextDeckIt = std::ranges::find(input, "Player 2:");
     return std::make_pair(
-        deal(std::begin(input)+1, nextDeckIt-1),
+        deal(std::begin(input)+1, nextDeckIt),
         deal(nextDeckIt+1       , std::end(input))
     );
 }
@@ -159,7 +159,7 @@ strvec readfile(std::string file){
 }
 
 int main(){
-    strvec input = readfile("input.txt");
+    const auto input = readFile::vectorOfStrings();
 
     const auto [result1, result2] = doStuff(input);
 
