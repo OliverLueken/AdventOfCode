@@ -16,11 +16,19 @@
 #include <vector>
 
 using strvec    = std::vector<std::string>;
-using Deck      = std::deque<int>;
+using Deck      = std::deque<unsigned int>;
 
 struct Game{
     Deck deck1{};
     Deck deck2{};
+
+    auto dealCards(){
+        const auto a = deck1.front();
+        const auto b = deck2.front();
+        deck1.pop_front();
+        deck2.pop_front();
+        return std::make_pair(a, b);
+    }
 };
 
 bool operator<(const Game& game1, const Game& game2) noexcept{
@@ -29,9 +37,9 @@ bool operator<(const Game& game1, const Game& game2) noexcept{
 
 auto dealDeck(const strvec& input){
     auto make_deck = [](auto begin, auto end){
-        auto toInt = [](const auto& s){return std::stoi(s);};
+        auto toUInt = [](const auto& s){return static_cast<unsigned int>(std::stoi(s));};
         auto deck = Deck{};
-        std::ranges::transform(begin, end, std::back_inserter(deck), toInt);
+        std::ranges::transform(begin, end, std::back_inserter(deck), toUInt);
         return deck;
     };
 
@@ -76,7 +84,6 @@ Deck firstNcards(Deck d, auto n){
 
 int playGame2(auto game, unsigned long& result2, int depth = 0){
     std::set<Game> existingDecks;
-    unsigned int a, b;
     int gameWonBy = 0;
 
     while(gameWonBy == 0){
@@ -87,10 +94,7 @@ int playGame2(auto game, unsigned long& result2, int depth = 0){
         }
 
         // Draw
-        a = game.deck1.front();
-        b = game.deck2.front();
-        game.deck1.pop_front();
-        game.deck2.pop_front();
+        const auto [a, b] = game.dealCards();
 
 
         int roundWonBy;
@@ -122,13 +126,9 @@ int playGame2(auto game, unsigned long& result2, int depth = 0){
 }
 
 auto playGame1(auto game){
-    int a, b;
     int gameWonBy = 0;
     while (gameWonBy == 0){
-        a = game.deck1.front();
-        b = game.deck2.front();
-        game.deck1.pop_front();
-        game.deck2.pop_front();
+        const auto [a, b] = game.dealCards();
 
         bool player1wonRound = a > b;
         gameWonBy = updateDeck(game, player1wonRound, a, b);
