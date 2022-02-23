@@ -18,8 +18,8 @@ typedef std::deque<int> deck;
 unsigned long result1 = 0, result2 = 0;
 
 void dealDeck(const strvec& input, deck& deck1, deck& deck2){
-    int i;
-    for(i = 1; i < input.size(); i++){
+    auto i = 1u;
+    for(; i < input.size(); i++){
         if (input[i].empty()) break;
         deck1.push_back(stoi(input[i]));
     }
@@ -55,7 +55,7 @@ bool deckAlreadyExisted(deck& deck1, deck& deck2, std::set<std::pair<deck, deck>
     return !it.second;
 }
 
-deck firstNcards(deck d, int n){
+deck firstNcards(deck d, auto n){
     while (d.size() > n) d.pop_back();
 
     return d;
@@ -63,9 +63,9 @@ deck firstNcards(deck d, int n){
 
 int playGame2(deck deck1, deck deck2, int depth = 0){
     std::set<std::pair<deck, deck>> existingDecks;
-    int a, b;
+    unsigned int a, b;
     int gameWonBy = 0;
-    int round = 1;
+    
     while(gameWonBy == 0){
 
         if(deckAlreadyExisted(deck1, deck2, existingDecks)){
@@ -99,7 +99,7 @@ int playGame2(deck deck1, deck deck2, int depth = 0){
 
     if(depth == 0){
         if(gameWonBy == 2) deck1 = deck2;
-        for(int i = deck1.size(); i > 0; i--){
+        for(auto i = deck1.size(); i > 0; i--){
             result2 += i * deck1.front();
             deck1.pop_front();
         }
@@ -121,7 +121,7 @@ void playGame1(deck deck1, deck deck2){
     }
 
     if(gameWonBy == 2) deck1 = deck2;
-    for(int i = deck1.size(); i > 0; i--){
+    for(auto i = deck1.size(); i > 0; i--){
         result1 += i * deck1.front();
         deck1.pop_front();
     }
