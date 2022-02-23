@@ -121,7 +121,7 @@ auto getDangerousIngredients(const auto& allergenToIngredient){
 }
 
 int main(){
-    auto ingredientLists = parseInput(readFile::vectorOfStrings());
+    const auto ingredientLists = parseInput(readFile::vectorOfStrings());
 
     //Task 1
     const auto allergenToIngredient = getAllergenToIngredientMap(ingredientLists);
