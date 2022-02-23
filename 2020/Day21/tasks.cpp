@@ -11,6 +11,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <ranges>
 
 struct IngredientList{
     std::set<std::string> ingredients{};
@@ -112,10 +113,10 @@ auto countAllergenFreeIngredients(const auto& ingredientLists, const auto& aller
 
 auto getDangerousIngredients(const auto& allergenToIngredient){
     auto dangerousIngredients = std::string{};
-    for (auto& [a, i] : allergenToIngredient){
-        dangerousIngredients+= i + ",";
+    for (const auto& ingredient : allergenToIngredient | std::views::values){
+        dangerousIngredients+= ingredient + ',';
     }
-    dangerousIngredients.pop_back();
+    dangerousIngredients.pop_back(); //remove trailing ','
     return dangerousIngredients;
 }
 
