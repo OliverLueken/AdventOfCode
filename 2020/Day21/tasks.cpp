@@ -87,7 +87,7 @@ auto getAllergenToIngredientMap(const auto& ingredientLists){
     };
 
     auto removeDeterminedIngredientsFromPossibleIngredients = [](auto& possibleIngredients, const auto& determinedIngredients){
-        for( auto& [_, possibleIngredientsForAllergen] : possibleIngredients ){
+        for( auto& possibleIngredientsForAllergen : possibleIngredients | std::views::values ){
             possibleIngredientsForAllergen = getSetDifference(possibleIngredientsForAllergen, determinedIngredients);
         }
     };
