@@ -18,7 +18,7 @@
 using strvec    = std::vector<std::string>;
 using deck      = std::deque<int>;
 
-void dealDeck(const strvec& input, deck& deck1, deck& deck2){
+auto dealDeck(const strvec& input){
     auto deal = [](auto begin, auto end){
         auto toInt = [](const auto& s){return std::stoi(s);};
         auto d = deck{};
@@ -27,8 +27,10 @@ void dealDeck(const strvec& input, deck& deck1, deck& deck2){
     };
 
     const auto nextDeckIt = std::ranges::find(input, "Player 2:");
-    deck1 = deal(std::begin(input)+1, nextDeckIt-1);
-    deck2 = deal(nextDeckIt+1       , std::end(input));
+    return std::make_pair(
+        deal(std::begin(input)+1, nextDeckIt-1),
+        deal(nextDeckIt+1       , std::end(input))
+    );
 }
 
 int updateDeck(deck& deck1, deck& deck2, int roundWonBy, int a, int b){
@@ -132,8 +134,7 @@ auto playGame1(deck deck1, deck deck2){
 }
 
 auto doStuff(const strvec& input){
-    deck deck1, deck2;
-    dealDeck(input, deck1, deck2);
+    auto [deck1, deck2] = dealDeck(input);
     const auto result1 = playGame1(deck1, deck2);
     auto result2 = 0ul;
     playGame2(deck1, deck2, result2);
