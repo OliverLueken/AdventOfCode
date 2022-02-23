@@ -133,14 +133,6 @@ auto playGame1(deck deck1, deck deck2){
     return result1;
 }
 
-auto doStuff(const strvec& input){
-    auto [deck1, deck2] = dealDeck(input);
-    const auto result1 = playGame1(deck1, deck2);
-    auto result2 = 0ul;
-    playGame2(deck1, deck2, result2);
-    return std::make_pair(result1, result2);
-}
-
 strvec readfile(std::string file){
     std::string line;
     std::ifstream input(file);
@@ -159,11 +151,15 @@ strvec readfile(std::string file){
 }
 
 int main(){
-    const auto input = readFile::vectorOfStrings();
+    const auto [deck1, deck2] = dealDeck(readFile::vectorOfStrings());
 
-    const auto [result1, result2] = doStuff(input);
-
+    //Task 1
+    const auto result1 = playGame1(deck1, deck2);
     std::cout << result1 << "\n";
+
+    //Task 2
+    auto result2 = 0ul;
+    playGame2(deck1, deck2, result2);
     std::cout << result2 << "\n";
 
     VerifySolution::verifySolution(result1, result2);
