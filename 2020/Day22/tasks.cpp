@@ -16,18 +16,24 @@
 #include <vector>
 
 using strvec    = std::vector<std::string>;
-using Deck      = std::deque<unsigned int>;
+
+struct Deck : public std::deque<unsigned int>{
+    auto deal(){
+        const auto a = front();
+        pop_front();
+        return a;
+    }
+};
 
 struct Game{
     Deck deck1{};
     Deck deck2{};
 
     auto dealCards(){
-        const auto a = deck1.front();
-        const auto b = deck2.front();
-        deck1.pop_front();
-        deck2.pop_front();
-        return std::make_pair(a, b);
+        return std::make_pair(
+            deck1.deal(),
+            deck2.deal()
+        );
     }
 };
 
