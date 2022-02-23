@@ -114,7 +114,7 @@ auto countAllergentFreeIngredients(const auto& ingredientLists, const auto& alle
     return numberOfAllergenFreeIngredients;
 }
 
-auto getDangerousIngredients(auto& allergenToIngredient){
+auto getDangerousIngredients(const auto& allergenToIngredient){
     auto dangerousIngredients = std::string{};
     for (auto& [a, i] : allergenToIngredient){
         dangerousIngredients+= i + ",";
@@ -127,7 +127,7 @@ int main(){
     auto ingredientLists = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    auto allergenToIngredient = getAllergenToIngredientMap(ingredientLists);
+    const auto allergenToIngredient = getAllergenToIngredientMap(ingredientLists);
     const auto numberOfAllergenFreeIngredients = countAllergentFreeIngredients(ingredientLists, allergenToIngredient);
     std::cout << "Allergen free ingredients appear " << numberOfAllergenFreeIngredients << " times.\n";
 
