@@ -15,11 +15,8 @@
 #include <string>
 #include <vector>
 
-typedef std::set<std::string> strset;
-typedef std::vector<strset> strsetvec;
-typedef std::vector<std::string> strvec;
-typedef std::pair<int, int> point;
-typedef std::deque<int> deck;
+using strvec    = std::vector<std::string>;
+using deck      = std::deque<int>;
 
 void dealDeck(const strvec& input, deck& deck1, deck& deck2){
     auto i = 1u;
