@@ -54,32 +54,47 @@ auto fillPossibleIngredients(const auto& ingredientLists){
     return possibleIngredients;
 }
 
+template<class Set>
+auto getSetDifference(const Set& set1, const Set& set2){
+    auto setDifference = Set{};
+    std::ranges::set_difference(set1, set2, std::inserter(setDifference, std::begin(setDifference)));
+    return setDifference;
+}
+
 auto getAllergenToIngredientMap(const auto& ingredientLists){
-    auto possibleIngredients = fillPossibleIngredients(ingredientLists);
+    auto possibleIngredientsForAllergens = fillPossibleIngredients(ingredientLists);
 
-    std::map<std::string, std::string> allergenToIngredient;
-    const auto numberOfAllergens = possibleIngredients.size();
+    auto allergenToIngredient = std::map<std::string, std::string>{};
 
+    auto collectDeterminedIngredientsWhichHaveAllergens = [&allergenToIngredient](auto& possibleIngredientsForAllergens_){
+        auto determinedIngredientsWhichHaveAllergens = std::set<std::string>{};
+        auto hasOnlyOnePossibleIngredient = [&allergenToIngredient, &determinedIngredientsWhichHaveAllergens]
+            (const auto& allergenAndPossibleIngredientsForAllergenPair)
+        {
+            const auto& [allergen, possibleIngredientsForAllergen] = allergenAndPossibleIngredientsForAllergenPair;
+            if(possibleIngredientsForAllergen.size() == 1){
+                auto ingredient = *possibleIngredientsForAllergen.begin();
+                allergenToIngredient[allergen] = ingredient;
+                determinedIngredientsWhichHaveAllergens.emplace(std::move(ingredient));
+                return true;
+            }
+            return false;
+        };
+
+        std::erase_if(possibleIngredientsForAllergens_, hasOnlyOnePossibleIngredient);
+        return determinedIngredientsWhichHaveAllergens;
+    };
+
+    auto removeDeterminedIngredientsFromPossibleIngredients = [](auto& possibleIngredients, const auto& determinedIngredients){
+        for( auto& [_, possibleIngredientsForAllergen] : possibleIngredients ){
+            possibleIngredientsForAllergen = getSetDifference(possibleIngredientsForAllergen, determinedIngredients);
+        }
+    };
+
+    const auto numberOfAllergens = possibleIngredientsForAllergens.size();
     do {
-        std::set<std::string> ingredientsToRemove;
-        for (auto it = possibleIngredients.begin();
-             it != possibleIngredients.end();){
-            if (it->second.size() == 1){
-                std::string ingredient = *(it->second.begin());
-                ingredientsToRemove.insert(ingredient);
-                allergenToIngredient[it->first] = ingredient;
-                it = possibleIngredients.erase(it);
-            } else {
-                it++;
-            }
-        }
-
-        for (auto it = possibleIngredients.begin();
-             it != possibleIngredients.end(); it++){
-            for (auto ingredient : ingredientsToRemove){
-                it->second.erase(ingredient);
-            }
-        }
+        const auto determinedIngredientsWhichHaveAllergens = collectDeterminedIngredientsWhichHaveAllergens(possibleIngredientsForAllergens);
+        removeDeterminedIngredientsFromPossibleIngredients(possibleIngredientsForAllergens, determinedIngredientsWhichHaveAllergens);
     } while(allergenToIngredient.size() < numberOfAllergens);
 
     return allergenToIngredient;
