@@ -23,6 +23,14 @@ struct Deck : public std::deque<unsigned int>{
         pop_front();
         return a;
     }
+
+    auto score() {
+        std::ranges::for_each(this->rbegin(), this->rend(), [worth=0](auto& val) mutable {
+            ++worth;
+            val*=worth;
+        });
+        return Utilities::sum(this->begin(), this->end());
+    }
 };
 
 struct Game{
@@ -34,6 +42,10 @@ struct Game{
             deck1.deal(),
             deck2.deal()
         );
+    }
+
+    auto score(){
+        return deck1.score()+deck2.score();
     }
 };
 
@@ -122,11 +134,7 @@ int playGame2(auto game, unsigned long& result2, int depth = 0){
     }
 
     if(depth == 0){
-        if(gameWonBy == 2) game.deck1 = game.deck2;
-        for(auto i = game.deck1.size(); i > 0; i--){
-            result2 += i * game.deck1.front();
-            game.deck1.pop_front();
-        }
+        result2 = game.score();
     }
     return gameWonBy;
 }
@@ -140,13 +148,7 @@ auto playGame1(auto game){
         gameWonBy = updateDeck(game, player1wonRound, a, b);
     }
 
-    auto result1 = 0ul;
-    if(gameWonBy == 2) game.deck1 = game.deck2;
-    for(auto i = game.deck1.size(); i > 0; i--){
-        result1 += i * game.deck1.front();
-        game.deck1.pop_front();
-    }
-    return result1;
+    return game.score();
 }
 
 int main(){
