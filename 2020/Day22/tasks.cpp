@@ -24,6 +24,10 @@ struct Deck : public std::deque<unsigned int>{
         return a;
     }
 
+    auto gameOver() const {
+        return this->size()==0;
+    }
+
     auto score() {
         std::ranges::for_each(this->rbegin(), this->rend(), [worth=0](auto& val) mutable {
             ++worth;
@@ -32,6 +36,25 @@ struct Deck : public std::deque<unsigned int>{
         return Utilities::sum(this->begin(), this->end());
     }
 };
+
+
+int updateDeck(auto& game, int roundWonBy, int a, int b){
+    if(roundWonBy == 1){
+        game.deck1.push_back(a);
+        game.deck1.push_back(b);
+        if(game.deck2.empty()){
+            return 1;
+        }
+    }
+    else{
+        game.deck2.push_back(b);
+        game.deck2.push_back(a);
+        if(game.deck1.empty()){
+            return 2;
+        }
+    }
+    return 0;
+}
 
 struct Game{
     Deck deck1{};
@@ -44,6 +67,19 @@ struct Game{
         );
     }
 
+    auto gameOver() const {
+        return deck1.gameOver() || deck2.gameOver();
+    }
+
+    auto play(){
+        while (!gameOver()){
+            const auto [a, b] = dealCards();
+
+            bool player1wonRound = a > b;
+            updateDeck(*this, player1wonRound, a, b);
+        }
+    }
+    
     auto score(){
         return deck1.score()+deck2.score();
     }
@@ -66,24 +102,6 @@ auto dealDeck(const strvec& input){
         make_deck(std::begin(input)+1, nextDeckIt),
         make_deck(nextDeckIt+1       , std::end(input))
     };
-}
-
-int updateDeck(auto& game, int roundWonBy, int a, int b){
-    if(roundWonBy == 1){
-        game.deck1.push_back(a);
-        game.deck1.push_back(b);
-        if(game.deck2.empty()){
-            return 1;
-        }
-    }
-    else{
-        game.deck2.push_back(b);
-        game.deck2.push_back(a);
-        if(game.deck1.empty()){
-            return 2;
-        }
-    }
-    return 0;
 }
 
 bool deckAlreadyExisted(auto& game, auto& existingDecks){
@@ -140,13 +158,7 @@ int playGame2(auto game, unsigned long& result2, int depth = 0){
 }
 
 auto playGame1(auto game){
-    int gameWonBy = 0;
-    while (gameWonBy == 0){
-        const auto [a, b] = game.dealCards();
-
-        bool player1wonRound = a > b;
-        gameWonBy = updateDeck(game, player1wonRound, a, b);
-    }
+    game.play();
 
     return game.score();
 }
