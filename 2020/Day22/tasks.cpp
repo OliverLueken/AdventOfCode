@@ -71,6 +71,15 @@ struct Game{
         return deck1.gameOver() || deck2.gameOver();
     }
 
+    auto getWinner() const {
+        return deck2.gameOver() ? 1 : 2;
+    }
+
+    /*
+    Plays the game
+    Returns 1 if Player1 won the game
+    Returns 2 if Player2 won the game
+    */
     auto play(){
         while (!gameOver()){
             const auto [a, b] = dealCards();
@@ -78,6 +87,7 @@ struct Game{
             bool player1wonRound = a > b;
             updateDeck(*this, player1wonRound, a, b);
         }
+        return getWinner();
     }
 
     auto score(){
