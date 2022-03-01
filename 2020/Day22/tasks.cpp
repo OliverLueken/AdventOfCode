@@ -79,7 +79,7 @@ struct Game{
             updateDeck(*this, player1wonRound, a, b);
         }
     }
-    
+
     auto score(){
         return deck1.score()+deck2.score();
     }
@@ -112,10 +112,10 @@ bool deckAlreadyExisted(auto& game, auto& existingDecks){
     return !it.second;
 }
 
-Deck firstNcards(Deck d, auto n){
-    while (d.size() > n) d.pop_back();
-
-    return d;
+auto firstNCards(const Deck& d, const auto n){
+    Deck newDeck{};
+    std::ranges::copy_n(std::begin(d), n, std::back_inserter(newDeck));
+    return newDeck;
 }
 
 int playGame2(auto game, unsigned long& result2, int depth = 0){
@@ -136,8 +136,8 @@ int playGame2(auto game, unsigned long& result2, int depth = 0){
         int roundWonBy;
         // Do recursive call?
         if(game.deck1.size() >= a && game.deck2.size() >= b){
-            Deck deck1copy = firstNcards(game.deck1, a);
-            Deck deck2copy = firstNcards(game.deck2, b);
+            Deck deck1copy = firstNCards(game.deck1, a);
+            Deck deck2copy = firstNCards(game.deck2, b);
             auto nextGame = Game{deck1copy, deck2copy};
             roundWonBy = playGame2(nextGame, result2, depth + 1);
         }
