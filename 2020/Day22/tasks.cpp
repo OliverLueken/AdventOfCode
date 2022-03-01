@@ -17,6 +17,8 @@
 
 using strvec    = std::vector<std::string>;
 
+enum Winner{Player1 = 1, Player2};
+
 struct Deck : public std::deque<unsigned int>{
     auto deal(){
         const auto a = front();
@@ -72,7 +74,7 @@ struct Game{
     }
 
     auto getWinner() const {
-        return deck2.gameOver() ? 1 : 2;
+        return deck2.gameOver() ? Winner::Player1 : Winner::Player2;
     }
 
     /*
