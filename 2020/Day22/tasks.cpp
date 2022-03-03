@@ -17,7 +17,7 @@
 
 using strvec    = std::vector<std::string>;
 
-enum Winner{Player1 = 1, Player2};
+enum Winner{NoWinner = 0, Player1, Player2};
 
 struct Deck : public std::deque<unsigned int>{
     auto deal(){
@@ -40,22 +40,22 @@ struct Deck : public std::deque<unsigned int>{
 };
 
 
-int updateDeck(auto& game, int roundWonBy, int a, int b){
-    if(roundWonBy == 1){
+auto updateDeck(auto& game, const Winner winner, int a, int b){
+    if(winner == Winner::Player1){
         game.deck1.push_back(a);
         game.deck1.push_back(b);
         if(game.deck2.empty()){
-            return 1;
+            return Winner::Player1;
         }
     }
     else{
         game.deck2.push_back(b);
         game.deck2.push_back(a);
         if(game.deck1.empty()){
-            return 2;
+            return Winner::Player2;
         }
     }
-    return 0;
+    return Winner::NoWinner;
 }
 
 struct Game{
@@ -86,8 +86,8 @@ struct Game{
         while (!gameOver()){
             const auto [a, b] = dealCards();
 
-            bool player1wonRound = a > b;
-            updateDeck(*this, player1wonRound, a, b);
+            const auto winner = a > b ? Winner::Player1 : Winner::Player2;
+            updateDeck(*this, winner, a, b);
         }
         return getWinner();
     }
@@ -130,14 +130,14 @@ auto firstNCards(const Deck& d, const auto n){
     return newDeck;
 }
 
-int playGame2(auto game, unsigned long& result2, int depth = 0){
+Winner playGame2(auto game, unsigned long& result2, int depth = 0){
     std::set<Game> existingDecks;
-    int gameWonBy = 0;
+    auto gameWonBy = Winner::NoWinner;
 
-    while(gameWonBy == 0){
+    while(gameWonBy == Winner::NoWinner){
 
         if(deckAlreadyExisted(game, existingDecks)){
-            gameWonBy = 1;
+            gameWonBy = Winner::Player1;
             break;
         }
 
@@ -145,7 +145,7 @@ int playGame2(auto game, unsigned long& result2, int depth = 0){
         const auto [a, b] = game.dealCards();
 
 
-        int roundWonBy;
+        auto roundWonBy = Winner::NoWinner;
         // Do recursive call?
         if(game.deck1.size() >= a && game.deck2.size() >= b){
             Deck deck1copy = firstNCards(game.deck1, a);
@@ -155,9 +155,9 @@ int playGame2(auto game, unsigned long& result2, int depth = 0){
         }
         else{
             if (a > b)
-                roundWonBy = 1;
+                roundWonBy = Winner::Player1;
             else
-                roundWonBy = 2;
+                roundWonBy = Winner::Player2;
         }
 
         gameWonBy = updateDeck(game, roundWonBy, a, b);
