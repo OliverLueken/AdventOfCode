@@ -77,11 +77,6 @@ struct Game{
         return deck2.gameOver() ? Winner::Player1 : Winner::Player2;
     }
 
-    /*
-    Plays the game
-    Returns 1 if Player1 won the game
-    Returns 2 if Player2 won the game
-    */
     auto play(){
         while (!gameOver()){
             const auto [a, b] = dealCards();
