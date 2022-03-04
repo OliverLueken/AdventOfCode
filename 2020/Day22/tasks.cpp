@@ -62,9 +62,9 @@ template<typename T>
 struct Game{
     Deck deck1{};
     Deck deck2{};
-    T roundWinner;
+    const T& roundWinner;
 
-    Game(const Deck& deck1_, const Deck& deck2_, T roundWinner_)
+    Game(const Deck& deck1_, const Deck& deck2_, const T& roundWinner_)
         : deck1(deck1_), deck2(deck2_), roundWinner(roundWinner_){}
 
     auto dealCards(){
@@ -102,6 +102,8 @@ bool operator<(const Game<T>& game1, const Game<S>& game2) noexcept{
     return game1.deck1 < game2.deck1 || game1.deck2 < game2.deck2;
 }
 
+auto game1RoundWinner = [](const unsigned int a, const unsigned int b){return a > b ? Winner::Player1 : Winner::Player2;};
+
 auto dealDeck(const strvec& input){
     auto make_deck = [](auto begin, auto end){
         auto toUInt = [](const auto& s){return static_cast<unsigned int>(std::stoi(s));};
@@ -114,7 +116,7 @@ auto dealDeck(const strvec& input){
     return Game{
         make_deck(std::begin(input)+1, nextDeckIt),
         make_deck(nextDeckIt+1       , std::end(input)),
-        [](unsigned int a, unsigned int b){return a > b ? Winner::Player1 : Winner::Player2;}
+        game1RoundWinner
     };
 }
 
@@ -138,11 +140,6 @@ Winner playGame2(auto game, unsigned long& result2, int depth = 0){
 
     while(gameWonBy == Winner::NoWinner){
 
-        if(deckAlreadyExisted(game, existingDecks)){
-            gameWonBy = Winner::Player1;
-            break;
-        }
-
         // Draw
         const auto [a, b] = game.dealCards();
 
@@ -163,6 +160,11 @@ Winner playGame2(auto game, unsigned long& result2, int depth = 0){
         }
 
         gameWonBy = updateDeck(game, roundWonBy, a, b);
+
+        if(deckAlreadyExisted(game, existingDecks)){
+            gameWonBy = Winner::Player1;
+            break;
+        }
     }
 
     if(depth == 0){
