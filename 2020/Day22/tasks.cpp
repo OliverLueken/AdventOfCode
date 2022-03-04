@@ -58,9 +58,14 @@ auto updateDeck(auto& game, const Winner winner, int a, int b){
     return Winner::NoWinner;
 }
 
+template<typename T>
 struct Game{
     Deck deck1{};
     Deck deck2{};
+    T roundWinner;
+
+    Game(const Deck& deck1_, const Deck& deck2_, T roundWinner_)
+        : deck1(deck1_), deck2(deck2_), roundWinner(roundWinner_){}
 
     auto dealCards(){
         return std::make_pair(
@@ -81,7 +86,7 @@ struct Game{
         while (!gameOver()){
             const auto [a, b] = dealCards();
 
-            const auto winner = a > b ? Winner::Player1 : Winner::Player2;
+            const auto winner = roundWinner(a, b);
             updateDeck(*this, winner, a, b);
         }
         return getWinner();
@@ -92,7 +97,8 @@ struct Game{
     }
 };
 
-bool operator<(const Game& game1, const Game& game2) noexcept{
+template<typename T, typename S>
+bool operator<(const Game<T>& game1, const Game<S>& game2) noexcept{
     return game1.deck1 < game2.deck1 || game1.deck2 < game2.deck2;
 }
 
@@ -107,7 +113,8 @@ auto dealDeck(const strvec& input){
     const auto nextDeckIt = std::ranges::find(input, "Player 2:");
     return Game{
         make_deck(std::begin(input)+1, nextDeckIt),
-        make_deck(nextDeckIt+1       , std::end(input))
+        make_deck(nextDeckIt+1       , std::end(input)),
+        [](unsigned int a, unsigned int b){return a > b ? Winner::Player1 : Winner::Player2;}
     };
 }
 
@@ -126,7 +133,7 @@ auto firstNCards(const Deck& d, const auto n){
 }
 
 Winner playGame2(auto game, unsigned long& result2, int depth = 0){
-    std::set<Game> existingDecks;
+    std::set<decltype(game)> existingDecks;
     auto gameWonBy = Winner::NoWinner;
 
     while(gameWonBy == Winner::NoWinner){
@@ -145,7 +152,7 @@ Winner playGame2(auto game, unsigned long& result2, int depth = 0){
         if(game.deck1.size() >= a && game.deck2.size() >= b){
             Deck deck1copy = firstNCards(game.deck1, a);
             Deck deck2copy = firstNCards(game.deck2, b);
-            auto nextGame = Game{deck1copy, deck2copy};
+            auto nextGame = Game{deck1copy, deck2copy, game.roundWinner};
             roundWonBy = playGame2(nextGame, result2, depth + 1);
         }
         else{
