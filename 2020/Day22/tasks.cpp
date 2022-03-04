@@ -134,7 +134,27 @@ auto firstNCards(const Deck& d, const auto n){
     return newDeck;
 }
 
-Winner playGame2(auto game, unsigned long& result2, int depth = 0){
+Winner playGame2(auto game, unsigned long& result2, int depth = 0);
+
+auto game2RoundWinner = [](const auto& game, unsigned long& result2, int depth, const unsigned int a, const unsigned int b){
+    // Do recursive call?
+    auto roundWonBy = Winner::NoWinner;
+    if(game.deck1.size() >= a && game.deck2.size() >= b){
+        Deck deck1copy = firstNCards(game.deck1, a);
+        Deck deck2copy = firstNCards(game.deck2, b);
+        auto nextGame = Game{deck1copy, deck2copy, game.roundWinner};
+        roundWonBy = playGame2(nextGame, result2, depth + 1);
+    }
+    else{
+        if (a > b)
+            roundWonBy = Winner::Player1;
+        else
+            roundWonBy = Winner::Player2;
+    }
+    return roundWonBy;
+};
+
+Winner playGame2(auto game, unsigned long& result2, int depth){
     std::set<decltype(game)> existingDecks;
     auto gameWonBy = Winner::NoWinner;
 
@@ -144,20 +164,8 @@ Winner playGame2(auto game, unsigned long& result2, int depth = 0){
         const auto [a, b] = game.dealCards();
 
 
-        auto roundWonBy = Winner::NoWinner;
-        // Do recursive call?
-        if(game.deck1.size() >= a && game.deck2.size() >= b){
-            Deck deck1copy = firstNCards(game.deck1, a);
-            Deck deck2copy = firstNCards(game.deck2, b);
-            auto nextGame = Game{deck1copy, deck2copy, game.roundWinner};
-            roundWonBy = playGame2(nextGame, result2, depth + 1);
-        }
-        else{
-            if (a > b)
-                roundWonBy = Winner::Player1;
-            else
-                roundWonBy = Winner::Player2;
-        }
+        // auto roundWonBy = Winner::NoWinner;
+        const auto roundWonBy = game2RoundWinner(game, result2, depth, a, b);
 
         gameWonBy = updateDeck(game, roundWonBy, a, b);
 
