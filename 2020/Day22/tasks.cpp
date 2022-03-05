@@ -62,8 +62,8 @@ struct Game{
     Deck deck1{};
     Deck deck2{};
 
-    Game(const Deck& deck1_, const Deck& deck2_)
-        : deck1(deck1_), deck2(deck2_){}
+    Game(Deck&& deck1_, Deck&& deck2_)
+        : deck1(std::move(deck1_)), deck2(std::move(deck2_)){}
 
     Game(const Game&) = default;
     Game& operator=(const Game&) = default;
@@ -135,7 +135,7 @@ struct Game2 : public Game{
     std::unordered_set<size_t> existingDecks{};
 
     Game2(Game game_) : Game(game_){}
-    Game2(Deck deck1_, Deck deck2_) : Game{deck1_, deck2_} {}
+    Game2(Deck&& deck1_, Deck&& deck2_) : Game{std::move(deck1_), std::move(deck2_)} {}
     Winner roundWinner(const unsigned int a, const unsigned int b) const;
     Winner play();
 };
@@ -174,7 +174,7 @@ Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
     if(deck1.size() >= a && deck2.size() >= b){
         Deck deck1copy = firstNCards(deck1, a);
         Deck deck2copy = firstNCards(deck2, b);
-        auto nextGame = Game2{deck1copy, deck2copy};
+        auto nextGame = Game2{std::move(deck1copy), std::move(deck2copy)};
         return nextGame.play();
     }
     return Game::roundWinner(a, b);
