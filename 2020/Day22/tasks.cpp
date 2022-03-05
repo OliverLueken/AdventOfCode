@@ -171,20 +171,13 @@ bool deckAlreadyExisted(auto& game, auto& existingDecks){
 }
 
 Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
-    auto roundWonBy = Winner::NoWinner;
     if(deck1.size() >= a && deck2.size() >= b){
         Deck deck1copy = firstNCards(deck1, a);
         Deck deck2copy = firstNCards(deck2, b);
         auto nextGame = Game2{deck1copy, deck2copy};
-        roundWonBy = nextGame.play();
+        return nextGame.play();
     }
-    else{
-        if (a > b)
-            roundWonBy = Winner::Player1;
-        else
-            roundWonBy = Winner::Player2;
-    }
-    return roundWonBy;
+    return Game::roundWinner(a, b);
 }
 
 Winner Game2::play(){
