@@ -84,20 +84,13 @@ struct Game{
         return a > b ? Winner::Player1 : Winner::Player2;
     }
 
-    Winner updateDeck(const Winner winner, const int a, const int b){
+    void updateDeck(const Winner winner, const int a, const int b){
         if(winner == Winner::Player1){
             deck1.push(a, b);
-            if(deck2.empty()){
-                return Winner::Player1;
-            }
         }
         else{
             deck2.push(b, a);
-            if(deck1.empty()){
-                return Winner::Player2;
-            }
         }
-        return Winner::NoWinner;
     }
 };
 
@@ -177,19 +170,16 @@ Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
 }
 
 Winner Game2::play(){
-    auto gameWonBy = Winner::NoWinner;
-
-    while(gameWonBy == Winner::NoWinner){
+    while(!gameOver()){
         if(deckAlreadyExisted(*this, existingDecks)){
-            gameWonBy = Winner::Player1;
-            break;
+            return Winner::Player1;
         }
         const auto [a, b] = dealCards();
         const auto roundWonBy = roundWinner(a, b);
-        gameWonBy = updateDeck(roundWonBy, a, b);
+        updateDeck(roundWonBy, a, b);
 
     }
-    return gameWonBy;
+    return getWinner();
 }
 
 
