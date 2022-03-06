@@ -31,6 +31,11 @@ struct Deck : public std::deque<unsigned int>{
         });
         return Utilities::sum(this->begin(), this->end());
     }
+
+    void push(const unsigned int a, const unsigned int b){
+        this->push_back(a);
+        this->push_back(b);
+    }
 };
 
 struct Game{
@@ -81,15 +86,13 @@ struct Game{
 
     Winner updateDeck(const Winner winner, const int a, const int b){
         if(winner == Winner::Player1){
-            deck1.push_back(a);
-            deck1.push_back(b);
+            deck1.push(a, b);
             if(deck2.empty()){
                 return Winner::Player1;
             }
         }
         else{
-            deck2.push_back(b);
-            deck2.push_back(a);
+            deck2.push(b, a);
             if(deck1.empty()){
                 return Winner::Player2;
             }
