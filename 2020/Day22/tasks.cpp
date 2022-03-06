@@ -5,17 +5,11 @@
 #include "../../lib/matrix.hpp"
 
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
-#include <cmath>
-#include <fstream>
 #include <iostream>
-#include <queue>
-#include <regex>
+#include <deque>
 #include <unordered_set>
 #include <string>
 #include <vector>
-
-using strvec    = std::vector<std::string>;
 
 enum Winner{NoWinner = 0, Player1, Player2};
 
@@ -38,25 +32,6 @@ struct Deck : public std::deque<unsigned int>{
         return Utilities::sum(this->begin(), this->end());
     }
 };
-
-
-auto updateDeck(auto& game, const Winner winner, int a, int b){
-    if(winner == Winner::Player1){
-        game.deck1.push_back(a);
-        game.deck1.push_back(b);
-        if(game.deck2.empty()){
-            return Winner::Player1;
-        }
-    }
-    else{
-        game.deck2.push_back(b);
-        game.deck2.push_back(a);
-        if(game.deck1.empty()){
-            return Winner::Player2;
-        }
-    }
-    return Winner::NoWinner;
-}
 
 struct Game{
     Deck deck1{};
@@ -91,7 +66,7 @@ struct Game{
             const auto [a, b] = dealCards();
 
             const auto winner = roundWinner(a, b);
-            updateDeck(*this, winner, a, b);
+            updateDeck(winner, a, b);
         }
         return getWinner();
     }
@@ -103,13 +78,31 @@ struct Game{
     virtual Winner roundWinner(const unsigned int a, const unsigned int b) const {
         return a > b ? Winner::Player1 : Winner::Player2;
     }
+
+    Winner updateDeck(const Winner winner, const int a, const int b){
+        if(winner == Winner::Player1){
+            deck1.push_back(a);
+            deck1.push_back(b);
+            if(deck2.empty()){
+                return Winner::Player1;
+            }
+        }
+        else{
+            deck2.push_back(b);
+            deck2.push_back(a);
+            if(deck1.empty()){
+                return Winner::Player2;
+            }
+        }
+        return Winner::NoWinner;
+    }
 };
 
 bool operator<(const Game& game1, const Game& game2) noexcept{
     return game1.deck1 < game2.deck1 || game1.deck2 < game2.deck2;
 }
 
-auto dealDeck(const strvec& input){
+auto dealDeck(const auto& input){
     auto make_deck = [](auto begin, auto end){
         auto toUInt = [](const auto& s){return static_cast<unsigned int>(std::stoi(s));};
         auto deck = Deck{};
@@ -190,7 +183,7 @@ Winner Game2::play(){
         }
         const auto [a, b] = dealCards();
         const auto roundWonBy = roundWinner(a, b);
-        gameWonBy = updateDeck(*this, roundWonBy, a, b);
+        gameWonBy = updateDeck(roundWonBy, a, b);
 
     }
     return gameWonBy;
