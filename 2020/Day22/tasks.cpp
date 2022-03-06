@@ -127,6 +127,8 @@ struct Game2 : public Game{
     Game2(Deck&& deck1_, Deck&& deck2_) : Game{std::move(deck1_), std::move(deck2_)} {}
     Winner roundWinner(const unsigned int a, const unsigned int b) const;
     Winner play();
+
+    bool deckAlreadyExisted();
 };
 
 template<>
@@ -151,11 +153,8 @@ struct std::hash<Game2>{
     }
 };
 
-bool deckAlreadyExisted(auto& game, auto& existingDecks){
-    // std::pair<Deck, Deck> p = {deck1, deck2};
-
-    auto it = existingDecks.insert(std::hash<Game2>{}(game));
-
+bool Game2::deckAlreadyExisted(){
+    const auto it = existingDecks.insert(std::hash<Game2>{}(*this));
     return !it.second;
 }
 
@@ -171,7 +170,7 @@ Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
 
 Winner Game2::play(){
     while(!gameOver()){
-        if(deckAlreadyExisted(*this, existingDecks)){
+        if(deckAlreadyExisted()){
             return Winner::Player1;
         }
         const auto [a, b] = dealCards();
