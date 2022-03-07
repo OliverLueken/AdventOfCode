@@ -24,12 +24,12 @@ struct Deck : public std::deque<unsigned int>{
         return this->size()==0;
     }
 
-    auto score() {
-        std::ranges::for_each(this->rbegin(), this->rend(), [worth=0](auto& val) mutable {
+    auto score() const {
+        auto sum = [worth=0](const auto& score, const auto& newVal) mutable {
             ++worth;
-            val*=worth;
-        });
-        return Utilities::sum(this->begin(), this->end());
+            return score+newVal*worth;
+        };
+        return std::accumulate(this->rbegin(), this->rend(), 0u, sum);
     }
 
     void push(const unsigned int a, const unsigned int b){
