@@ -118,6 +118,9 @@ struct Game2 : public Game{
     std::unordered_set<size_t> existingDecks{};
 
     Game2(const Game& game_) : Game(game_){}
+    Game2(const Game2& game_, const unsigned int a, const unsigned int b)
+        : Game{firstNCards(game_.deck1, a), firstNCards(game_.deck2, b)} {}
+
     Game2(Deck&& deck1_, Deck&& deck2_) : Game{std::move(deck1_), std::move(deck2_)} {}
     Winner roundWinner(const unsigned int a, const unsigned int b) const;
 
@@ -131,7 +134,7 @@ struct Game2 : public Game{
         return deck1.gameOver() ? Winner::Player2 : Winner::Player1;
     }
 
-    auto firstNCards(const Deck& d, const auto n) const {
+    Deck firstNCards(const Deck& d, const auto n) const {
         Deck newDeck{};
         std::ranges::copy_n(std::begin(d), n, std::back_inserter(newDeck));
         return newDeck;
@@ -167,9 +170,7 @@ bool Game2::deckAlreadyExisted(){
 
 Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
     if(deck1.size() >= a && deck2.size() >= b){
-        Deck deck1copy = firstNCards(deck1, a);
-        Deck deck2copy = firstNCards(deck2, b);
-        auto nextGame = Game2{std::move(deck1copy), std::move(deck2copy)};
+        auto nextGame = Game2{*this, a, b};
         return nextGame.play();
     }
     return Game::roundWinner(a, b);
