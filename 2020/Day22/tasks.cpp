@@ -143,6 +143,10 @@ struct Game2 : public Game{
     Game2 makeSubGame(const unsigned int a, const unsigned int b) const {
         return Game2{*this, a, b};
     }
+
+    bool recursiveCombatNeeded(const unsigned int a, const unsigned int b) const {
+        return deck1.size() >= a && deck2.size() >= b;
+    }
 };
 
 template<>
@@ -173,7 +177,7 @@ bool Game2::deckAlreadyExisted(){
 }
 
 Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
-    if(deck1.size() >= a && deck2.size() >= b){
+    if(recursiveCombatNeeded(a, b)){
         auto nextGame = makeSubGame(a, b);
         return nextGame.play();
     }
