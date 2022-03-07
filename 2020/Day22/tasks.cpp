@@ -189,12 +189,12 @@ int main(){
     const auto game = dealDeck(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result1 = playGame(game);
-    std::cout << result1 << "\n";
+    const auto firstGameScore = playGame(game);
+    std::cout << "The score of the first game's winner is "  << firstGameScore  << ".\n";
 
     //Task 2
-    auto result2 = playGame(Game2{game});
-    std::cout << result2 << "\n";
+    auto secondGameScore = playGame(Game2{game});
+    std::cout << "The score of the second game's winner is " << secondGameScore << ".\n";
 
-    VerifySolution::verifySolution(result1, result2);
+    VerifySolution::verifySolution(firstGameScore, secondGameScore);
 }
