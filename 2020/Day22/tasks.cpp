@@ -94,10 +94,6 @@ struct Game{
     }
 };
 
-bool operator<(const Game& game1, const Game& game2) noexcept{
-    return game1.deck1 < game2.deck1 || game1.deck2 < game2.deck2;
-}
-
 auto dealDeck(const auto& input){
     auto make_deck = [](auto begin, auto end){
         auto toUInt = [](const auto& s){return static_cast<unsigned int>(std::stoi(s));};
