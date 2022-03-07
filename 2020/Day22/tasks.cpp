@@ -184,18 +184,8 @@ Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
     return Game::roundWinner(a, b);
 }
 
-Winner playGame2(auto game_, unsigned long& result2, int depth = 0){
-    Game2 game{game_};
-    const auto gameWonBy = game.play();
-    if(depth == 0){
-        result2 = game.score();
-    }
-    return gameWonBy;
-}
-
-auto playGame1(auto game){
+auto playGame(auto game){
     game.play();
-
     return game.score();
 }
 
@@ -203,12 +193,11 @@ int main(){
     const auto game = dealDeck(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result1 = playGame1(game);
+    const auto result1 = playGame(game);
     std::cout << result1 << "\n";
 
     //Task 2
-    auto result2 = 0ul;
-    playGame2(game, result2);
+    auto result2 = playGame(Game2{game});
     std::cout << result2 << "\n";
 
     VerifySolution::verifySolution(result1, result2);
