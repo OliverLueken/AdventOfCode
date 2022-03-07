@@ -139,6 +139,10 @@ struct Game2 : public Game{
         std::ranges::copy_n(std::begin(d), n, std::back_inserter(newDeck));
         return newDeck;
     }
+
+    Game2 makeSubGame(const unsigned int a, const unsigned int b) const {
+        return Game2{*this, a, b};
+    }
 };
 
 template<>
@@ -170,7 +174,7 @@ bool Game2::deckAlreadyExisted(){
 
 Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
     if(deck1.size() >= a && deck2.size() >= b){
-        auto nextGame = Game2{*this, a, b};
+        auto nextGame = makeSubGame(a, b);
         return nextGame.play();
     }
     return Game::roundWinner(a, b);
