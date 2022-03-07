@@ -58,7 +58,7 @@ struct Game{
         );
     }
 
-    auto gameOver() const {
+    virtual bool gameOver() {
         return deck1.gameOver() || deck2.gameOver();
     }
 
@@ -128,7 +128,15 @@ struct Game2 : public Game{
     Winner roundWinner(const unsigned int a, const unsigned int b) const;
     Winner play();
 
+    bool gameOver() {
+        return deck1.gameOver() || deck2.gameOver() || deckAlreadyExisted();
+    }
+
     bool deckAlreadyExisted();
+
+    virtual Winner getWinner() const {
+        return deck1.gameOver() ? Winner::Player2 : Winner::Player1;
+    }
 };
 
 template<>
@@ -170,13 +178,9 @@ Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
 
 Winner Game2::play(){
     while(!gameOver()){
-        if(deckAlreadyExisted()){
-            return Winner::Player1;
-        }
         const auto [a, b] = dealCards();
         const auto roundWonBy = roundWinner(a, b);
         updateDeck(roundWonBy, a, b);
-
     }
     return getWinner();
 }
