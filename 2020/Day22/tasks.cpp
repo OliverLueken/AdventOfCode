@@ -126,7 +126,6 @@ struct Game2 : public Game{
     Game2(Game game_) : Game(game_){}
     Game2(Deck&& deck1_, Deck&& deck2_) : Game{std::move(deck1_), std::move(deck2_)} {}
     Winner roundWinner(const unsigned int a, const unsigned int b) const;
-    Winner play();
 
     bool gameOver() {
         return deck1.gameOver() || deck2.gameOver() || deckAlreadyExisted();
@@ -175,16 +174,6 @@ Winner Game2::roundWinner(const unsigned int a, const unsigned int b) const {
     }
     return Game::roundWinner(a, b);
 }
-
-Winner Game2::play(){
-    while(!gameOver()){
-        const auto [a, b] = dealCards();
-        const auto roundWonBy = roundWinner(a, b);
-        updateDeck(roundWonBy, a, b);
-    }
-    return getWinner();
-}
-
 
 Winner playGame2(auto game_, unsigned long& result2, int depth = 0){
     Game2 game{game_};
