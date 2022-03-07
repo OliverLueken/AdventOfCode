@@ -117,7 +117,7 @@ auto dealDeck(const auto& input){
 struct Game2 : public Game{
     std::unordered_set<size_t> existingDecks{};
 
-    Game2(Game game_) : Game(game_){}
+    Game2(const Game& game_) : Game(game_){}
     Game2(Deck&& deck1_, Deck&& deck2_) : Game{std::move(deck1_), std::move(deck2_)} {}
     Winner roundWinner(const unsigned int a, const unsigned int b) const;
 
