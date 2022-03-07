@@ -114,12 +114,6 @@ auto dealDeck(const auto& input){
 }
 
 
-auto firstNCards(const Deck& d, const auto n){
-    Deck newDeck{};
-    std::ranges::copy_n(std::begin(d), n, std::back_inserter(newDeck));
-    return newDeck;
-}
-
 struct Game2 : public Game{
     std::unordered_set<size_t> existingDecks{};
 
@@ -135,6 +129,12 @@ struct Game2 : public Game{
 
     virtual Winner getWinner() const {
         return deck1.gameOver() ? Winner::Player2 : Winner::Player1;
+    }
+
+    auto firstNCards(const Deck& d, const auto n) const {
+        Deck newDeck{};
+        std::ranges::copy_n(std::begin(d), n, std::back_inserter(newDeck));
+        return newDeck;
     }
 };
 
