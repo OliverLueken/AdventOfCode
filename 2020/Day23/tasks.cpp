@@ -53,7 +53,7 @@ circle::circle(std::string s, bool bigmode){
     maxvalue = c->n;
     current = c;
 
-    for(int i = 1; i < s.size(); i++){
+    for(auto i = 1u; i < s.size(); i++){
         node* b = new node;
         b->n = s[i] - '0';
         nodepos[b->n - 1] = b;
