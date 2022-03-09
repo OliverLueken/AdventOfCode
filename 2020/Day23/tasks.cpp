@@ -7,40 +7,40 @@
 #include <string>
 #include <vector>
 
-class node{
+class Node{
    public:
     unsigned int n;
-    node* next;
+    Node* next;
 };
 
-class circle{
+class Circle{
     unsigned int maxvalue;
-    std::vector<node*> nodepos;
+    std::vector<Node*> nodepos;
 
    public:
-    node* current;
+    Node* current;
 
-    circle(const std::string& s);
-    circle(const std::string& s, const unsigned int);
-    ~circle(){
-        for(auto node : nodepos){
-            delete node;
+    Circle(const std::string& s);
+    Circle(const std::string& s, const unsigned int);
+    ~Circle(){
+        for(auto Node : nodepos){
+            delete Node;
         }
     }
     void doNMoves(int n);
     void doOneMove();
-    node* removeNextThree();
-    bool isInCircle(node* d);
-    node* getDestinationCup();
-    node* findCup(int n);
-    void insertCups(node* cups, node* destination);
+    Node* removeNextThree();
+    bool isInCircle(Node* d);
+    Node* getDestinationCup();
+    Node* findCup(int n);
+    void insertCups(Node* cups, Node* destination);
     auto getCupNumbers(auto amount = 9u);
 };
 
-circle::circle(const std::string& s){
+Circle::Circle(const std::string& s){
     nodepos.resize(9);
 
-    node* c = new node;
+    Node* c = new Node;
     c->n = s[0] - '0';
     nodepos[c->n - 1] = c;
 
@@ -48,7 +48,7 @@ circle::circle(const std::string& s){
     current = c;
 
     for(auto i = 1u; i < s.size(); i++){
-        node* b = new node;
+        Node* b = new Node;
         b->n = s[i] - '0';
         nodepos[b->n - 1] = b;
 
@@ -59,17 +59,17 @@ circle::circle(const std::string& s){
     c->next = current;
 }
 
-circle::circle(const std::string& s, const unsigned int circleSize){
+Circle::Circle(const std::string& s, const unsigned int circleSize){
     nodepos.resize(10*circleSize);
 
-    node* c = new node;
+    Node* c = new Node;
     c->n = s[0] - '0';
     nodepos[c->n - 1] = c;
 
     maxvalue = c->n;
     current = c;
     for(auto i = 1u; i < s.size(); i++){
-        node* b = new node;
+        Node* b = new Node;
         b->n = s[i] - '0';
         nodepos[b->n - 1] = b;
 
@@ -78,7 +78,7 @@ circle::circle(const std::string& s, const unsigned int circleSize){
         c = b;
     }
     for(auto i = maxvalue + 1; i <= circleSize; i++){
-        node* b = new node;
+        Node* b = new Node;
         b->n = i;
         nodepos[b->n - 1] = b;
 
@@ -90,27 +90,27 @@ circle::circle(const std::string& s, const unsigned int circleSize){
     c->next = current;
 }
 
-void circle::doNMoves(int n){
+void Circle::doNMoves(int n){
     for(int i = 0; i < n; i++){
         doOneMove();
     }
 }
 
-void circle::doOneMove(){
-    node* removedCups = removeNextThree();
-    node* destinationCup = getDestinationCup();
+void Circle::doOneMove(){
+    Node* removedCups = removeNextThree();
+    Node* destinationCup = getDestinationCup();
     insertCups(removedCups, destinationCup);
     current = current->next;
 }
 
-node* circle::removeNextThree(){
-    node* removedCups = current->next;
+Node* Circle::removeNextThree(){
+    Node* removedCups = current->next;
     current->next = removedCups->next->next->next;
     removedCups->next->next->next = NULL;
     return removedCups;
 }
 
-bool circle::isInCircle(node* d){
+bool Circle::isInCircle(Node* d){
     if(d->next == NULL) return false;
     d = d->next;
     if(d->next == NULL) return false;
@@ -119,9 +119,9 @@ bool circle::isInCircle(node* d){
     return true;
 }
 
-node* circle::getDestinationCup(){
+Node* Circle::getDestinationCup(){
     int n = current->n;
-    node* destinationCup;
+    Node* destinationCup;
     bool isInC;
     do {
         n = n + maxvalue - 2;
@@ -133,16 +133,16 @@ node* circle::getDestinationCup(){
     return destinationCup;
 }
 
-node* circle::findCup(int n){
+Node* Circle::findCup(int n){
     return nodepos[n - 1];
 }
 
-void circle::insertCups(node* cups, node* destination){
+void Circle::insertCups(Node* cups, Node* destination){
     cups->next->next->next = destination->next;
     destination->next = cups;
 }
 
-auto circle::getCupNumbers(const auto amount){
+auto Circle::getCupNumbers(const auto amount){
     auto n = findCup(1)->next;
     auto numbers = std::vector<int>{};
     for(auto i=0u; i<amount; ++i){
@@ -153,7 +153,7 @@ auto circle::getCupNumbers(const auto amount){
 }
 
 auto playFirstGame(const auto& s){
-    circle c(s);
+    Circle c(s);
 
     c.doNMoves(100);
     const auto numbers = c.getCupNumbers(s.size()-1);
@@ -165,7 +165,7 @@ auto playFirstGame(const auto& s){
 }
 
 auto playSecondGame(const auto& s){
-    circle c2(s, 1'000'000);
+    Circle c2(s, 1'000'000);
     c2.doNMoves(10'000'000);
     const auto numbers = c2.getCupNumbers(2u);
     return (long)numbers[0]*numbers[1];
