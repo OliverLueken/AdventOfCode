@@ -49,7 +49,7 @@ circle::circle(std::string s, bool bigmode){
     node* c = new node;
     c->n = s[0] - '0';
     nodepos[c->n - 1] = c;
-    // std::cout << c->n;
+    
     maxvalue = c->n;
     current = c;
 
@@ -57,18 +57,17 @@ circle::circle(std::string s, bool bigmode){
         node* b = new node;
         b->n = s[i] - '0';
         nodepos[b->n - 1] = b;
-        // std::cout << b->n;
+
         if(b->n > maxvalue) maxvalue = b->n;
         c->next = b;
         c = b;
-        // std::cout << current->n;
     }
     if(bigmode){
         for(int i = maxvalue + 1; i <= 1000000; i++){
             node* b = new node;
             b->n = i;
             nodepos[b->n - 1] = b;
-            // std::cout << b->n << ", ";
+
             c->next = b;
             c = b;
         }
@@ -89,7 +88,6 @@ void circle::doOneMove(){
     node* destinationCup = getDestinationCup();
     insertCups(removedCups, destinationCup);
     current = current->next;
-    // printOrder();
 }
 
 node* circle::removeNextThree(){
@@ -117,20 +115,12 @@ node* circle::getDestinationCup(){
         n = n % maxvalue + 1;
         destinationCup = findCup(n);
         isInC = isInCircle(destinationCup);
-        // std::cout << "Destination Cup " << destinationCup->n << std::endl;
+
     } while (!isInC);
     return destinationCup;
 }
 
 node* circle::findCup(int n){
-    // node* c = current->next;
-    // do{
-    //   //std::cout << "Looking at " << c->n << std::endl;
-    //   if(c->n == n) return c;
-    //   c=c->next;
-    // }while(c!=current);
-    // return c;
-    // std::cout << "Find " << n <<std::endl;
     return nodepos[n - 1];
 }
 
@@ -154,8 +144,7 @@ void circle::printOrder(int from, int amount){
 void doStuff(){
     std::string s = "135468729";
     circle c(s);
-    // std::cout << c.current->n << std::endl;
-    // c.printOrder();
+
     c.doNMoves(100);
     c.printOrder();
 
@@ -164,25 +153,7 @@ void doStuff(){
     c2.printOrder(1, 2);
 }
 
-// strvec readfile(std::string file){
-//   std::string line;
-//   std::ifstream input(file);
-//   strvec lines;
-//
-//   if(input.is_open()){
-//   	while(getline(input,line)){
-//         lines.push_back(line);
-//     	}
-//       input.close();
-//     }
-//   else{
-//     std::cout << "Unable to open file\n";
-//   }
-//   return lines;
-// }
-
 int main(){
-    // strvec input=readfile("input.txt");
 
     doStuff();
 
