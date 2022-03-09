@@ -1,3 +1,9 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
+
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <cmath>
@@ -171,4 +177,6 @@ int main(){
     //Task 2
     const auto productOfNextTwoCupLabelsAfterCupOne = playSecondGame(input);
     std::cout << "The product of the next two cups after cup 1 is " << productOfNextTwoCupLabelsAfterCupOne << ".\n";
+
+    VerifySolution::verifySolution(cupLabelsAfterCupOne, productOfNextTwoCupLabelsAfterCupOne);
 }
