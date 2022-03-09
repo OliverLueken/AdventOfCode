@@ -6,27 +6,30 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <ranges>
 
 class Node{
    public:
     unsigned int n;
-    Node* next;
+    Node* next{nullptr};
 };
 
 class Circle{
     unsigned int maxvalue;
     std::vector<Node*> nodepos;
+    std::unordered_map<unsigned int, Node> nodeMap{};
 
    public:
     Node* current;
+    unsigned int currentLabel;
 
-    Circle(const std::string& s);
-    Circle(const std::string& s, const unsigned int);
-    ~Circle(){
-        for(auto Node : nodepos){
-            delete Node;
-        }
-    }
+    Circle(const std::vector<unsigned int>& s);
+    Circle(const std::vector<unsigned int>& s, const unsigned int);
+    // ~Circle(){
+    //     for(auto Node : nodepos){
+    //         delete Node;
+    //     }
+    // }
     void doNMoves(int n);
     void doOneMove();
     Node* removeNextThree();
@@ -35,59 +38,37 @@ class Circle{
     Node* findCup(int n);
     void insertCups(Node* cups, Node* destination);
     auto getCupNumbers(auto amount = 9u);
+    auto insert(const std::vector<unsigned int>&, Node**);
 };
 
-Circle::Circle(const std::string& s){
-    nodepos.resize(9);
+auto Circle::insert(const std::vector<unsigned int>& elements, Node** start){
+    auto addVal = [](auto& map, const auto val){
+        return &map.emplace(val, val).first->second;
+    };
 
-    Node* c = new Node;
-    c->n = s[0] - '0';
-    nodepos[c->n - 1] = c;
+    auto insertedElementPtr = addVal(nodeMap, elements[0]);
+    auto lastInsertedElementPtr = insertedElementPtr;
+    *start = insertedElementPtr;
 
-    maxvalue = c->n;
-    current = c;
-
-    for(auto i = 1u; i < s.size(); i++){
-        Node* b = new Node;
-        b->n = s[i] - '0';
-        nodepos[b->n - 1] = b;
-
-        if(b->n > maxvalue) maxvalue = b->n;
-        c->next = b;
-        c = b;
+    for(auto val : elements | std::views::drop(1))
+    {
+        insertedElementPtr = addVal(nodeMap, val);
+        lastInsertedElementPtr->next = insertedElementPtr;
+        lastInsertedElementPtr = insertedElementPtr;
     }
-    c->next = current;
+    return lastInsertedElementPtr;
 }
 
-Circle::Circle(const std::string& s, const unsigned int circleSize){
-    nodepos.resize(10*circleSize);
+Circle::Circle(const std::vector<unsigned int>& s){
+    nodeMap.reserve(s.size());
+    insert(s, &current);
+}
 
-    Node* c = new Node;
-    c->n = s[0] - '0';
-    nodepos[c->n - 1] = c;
-
-    maxvalue = c->n;
-    current = c;
-    for(auto i = 1u; i < s.size(); i++){
-        Node* b = new Node;
-        b->n = s[i] - '0';
-        nodepos[b->n - 1] = b;
-
-        if(b->n > maxvalue) maxvalue = b->n;
-        c->next = b;
-        c = b;
-    }
-    for(auto i = maxvalue + 1; i <= circleSize; i++){
-        Node* b = new Node;
-        b->n = i;
-        nodepos[b->n - 1] = b;
-
-        c->next = b;
-        c = b;
-    }
-    maxvalue = circleSize;
-
-    c->next = current;
+Circle::Circle(const std::vector<unsigned int>& s, const unsigned int circleSize){
+    nodepos.resize(circleSize);
+    auto lastInsertedElementPtr = insert(s, &current);
+    auto nextElements = std::vector<unsigned int>{10,11,12,13};
+    insert(nextElements, &lastInsertedElementPtr->next);
 }
 
 void Circle::doNMoves(int n){
@@ -155,24 +136,25 @@ auto Circle::getCupNumbers(const auto amount){
 auto playFirstGame(const auto& s){
     Circle c(s);
 
-    c.doNMoves(100);
-    const auto numbers = c.getCupNumbers(s.size()-1);
-    auto number = std::string{};
-    for(const auto& i : numbers){
-        number+= std::to_string(i);
-    }
-    return number;
+    // c.doNMoves(100);
+    // const auto numbers = c.getCupNumbers(s.size()-1);
+    // auto number = std::string{};
+    // for(const auto& i : numbers){
+    //     number+= std::to_string(i);
+    // }
+    // return number;
 }
 
 auto playSecondGame(const auto& s){
     Circle c2(s, 1'000'000);
-    c2.doNMoves(10'000'000);
-    const auto numbers = c2.getCupNumbers(2u);
-    return (long)numbers[0]*numbers[1];
+    // c2.doNMoves(10'000'000);
+    // const auto numbers = c2.getCupNumbers(2u);
+    // return (long)numbers[0]*numbers[1];
+    return 0;
 }
 
 int main(){
-    const auto input = std::string{"135468729"};
+    const auto input = std::vector<unsigned int>{1,3,5,4,6,8,7,2,9};
 
     //Task 1
     const auto cupLabelsAfterCupOne = playFirstGame(input);
