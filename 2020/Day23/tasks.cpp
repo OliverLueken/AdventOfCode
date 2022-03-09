@@ -9,18 +9,19 @@
 
 class node{
    public:
-    int n;
+    unsigned int n;
     node* next;
 };
 
 class circle{
-    int maxvalue;
+    unsigned int maxvalue;
     std::vector<node*> nodepos;
 
    public:
     node* current;
 
-    circle(std::string s, bool bigmode = false);
+    circle(const std::string& s);
+    circle(const std::string& s, const unsigned int);
     ~circle(){
         for(auto node : nodepos){
             delete node;
@@ -36,11 +37,8 @@ class circle{
     auto getCupNumbers(auto amount = 9u);
 };
 
-circle::circle(std::string s, bool bigmode){
-    if(bigmode)
-        nodepos.resize(10000000);
-    else
-        nodepos.resize(9);
+circle::circle(const std::string& s){
+    nodepos.resize(9);
 
     node* c = new node;
     c->n = s[0] - '0';
@@ -58,17 +56,37 @@ circle::circle(std::string s, bool bigmode){
         c->next = b;
         c = b;
     }
-    if(bigmode){
-        for(int i = maxvalue + 1; i <= 1000000; i++){
-            node* b = new node;
-            b->n = i;
-            nodepos[b->n - 1] = b;
+    c->next = current;
+}
 
-            c->next = b;
-            c = b;
-        }
-        maxvalue = 1000000;
+circle::circle(const std::string& s, const unsigned int circleSize){
+    nodepos.resize(10*circleSize);
+
+    node* c = new node;
+    c->n = s[0] - '0';
+    nodepos[c->n - 1] = c;
+
+    maxvalue = c->n;
+    current = c;
+    for(auto i = 1u; i < s.size(); i++){
+        node* b = new node;
+        b->n = s[i] - '0';
+        nodepos[b->n - 1] = b;
+
+        if(b->n > maxvalue) maxvalue = b->n;
+        c->next = b;
+        c = b;
     }
+    for(auto i = maxvalue + 1; i <= circleSize; i++){
+        node* b = new node;
+        b->n = i;
+        nodepos[b->n - 1] = b;
+
+        c->next = b;
+        c = b;
+    }
+    maxvalue = circleSize;
+
     c->next = current;
 }
 
@@ -147,8 +165,8 @@ auto playFirstGame(const auto& s){
 }
 
 auto playSecondGame(const auto& s){
-    circle c2(s, true);
-    c2.doNMoves(10000000);
+    circle c2(s, 1'000'000);
+    c2.doNMoves(10'000'000);
     const auto numbers = c2.getCupNumbers(2u);
     return (long)numbers[0]*numbers[1];
 }
