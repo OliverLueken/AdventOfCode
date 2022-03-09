@@ -1,24 +1,11 @@
 
-#include "../../lib/readFile.hpp"
 #include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
-#include "../../lib/matrix.hpp"
 
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
-#include <cmath>
-#include <fstream>
 #include <iostream>
-#include <queue>
-#include <regex>
-#include <set>
 #include <string>
 #include <vector>
-
-typedef std::set<std::string> strset;
-typedef std::vector<strset> strsetvec;
-typedef std::vector<std::string> strvec;
-typedef std::pair<int, int> point;
 
 class node{
    public:
@@ -83,7 +70,6 @@ circle::circle(std::string s, bool bigmode){
         maxvalue = 1000000;
     }
     c->next = current;
-    std::cout << "\nConstruction complete\n";
 }
 
 void circle::doNMoves(int n){
