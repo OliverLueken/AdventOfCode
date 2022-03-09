@@ -49,7 +49,7 @@ circle::circle(std::string s, bool bigmode){
     node* c = new node;
     c->n = s[0] - '0';
     nodepos[c->n - 1] = c;
-    
+
     maxvalue = c->n;
     current = c;
 
@@ -141,21 +141,24 @@ void circle::printOrder(int from, int amount){
     std::cout << std::endl;
 }
 
-void doStuff(){
-    std::string s = "135468729";
+void playFirstGame(const auto& s){
     circle c(s);
 
     c.doNMoves(100);
     c.printOrder();
+}
 
+auto playSecondGame(const auto& s){
     circle c2(s, true);
     c2.doNMoves(10000000);
     c2.printOrder(1, 2);
 }
 
 int main(){
+    const auto input = std::string{"135468729"};
 
-    doStuff();
+    playFirstGame(input);
+    playSecondGame(input);
 
     // std::cout << result1 << "\n";
     // std::cout << result2 << "\n";
