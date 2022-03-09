@@ -30,6 +30,11 @@ class circle{
     node* current;
 
     circle(std::string s, bool bigmode = false);
+    ~circle(){
+        for(auto node : nodepos){
+            delete node;
+        }
+    }
     void doNMoves(int n);
     void doOneMove();
     node* removeNextThree();
