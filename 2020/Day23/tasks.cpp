@@ -14,8 +14,6 @@ typedef std::vector<strset> strsetvec;
 typedef std::vector<std::string> strvec;
 typedef std::pair<int, int> point;
 
-unsigned long result1 = 0, result2 = 0;
-
 class node{
    public:
     int n;
@@ -42,7 +40,7 @@ class circle{
     node* getDestinationCup();
     node* findCup(int n);
     void insertCups(node* cups, node* destination);
-    void printOrder(int from = 1, int amount = 9);
+    auto getCupNumbers(auto amount = 9u);
 };
 
 circle::circle(std::string s, bool bigmode){
@@ -134,37 +132,43 @@ void circle::insertCups(node* cups, node* destination){
     destination->next = cups;
 }
 
-void circle::printOrder(int from, int amount){
-    node* one = findCup(from);
-    node* n = one->next;
-    int i = 0;
-    while(i < amount){
-        std::cout << n->n << ", ";
+auto circle::getCupNumbers(const auto amount){
+    auto n = findCup(1)->next;
+    auto numbers = std::vector<int>{};
+    for(auto i=0u; i<amount; ++i){
+        numbers.push_back(n->n);
         n = n->next;
-        i++;
     }
-    std::cout << std::endl;
+    return numbers;
 }
 
-void playFirstGame(const auto& s){
+auto playFirstGame(const auto& s){
     circle c(s);
 
     c.doNMoves(100);
-    c.printOrder();
+    const auto numbers = c.getCupNumbers(s.size()-1);
+    auto number = std::string{};
+    for(const auto& i : numbers){
+        number+= std::to_string(i);
+    }
+    return number;
 }
 
 auto playSecondGame(const auto& s){
     circle c2(s, true);
     c2.doNMoves(10000000);
-    c2.printOrder(1, 2);
+    const auto numbers = c2.getCupNumbers(2u);
+    return (long)numbers[0]*numbers[1];
 }
 
 int main(){
     const auto input = std::string{"135468729"};
 
-    playFirstGame(input);
-    playSecondGame(input);
+    //Task 1
+    const auto cupLabelsAfterCupOne = playFirstGame(input);
+    std::cout << "The cups after cup 1 are " << cupLabelsAfterCupOne << ".\n";
 
-    // std::cout << result1 << "\n";
-    // std::cout << result2 << "\n";
+    //Task 2
+    const auto productOfNextTwoCupLabelsAfterCupOne = playSecondGame(input);
+    std::cout << "The product of the next two cups after cup 1 is " << productOfNextTwoCupLabelsAfterCupOne << ".\n";
 }
