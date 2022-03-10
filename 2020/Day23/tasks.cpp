@@ -41,6 +41,7 @@ class Circle{
         }
         std::cout << "\n";
     }
+    bool labelWasRemoved(const unsigned int, const Cup*) const;
 };
 
 auto Circle::insert(const auto& elements, Cup** start){
@@ -99,14 +100,17 @@ Cup* Circle::removeNextThree(){
     return removedCups;
 }
 
-Cup* Circle::getDestinationCup(Cup* removedCups){
-    auto removedLabels=std::unordered_set<unsigned int>{};
-    for(auto nodePtr = removedCups; nodePtr!=nullptr;){
-        removedLabels.insert(nodePtr->cupLabel);
-        nodePtr=nodePtr->next;
+bool Circle::labelWasRemoved(const unsigned int label, const Cup* removedCups) const {
+    while(removedCups!=nullptr){
+        if(label == removedCups->cupLabel) return true;
+        removedCups=removedCups->next;
     }
+    return false;
+}
+
+Cup* Circle::getDestinationCup(Cup* removedCups){
     int n = current->cupLabel-1;
-    while( removedLabels.contains((n+maxvalue-1)%maxvalue+1) ){
+    while( labelWasRemoved((n+maxvalue-1)%maxvalue+1, removedCups) ){
         --n;
     }
     return &nodeMap[(n+maxvalue-1)%maxvalue+1];
