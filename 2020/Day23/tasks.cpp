@@ -27,7 +27,6 @@ class Circle{
     bool labelWasRemoved(const unsigned int, const Cup*) const;
 
    public:
-    Circle(const std::vector<unsigned int>& s);
     Circle(const std::vector<unsigned int>& s, const unsigned int);
 
     void doNMoves(const int);
@@ -52,20 +51,14 @@ auto Circle::insert(const auto& elements, Cup** start){
     return lastInsertedElementPtr;
 }
 
-Circle::Circle(const std::vector<unsigned int>& s){
-    nodeMap.reserve(s.size());
-    auto lastInsertedElementPtr = insert(s, &current);
-    lastInsertedElementPtr->next = current;
-
-    maxvalue = std::ranges::max(nodeMap | std::views::values | std::views::transform(&Cup::cupLabel));
-}
-
 Circle::Circle(const std::vector<unsigned int>& s, const unsigned int circleSize){
     nodeMap.reserve(circleSize);
     auto lastInsertedElementPtr = insert(s, &current);
     maxvalue = std::ranges::max(nodeMap | std::views::values | std::views::transform(&Cup::cupLabel));
-    auto nextElements = std::ranges::iota_view{maxvalue+1, circleSize+1};
-    lastInsertedElementPtr = insert(nextElements, &lastInsertedElementPtr->next);
+    if(maxvalue < circleSize){
+        auto nextElements = std::ranges::iota_view{maxvalue+1, circleSize+1};
+        lastInsertedElementPtr = insert(nextElements, &lastInsertedElementPtr->next);
+    }
     lastInsertedElementPtr->next = current;
     maxvalue = circleSize;
 }
@@ -77,8 +70,8 @@ void Circle::doNMoves(const int n){
 }
 
 void Circle::doOneMove(){
-    Cup* removedCups    = removeNextThree();
-    Cup* destinationCup = getDestinationCup(removedCups);
+    Cup* const removedCups    = removeNextThree();
+    Cup* const destinationCup = getDestinationCup(removedCups);
     insertCups(removedCups, destinationCup);
     current = current->next;
 }
@@ -120,11 +113,14 @@ auto Circle::getCupsAfterCupNumberOne(const auto amount) const{
     }
     return numbers;
 }
+auto playGame(const auto& s, const auto maxvalue, const unsigned int rounds, const auto cupCount){
+    auto c = Circle{s, static_cast<unsigned int>(maxvalue)};
+    c.doNMoves(rounds);
+    return c.getCupsAfterCupNumberOne(cupCount);
+}
 
 auto playFirstGame(const auto& s){
-    auto c = Circle{s};
-    c.doNMoves(100);
-    const auto numbers = c.getCupsAfterCupNumberOne(s.size()-1);
+    const auto numbers = playGame(s, s.size(), 100, s.size()-1);
     auto number = std::string{};
     for(const auto& i : numbers){
         number+= std::to_string(i);
@@ -133,9 +129,7 @@ auto playFirstGame(const auto& s){
 }
 
 auto playSecondGame(const auto& s){
-    auto c = Circle{s, 1'000'000};
-    c.doNMoves(10'000'000);
-    const auto numbers = c.getCupsAfterCupNumberOne(2u);
+    const auto numbers = playGame(s, 1'000'000lu, 10'000'000, 2lu);
     return (long)numbers[0]*numbers[1];
 }
 
