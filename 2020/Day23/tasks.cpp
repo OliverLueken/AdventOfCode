@@ -31,7 +31,7 @@ class Circle{
     Cup* removeNextThree();
     Cup* getDestinationCup(Cup const* const);
     void insertCups(Cup* const cups, Cup* const destination);
-    auto getCupNumbers(const auto amount = 9u);
+    auto getCupNumbers(const auto amount = 9u) const;
     auto insert(const auto&, Cup**);
     auto print() const{
         std::cout << current->cupLabel << ' ';
@@ -121,8 +121,8 @@ void Circle::insertCups(Cup* const cups, Cup* const destination){
     destination->next = cups;
 }
 
-auto Circle::getCupNumbers(const auto amount){
-    auto firstCup = nodeMap[1].next;
+auto Circle::getCupNumbers(const auto amount) const{
+    auto firstCup = nodeMap.at(1).next;
     auto numbers = std::vector<int>{};
     for(auto i=0u; i<amount; ++i){
         numbers.push_back(firstCup->cupLabel);
