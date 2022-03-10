@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <ranges>
+#include <unordered_set>
 
 class Node{
    public:
@@ -16,7 +17,7 @@ class Node{
 
 class Circle{
     unsigned int maxvalue;
-    std::vector<Node*> nodepos;
+    // std::vector<Node*> nodepos;
     std::unordered_map<unsigned int, Node> nodeMap{};
 
    public:
@@ -25,20 +26,24 @@ class Circle{
 
     Circle(const std::vector<unsigned int>& s);
     Circle(const std::vector<unsigned int>& s, const unsigned int);
-    // ~Circle(){
-    //     for(auto Node : nodepos){
-    //         delete Node;
-    //     }
-    // }
+    
     void doNMoves(int n);
     void doOneMove();
     Node* removeNextThree();
     bool isInCircle(Node* d);
-    Node* getDestinationCup();
+    Node* getDestinationCup(Node*);
     Node* findCup(int n);
     void insertCups(Node* cups, Node* destination);
     auto getCupNumbers(auto amount = 9u);
     auto insert(const std::vector<unsigned int>&, Node**);
+    auto print() const{
+        std::cout << current->n << ' ';
+        for(auto nodePtr = current->next; nodePtr!=current;){
+            std::cout << nodePtr->n << ' ';
+            nodePtr = nodePtr->next;
+        }
+        std::cout << "\n";
+    }
 };
 
 auto Circle::insert(const std::vector<unsigned int>& elements, Node** start){
@@ -61,25 +66,31 @@ auto Circle::insert(const std::vector<unsigned int>& elements, Node** start){
 
 Circle::Circle(const std::vector<unsigned int>& s){
     nodeMap.reserve(s.size());
-    insert(s, &current);
+    auto lastInsertedElementPtr = insert(s, &current);
+    lastInsertedElementPtr->next = current;
+
+    maxvalue = std::ranges::max(nodeMap | std::views::values | std::views::transform(&Node::n));
 }
 
 Circle::Circle(const std::vector<unsigned int>& s, const unsigned int circleSize){
-    nodepos.resize(circleSize);
+    nodeMap.reserve(circleSize);
     auto lastInsertedElementPtr = insert(s, &current);
     auto nextElements = std::vector<unsigned int>{10,11,12,13};
     insert(nextElements, &lastInsertedElementPtr->next);
+    lastInsertedElementPtr->next = current;
+    maxvalue = std::ranges::max(nodeMap | std::views::values | std::views::transform(&Node::n));
 }
 
 void Circle::doNMoves(int n){
     for(int i = 0; i < n; i++){
         doOneMove();
+        print();
     }
 }
 
 void Circle::doOneMove(){
     Node* removedCups = removeNextThree();
-    Node* destinationCup = getDestinationCup();
+    Node* destinationCup = getDestinationCup(removedCups);
     insertCups(removedCups, destinationCup);
     current = current->next;
 }
@@ -87,35 +98,34 @@ void Circle::doOneMove(){
 Node* Circle::removeNextThree(){
     Node* removedCups = current->next;
     current->next = removedCups->next->next->next;
-    removedCups->next->next->next = NULL;
+    removedCups->next->next->next = nullptr;
     return removedCups;
 }
 
 bool Circle::isInCircle(Node* d){
-    if(d->next == NULL) return false;
+    if(d->next == nullptr) return false;
     d = d->next;
-    if(d->next == NULL) return false;
+    if(d->next == nullptr) return false;
     d = d->next;
-    if(d->next == NULL) return false;
+    if(d->next == nullptr) return false;
     return true;
 }
 
-Node* Circle::getDestinationCup(){
-    int n = current->n;
-    Node* destinationCup;
-    bool isInC;
-    do {
-        n = n + maxvalue - 2;
-        n = n % maxvalue + 1;
-        destinationCup = findCup(n);
-        isInC = isInCircle(destinationCup);
-
-    } while (!isInC);
-    return destinationCup;
+Node* Circle::getDestinationCup(Node* removedCups){
+    auto removedLabels=std::unordered_set<unsigned int>{};
+    for(auto nodePtr = removedCups; nodePtr!=nullptr;){
+        removedLabels.insert(nodePtr->n);
+        nodePtr=nodePtr->next;
+    }
+    int n = current->n-1;
+    while( removedLabels.contains((n+maxvalue-1)%maxvalue+1) ){
+        --n;
+    }
+    return &nodeMap[(n+maxvalue-1)%maxvalue+1];
 }
 
 Node* Circle::findCup(int n){
-    return nodepos[n - 1];
+    return &nodeMap[n];
 }
 
 void Circle::insertCups(Node* cups, Node* destination){
@@ -135,14 +145,15 @@ auto Circle::getCupNumbers(const auto amount){
 
 auto playFirstGame(const auto& s){
     Circle c(s);
-
-    // c.doNMoves(100);
+    // c.doOneMove();
+    c.doNMoves(100);
     // const auto numbers = c.getCupNumbers(s.size()-1);
     // auto number = std::string{};
     // for(const auto& i : numbers){
     //     number+= std::to_string(i);
     // }
     // return number;
+    return 0;
 }
 
 auto playSecondGame(const auto& s){
