@@ -7,10 +7,9 @@
 #include <string>
 #include <vector>
 #include <ranges>
-#include <unordered_set>
+#include <unordered_map>
 
-class Cup{
-   public:
+struct Cup{
     unsigned int cupLabel;
     Cup* next{nullptr};
 };
@@ -18,6 +17,7 @@ class Cup{
 class Circle{
     unsigned int maxvalue;
     std::unordered_map<unsigned int, Cup> nodeMap{};
+    Cup* current;
 
     void doOneMove();
     Cup* removeNextThree();
@@ -27,8 +27,6 @@ class Circle{
     bool labelWasRemoved(const unsigned int, const Cup*) const;
 
    public:
-    Cup* current;
-
     Circle(const std::vector<unsigned int>& s);
     Circle(const std::vector<unsigned int>& s, const unsigned int);
 
@@ -45,7 +43,7 @@ auto Circle::insert(const auto& elements, Cup** start){
     auto lastInsertedElementPtr = insertedElementPtr;
     *start = insertedElementPtr;
 
-    for(auto val : elements | std::views::drop(1))
+    for(const auto& val : elements | std::views::drop(1))
     {
         insertedElementPtr = addVal(nodeMap, val);
         lastInsertedElementPtr->next = insertedElementPtr;
@@ -73,13 +71,13 @@ Circle::Circle(const std::vector<unsigned int>& s, const unsigned int circleSize
 }
 
 void Circle::doNMoves(const int n){
-    for(int i = 0; i < n; i++){
+    for(auto i = 0; i < n; i++){
         doOneMove();
     }
 }
 
 void Circle::doOneMove(){
-    Cup* removedCups = removeNextThree();
+    Cup* removedCups    = removeNextThree();
     Cup* destinationCup = getDestinationCup(removedCups);
     insertCups(removedCups, destinationCup);
     current = current->next;
