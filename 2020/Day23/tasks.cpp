@@ -34,17 +34,17 @@ class Circle{
 };
 
 auto Circle::insert(const auto& elements, Cup** start){
-    auto addVal = [](auto& map, const auto val){
-        return &map.emplace(val, val).first->second;
+    auto addVal = [this](const auto val){
+        return &this->nodeMap.emplace(val, val).first->second;
     };
 
-    auto insertedElementPtr = addVal(nodeMap, elements[0]);
+    auto insertedElementPtr = addVal(elements[0]);
     auto lastInsertedElementPtr = insertedElementPtr;
     *start = insertedElementPtr;
 
     for(const auto& val : elements | std::views::drop(1))
     {
-        insertedElementPtr = addVal(nodeMap, val);
+        insertedElementPtr = addVal(val);
         lastInsertedElementPtr->next = insertedElementPtr;
         lastInsertedElementPtr = insertedElementPtr;
     }
@@ -56,7 +56,7 @@ Circle::Circle(const std::vector<unsigned int>& s, const unsigned int circleSize
     auto lastInsertedElementPtr = insert(s, &current);
     maxvalue = std::ranges::max(nodeMap | std::views::values | std::views::transform(&Cup::cupLabel));
     if(maxvalue < circleSize){
-        auto nextElements = std::ranges::iota_view{maxvalue+1, circleSize+1};
+        const auto nextElements = std::ranges::iota_view{maxvalue+1, circleSize+1};
         lastInsertedElementPtr = insert(nextElements, &lastInsertedElementPtr->next);
     }
     lastInsertedElementPtr->next = current;
