@@ -30,7 +30,6 @@ class Circle{
     void doOneMove();
     Cup* removeNextThree();
     Cup* getDestinationCup(Cup*);
-    Cup* findCup(int n);
     void insertCups(Cup* cups, Cup* destination);
     auto getCupNumbers(auto amount = 9u);
     auto insert(const auto&, Cup**);
@@ -113,21 +112,17 @@ Cup* Circle::getDestinationCup(Cup* removedCups){
     return &nodeMap[(n+maxvalue-1)%maxvalue+1];
 }
 
-Cup* Circle::findCup(int n){
-    return &nodeMap[n];
-}
-
 void Circle::insertCups(Cup* cups, Cup* destination){
     cups->next->next->next = destination->next;
     destination->next = cups;
 }
 
 auto Circle::getCupNumbers(const auto amount){
-    auto n = findCup(1)->next;
+    auto firstCup = nodeMap[1].next;
     auto numbers = std::vector<int>{};
     for(auto i=0u; i<amount; ++i){
-        numbers.push_back(n->cupLabel);
-        n = n->next;
+        numbers.push_back(firstCup->cupLabel);
+        firstCup = firstCup->next;
     }
     return numbers;
 }
