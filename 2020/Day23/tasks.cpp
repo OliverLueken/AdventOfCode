@@ -17,7 +17,6 @@ class Node{
 
 class Circle{
     unsigned int maxvalue;
-    // std::vector<Node*> nodepos;
     std::unordered_map<unsigned int, Node> nodeMap{};
 
    public:
@@ -26,7 +25,7 @@ class Circle{
 
     Circle(const std::vector<unsigned int>& s);
     Circle(const std::vector<unsigned int>& s, const unsigned int);
-    
+
     void doNMoves(int n);
     void doOneMove();
     Node* removeNextThree();
@@ -35,7 +34,7 @@ class Circle{
     Node* findCup(int n);
     void insertCups(Node* cups, Node* destination);
     auto getCupNumbers(auto amount = 9u);
-    auto insert(const std::vector<unsigned int>&, Node**);
+    auto insert(const auto&, Node**);
     auto print() const{
         std::cout << current->n << ' ';
         for(auto nodePtr = current->next; nodePtr!=current;){
@@ -46,7 +45,7 @@ class Circle{
     }
 };
 
-auto Circle::insert(const std::vector<unsigned int>& elements, Node** start){
+auto Circle::insert(const auto& elements, Node** start){
     auto addVal = [](auto& map, const auto val){
         return &map.emplace(val, val).first->second;
     };
@@ -75,16 +74,16 @@ Circle::Circle(const std::vector<unsigned int>& s){
 Circle::Circle(const std::vector<unsigned int>& s, const unsigned int circleSize){
     nodeMap.reserve(circleSize);
     auto lastInsertedElementPtr = insert(s, &current);
-    auto nextElements = std::vector<unsigned int>{10,11,12,13};
-    insert(nextElements, &lastInsertedElementPtr->next);
-    lastInsertedElementPtr->next = current;
     maxvalue = std::ranges::max(nodeMap | std::views::values | std::views::transform(&Node::n));
+    auto nextElements = std::ranges::iota_view{maxvalue+1, circleSize+1};
+    lastInsertedElementPtr = insert(nextElements, &lastInsertedElementPtr->next);
+    lastInsertedElementPtr->next = current;
+    maxvalue = circleSize;
 }
 
 void Circle::doNMoves(int n){
     for(int i = 0; i < n; i++){
         doOneMove();
-        print();
     }
 }
 
@@ -145,23 +144,20 @@ auto Circle::getCupNumbers(const auto amount){
 
 auto playFirstGame(const auto& s){
     Circle c(s);
-    // c.doOneMove();
     c.doNMoves(100);
-    // const auto numbers = c.getCupNumbers(s.size()-1);
-    // auto number = std::string{};
-    // for(const auto& i : numbers){
-    //     number+= std::to_string(i);
-    // }
-    // return number;
-    return 0;
+    const auto numbers = c.getCupNumbers(s.size()-1);
+    auto number = std::string{};
+    for(const auto& i : numbers){
+        number+= std::to_string(i);
+    }
+    return number;
 }
 
 auto playSecondGame(const auto& s){
     Circle c2(s, 1'000'000);
-    // c2.doNMoves(10'000'000);
-    // const auto numbers = c2.getCupNumbers(2u);
-    // return (long)numbers[0]*numbers[1];
-    return 0;
+    c2.doNMoves(10'000'000);
+    const auto numbers = c2.getCupNumbers(2u);
+    return (long)numbers[0]*numbers[1];
 }
 
 int main(){
