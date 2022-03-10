@@ -26,12 +26,12 @@ class Circle{
     Circle(const std::vector<unsigned int>& s);
     Circle(const std::vector<unsigned int>& s, const unsigned int);
 
-    void doNMoves(int n);
+    void doNMoves(const int);
     void doOneMove();
     Cup* removeNextThree();
-    Cup* getDestinationCup(Cup*);
-    void insertCups(Cup* cups, Cup* destination);
-    auto getCupNumbers(auto amount = 9u);
+    Cup* getDestinationCup(Cup const* const);
+    void insertCups(Cup* const cups, Cup* const destination);
+    auto getCupNumbers(const auto amount = 9u);
     auto insert(const auto&, Cup**);
     auto print() const{
         std::cout << current->cupLabel << ' ';
@@ -80,7 +80,7 @@ Circle::Circle(const std::vector<unsigned int>& s, const unsigned int circleSize
     maxvalue = circleSize;
 }
 
-void Circle::doNMoves(int n){
+void Circle::doNMoves(const int n){
     for(int i = 0; i < n; i++){
         doOneMove();
     }
@@ -108,15 +108,15 @@ bool Circle::labelWasRemoved(const unsigned int label, const Cup* removedCups) c
     return false;
 }
 
-Cup* Circle::getDestinationCup(Cup* removedCups){
-    int n = current->cupLabel-1;
-    while( labelWasRemoved((n+maxvalue-1)%maxvalue+1, removedCups) ){
+Cup* Circle::getDestinationCup(Cup const* const removedCups){
+    auto n = current->cupLabel+maxvalue-1;
+    while( labelWasRemoved((n-1)%maxvalue+1, removedCups) ){
         --n;
     }
-    return &nodeMap[(n+maxvalue-1)%maxvalue+1];
+    return &nodeMap[(n-1)%maxvalue+1];
 }
 
-void Circle::insertCups(Cup* cups, Cup* destination){
+void Circle::insertCups(Cup* const cups, Cup* const destination){
     cups->next->next->next = destination->next;
     destination->next = cups;
 }
@@ -132,7 +132,7 @@ auto Circle::getCupNumbers(const auto amount){
 }
 
 auto playFirstGame(const auto& s){
-    Circle c(s);
+    auto c = Circle{s};
     c.doNMoves(100);
     const auto numbers = c.getCupNumbers(s.size()-1);
     auto number = std::string{};
@@ -143,9 +143,9 @@ auto playFirstGame(const auto& s){
 }
 
 auto playSecondGame(const auto& s){
-    Circle c2(s, 1'000'000);
-    c2.doNMoves(10'000'000);
-    const auto numbers = c2.getCupNumbers(2u);
+    auto c = Circle{s, 1'000'000};
+    c.doNMoves(10'000'000);
+    const auto numbers = c.getCupNumbers(2u);
     return (long)numbers[0]*numbers[1];
 }
 
