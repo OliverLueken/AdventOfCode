@@ -19,29 +19,21 @@ class Circle{
     unsigned int maxvalue;
     std::unordered_map<unsigned int, Cup> nodeMap{};
 
+    void doOneMove();
+    Cup* removeNextThree();
+    Cup* getDestinationCup(Cup const* const);
+    void insertCups(Cup* const cups, Cup* const destination);
+    auto insert(const auto&, Cup**);
+    bool labelWasRemoved(const unsigned int, const Cup*) const;
+
    public:
     Cup* current;
-    unsigned int currentLabel;
 
     Circle(const std::vector<unsigned int>& s);
     Circle(const std::vector<unsigned int>& s, const unsigned int);
 
     void doNMoves(const int);
-    void doOneMove();
-    Cup* removeNextThree();
-    Cup* getDestinationCup(Cup const* const);
-    void insertCups(Cup* const cups, Cup* const destination);
-    auto getCupNumbers(const auto amount = 9u) const;
-    auto insert(const auto&, Cup**);
-    auto print() const{
-        std::cout << current->cupLabel << ' ';
-        for(auto nodePtr = current->next; nodePtr!=current;){
-            std::cout << nodePtr->cupLabel << ' ';
-            nodePtr = nodePtr->next;
-        }
-        std::cout << "\n";
-    }
-    bool labelWasRemoved(const unsigned int, const Cup*) const;
+    auto getCupsAfterCupNumberOne(const auto) const;
 };
 
 auto Circle::insert(const auto& elements, Cup** start){
@@ -121,7 +113,7 @@ void Circle::insertCups(Cup* const cups, Cup* const destination){
     destination->next = cups;
 }
 
-auto Circle::getCupNumbers(const auto amount) const{
+auto Circle::getCupsAfterCupNumberOne(const auto amount) const{
     auto firstCup = nodeMap.at(1).next;
     auto numbers = std::vector<int>{};
     for(auto i=0u; i<amount; ++i){
@@ -134,7 +126,7 @@ auto Circle::getCupNumbers(const auto amount) const{
 auto playFirstGame(const auto& s){
     auto c = Circle{s};
     c.doNMoves(100);
-    const auto numbers = c.getCupNumbers(s.size()-1);
+    const auto numbers = c.getCupsAfterCupNumberOne(s.size()-1);
     auto number = std::string{};
     for(const auto& i : numbers){
         number+= std::to_string(i);
@@ -145,7 +137,7 @@ auto playFirstGame(const auto& s){
 auto playSecondGame(const auto& s){
     auto c = Circle{s, 1'000'000};
     c.doNMoves(10'000'000);
-    const auto numbers = c.getCupNumbers(2u);
+    const auto numbers = c.getCupsAfterCupNumberOne(2u);
     return (long)numbers[0]*numbers[1];
 }
 
