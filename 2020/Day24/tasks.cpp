@@ -88,7 +88,7 @@ int countBlackNeighbors(const std::set<point>& blackTiles, const point& tile){
     int n = 0;
     for(int i = -1; i <= 1; i++){
         for(int j = -1; j <= 1; j++){
-            if(i == -1 && j == 1 || i == 0 && j == 0 || i == 1 && j == -1)
+            if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) )
                 continue;
             point x({tile.first + i, tile.second + j});
             if(blackTiles.find(x) != blackTiles.end()) n++;
@@ -107,7 +107,7 @@ void checkWhiteTile(const std::set<point>& blackTiles, const point& x, std::set<
 void checkNeighbors(const std::set<point>& blackTiles, const point& tile, std::set<point>& tilesToFlip){
     for(int i = -1; i <= 1; i++){
         for(int j = -1; j <= 1; j++){
-            if(i == -1 && j == 1 || i == 0 && j == 0 || i == 1 && j == -1)
+            if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) )
                 continue;
             point x = {tile.first + i, tile.second + j};
             checkWhiteTile(blackTiles, x, tilesToFlip);
