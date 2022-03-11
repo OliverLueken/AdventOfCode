@@ -150,7 +150,7 @@ void doStuff(strvec& input){
 
     for(int i = 0; i < 100; i++){
         doADay(blackTiles);
-        std::cout << i + 1 << ": " << blackTiles.size() << std::endl;
+        // std::cout << i + 1 << ": " << blackTiles.size() << std::endl;
     }
     result2 = blackTiles.size();
 }
