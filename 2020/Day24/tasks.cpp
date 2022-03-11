@@ -75,16 +75,6 @@ int getNextDirection(std::string& line){
     return 2;
 }
 
-point obtainTileCoords(std::string& line){
-    point x = {0, 0};
-    int nextDirection;
-    do {
-        nextDirection = getNextDirection(line);
-        updateCoords(nextDirection, x);
-    } while(nextDirection > 0);
-    return x;
-}
-
 void flipTile(std::set<point>& Tiles, const point& x){
     auto it = Tiles.insert(x);
     if(!it.second) Tiles.erase(x);
@@ -145,8 +135,7 @@ void doADay(std::set<point>& blackTiles){
 
 auto buildFloor(auto& input){
     std::set<point> blackTiles;
-    for(auto& line : input){
-        point x = obtainTileCoords(line);
+    for(auto& x : input){
         flipTile(blackTiles, x);
     }
     return blackTiles;
@@ -159,8 +148,28 @@ auto evolveFloor(auto& blackTiles){
     return blackTiles.size();
 }
 
+point obtainTileCoords(std::string& line){
+    point x = {0, 0};
+    int nextDirection;
+    do {
+        nextDirection = getNextDirection(line);
+        updateCoords(nextDirection, x);
+    } while(nextDirection > 0);
+    return x;
+}
+
+auto parseInput(auto&& input){
+    auto tilesToFlip = std::set<point>{};
+    for(auto& line : input){
+        const auto x = obtainTileCoords(line);
+        const auto inserted = tilesToFlip.insert(x).second;
+        if(!inserted) tilesToFlip.erase(x);
+    }
+    return tilesToFlip;
+}
+
 int main(){
-    auto input = readFile::vectorOfStrings();
+    auto input = parseInput( readFile::vectorOfStrings() );
 
     //Task 1
     auto blackTiles = buildFloor(input);
