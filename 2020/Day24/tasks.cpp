@@ -143,28 +143,33 @@ void doADay(std::set<point>& blackTiles){
     flipTiles(blackTiles, tilesToFlip);
 }
 
-void doStuff(strvec& input){
+auto buildFloor(auto& input){
     std::set<point> blackTiles;
     for(auto& line : input){
         point x = obtainTileCoords(line);
         flipTile(blackTiles, x);
     }
-    result1 = blackTiles.size();
+    return blackTiles;
+}
 
-    for(int i = 0; i < 100; i++){
+auto evolveFloor(auto& blackTiles){
+    for(auto i = 0; i < 100; ++i){
         doADay(blackTiles);
-        // std::cout << i + 1 << ": " << blackTiles.size() << std::endl;
     }
-    result2 = blackTiles.size();
+    return blackTiles.size();
 }
 
 int main(){
     auto input = readFile::vectorOfStrings();
 
-    doStuff(input);
+    //Task 1
+    auto blackTiles = buildFloor(input);
+    const auto numberOfBlackTiles = blackTiles.size();
+    std::cout << "There are " << numberOfBlackTiles << " black tiles.\n";
 
-    std::cout << result1 << "\n";
-    std::cout << result2 << "\n";
+    //Task 2
+    const auto numberOfBlackTilesAfter100Days = evolveFloor(blackTiles);
+    std::cout << "After 100 days, there are " << numberOfBlackTiles << " black tiles.\n";
 
-    VerifySolution::verifySolution(result1, result2);
+    VerifySolution::verifySolution(numberOfBlackTiles, numberOfBlackTilesAfter100Days);
 }
