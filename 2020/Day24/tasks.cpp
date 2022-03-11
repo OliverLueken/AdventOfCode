@@ -1,3 +1,9 @@
+
+#include "../../lib/readFile.hpp"
+#include "../../lib/verifySolution.hpp"
+#include "../../lib/utilities.hpp"
+#include "../../lib/matrix.hpp"
+
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <cmath>
@@ -175,4 +181,6 @@ int main(){
 
     std::cout << result1 << "\n";
     std::cout << result2 << "\n";
+
+    VerifySolution::verifySolution(result1, result2);
 }
