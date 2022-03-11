@@ -97,16 +97,14 @@ int countBlackNeighbors(const std::set<point>& blackTiles, const point& tile){
     return n;
 }
 
-void checkWhiteTile(const std::set<point>& blackTiles, const point& x,
-                    std::set<point>& tilesToFlip){
+void checkWhiteTile(const std::set<point>& blackTiles, const point& x, std::set<point>& tilesToFlip){
     if(blackTiles.find(x) != blackTiles.end()) return;
 
     int n = countBlackNeighbors(blackTiles, x);
     if(n == 2) tilesToFlip.insert(x);
 }
 
-void checkNeighbors(const std::set<point>& blackTiles, const point& tile,
-                    std::set<point>& tilesToFlip){
+void checkNeighbors(const std::set<point>& blackTiles, const point& tile, std::set<point>& tilesToFlip){
     for(int i = -1; i <= 1; i++){
         for(int j = -1; j <= 1; j++){
             if(i == -1 && j == 1 || i == 0 && j == 0 || i == 1 && j == -1)
@@ -128,8 +126,7 @@ std::set<point> getTilesToFlip(const std::set<point>& blackTiles){
     return tilesToFlip;
 }
 
-void flipTiles(std::set<point>& blackTiles,
-               const std::set<point>& tilesToFlip){
+void flipTiles(std::set<point>& blackTiles, const std::set<point>& tilesToFlip){
     for(auto& tile : tilesToFlip){
         flipTile(blackTiles, tile);
     }
