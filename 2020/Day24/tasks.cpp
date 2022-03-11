@@ -133,9 +133,9 @@ void doADay(std::set<point>& blackTiles){
     flipTiles(blackTiles, tilesToFlip);
 }
 
-auto buildFloor(auto& input){
+auto buildFloor(const auto& tilesToFlip){
     std::set<point> blackTiles;
-    for(auto& x : input){
+    for(const auto& x : tilesToFlip){
         flipTile(blackTiles, x);
     }
     return blackTiles;
@@ -169,10 +169,10 @@ auto parseInput(auto&& input){
 }
 
 int main(){
-    auto input = parseInput( readFile::vectorOfStrings() );
+    const auto tilesToFlip = parseInput( readFile::vectorOfStrings() );
 
     //Task 1
-    auto blackTiles = buildFloor(input);
+    auto blackTiles = buildFloor(tilesToFlip);
     const auto numberOfBlackTiles = blackTiles.size();
     std::cout << "There are " << numberOfBlackTiles << " black tiles.\n";
 
