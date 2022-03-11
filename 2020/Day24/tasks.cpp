@@ -158,24 +158,8 @@ void doStuff(strvec& input){
     result2 = blackTiles.size();
 }
 
-strvec readfile(std::string file){
-    std::string line;
-    std::ifstream input(file);
-    strvec lines;
-
-    if(input.is_open()){
-        while(getline(input, line)){
-            lines.push_back(line);
-        }
-        input.close();
-    } else {
-        std::cout << "Unable to open file\n";
-    }
-    return lines;
-}
-
 int main(){
-    strvec input = readfile("input.txt");
+    auto input = readFile::vectorOfStrings();
 
     doStuff(input);
 
