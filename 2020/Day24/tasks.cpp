@@ -12,8 +12,6 @@
 
 using point = Utilities::Position<int>;
 
-unsigned long result1 = 0, result2 = 0;
-
 void updateCoords(int direction, point& x){
     switch(direction){
         case 1: {
