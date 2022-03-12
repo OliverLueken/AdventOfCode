@@ -11,58 +11,48 @@
 #include <vector>
 
 using point = Utilities::Position<int>;
+enum Direction{Center = 0, East, SouthEast, SouthWest, West, NorthWest, NorthEast};
 
-void updateCoords(int direction, point& x){
+void updateCoords(auto direction, point& x){
     switch(direction){
-        case 1: {
+        break; case Direction::East:
             x.first += 1;
             x.second += 0;
-            break;
-        }
-        case 2: {
+        break; case Direction::SouthEast:
             x.first += 0;
             x.second += -1;
-            break;
-        }
-        case 3: {
+        break; case Direction::SouthWest:
             x.first += -1;
             x.second += -1;
-            break;
-        }
-        case 4: {
+        break; case Direction::West:
             x.first += -1;
             x.second += 0;
-            break;
-        }
-        case 5: {
+        break; case Direction::NorthWest:
             x.first += 0;
             x.second += 1;
-            break;
-        }
-        case 6: {
+        break; case Direction::NorthEast:
             x.first += 1;
             x.second += 1;
-            break;
-        }
+        break; case Direction::Center: break;
     }
 }
 
-int getNextDirection(std::string& line){
-    if(line.empty()) return 0;
+auto getNextDirection(std::string& line){
+    if(line.empty()) return Direction::Center;
     char a = line.front();
     line.erase(0, 1);
-    if(a == 'e') return 1;
-    if(a == 'w') return 4;
+    if(a == 'e') return Direction::East;
+    if(a == 'w') return Direction::West;
 
     char b = line.front();
     line.erase(0, 1);
     if(a == 'n'){
-        if(b == 'w') return 5;
-        if(b == 'e') return 6;
+        if(b == 'w') return Direction::NorthWest;
+        if(b == 'e') return Direction::NorthEast;
     }
-    if(b == 'w') return 3;
+    if(b == 'w') return Direction::SouthWest;
     // if(b == 'e')
-    return 2;
+    return Direction::SouthEast;
 }
 
 void flipTile(std::set<point>& Tiles, const point& x){
@@ -101,8 +91,8 @@ void checkNeighbors(const std::set<point>& blackTiles, const point& tile, std::s
     }
 }
 
-std::set<point> getTilesToFlip(const std::set<point>& blackTiles){
-    std::set<point> tilesToFlip;
+auto getTilesToFlip(const std::set<point>& blackTiles){
+    auto tilesToFlip = std::set<point>{};
     for(auto& tile : blackTiles){
         int n = countBlackNeighbors(blackTiles, tile);
         if(n == 0 || n > 2) tilesToFlip.insert(tile);
@@ -140,11 +130,11 @@ auto evolveFloor(auto& blackTiles){
 
 point obtainTileCoords(std::string& line){
     point x = {0, 0};
-    int nextDirection;
+    auto nextDirection = Direction::Center;
     do {
         nextDirection = getNextDirection(line);
         updateCoords(nextDirection, x);
-    } while(nextDirection > 0);
+    } while(nextDirection != Direction::Center);
     return x;
 }
 
