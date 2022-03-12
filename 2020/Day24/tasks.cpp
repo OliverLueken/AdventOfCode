@@ -15,25 +15,25 @@ enum Direction{Center = 0, East, SouthEast, SouthWest, West, NorthWest, NorthEas
 
 void updateCoords(auto direction, point& x){
     switch(direction){
-        break; case Direction::East:
-            x.first += 1;
-            x.second += 0;
-        break; case Direction::SouthEast:
-            x.first += 0;
-            x.second += -1;
-        break; case Direction::SouthWest:
-            x.first += -1;
-            x.second += -1;
-        break; case Direction::West:
-            x.first += -1;
-            x.second += 0;
-        break; case Direction::NorthWest:
-            x.first += 0;
-            x.second += 1;
-        break; case Direction::NorthEast:
-            x.first += 1;
-            x.second += 1;
-        break; case Direction::Center: break;
+    break; case Direction::East:
+        x.first  += 1;
+        x.second += 0;
+    break; case Direction::SouthEast:
+        x.first  += 0;
+        x.second += -1;
+    break; case Direction::SouthWest:
+        x.first  += -1;
+        x.second += -1;
+    break; case Direction::West:
+        x.first  += -1;
+        x.second += 0;
+    break; case Direction::NorthWest:
+        x.first  += 0;
+        x.second += 1;
+    break; case Direction::NorthEast:
+        x.first  += 1;
+        x.second += 1;
+    break; case Direction::Center: break;
     }
 }
 
