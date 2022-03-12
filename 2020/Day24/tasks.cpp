@@ -13,6 +13,84 @@
 using point = Utilities::Position<int>;
 enum Direction{Center = 0, East, SouthEast, SouthWest, West, NorthWest, NorthEast};
 
+struct Floor{
+
+    std::set<point> blackTiles{};
+
+    Floor(const auto& tilesToFlip){
+        for(const auto& x : tilesToFlip){
+            flipTile(x);
+        }
+    }
+
+    void flipTile(const point& x){
+        auto it = blackTiles.insert(x);
+        if(!it.second) blackTiles.erase(x);
+    }
+
+    int countBlackNeighbors(const point& tile) const {
+        int n = 0;
+        for(int i = -1; i <= 1; i++){
+            for(int j = -1; j <= 1; j++){
+                if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) ) continue;
+                point x({tile.first + i, tile.second + j});
+                if(blackTiles.find(x) != blackTiles.end()) n++;
+            }
+        }
+        return n;
+    }
+
+    void checkWhiteTile(const point& x, std::set<point>& tilesToFlip) const {
+        if(blackTiles.find(x) != blackTiles.end()) return;
+
+        int n = countBlackNeighbors(x);
+        if(n == 2) tilesToFlip.insert(x);
+    }
+
+    void checkNeighbors(const point& tile, std::set<point>& tilesToFlip) const {
+        for(int i = -1; i <= 1; i++){
+            for(int j = -1; j <= 1; j++){
+                if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) )
+                    continue;
+                point x = {tile.first + i, tile.second + j};
+                checkWhiteTile(x, tilesToFlip);
+            }
+        }
+    }
+
+    auto getTilesToFlip() const {
+        auto tilesToFlip = std::set<point>{};
+        for(auto& tile : blackTiles){
+            int n = countBlackNeighbors(tile);
+            if(n == 0 || n > 2) tilesToFlip.insert(tile);
+
+            checkNeighbors(tile, tilesToFlip);
+        }
+        return tilesToFlip;
+    }
+
+    void flipTiles(const std::set<point>& tilesToFlip){
+        for(auto& tile : tilesToFlip){
+            flipTile(tile);
+        }
+    }
+
+    void doADay(){
+        std::set<point> tilesToFlip = getTilesToFlip();
+        flipTiles(tilesToFlip);
+    }
+
+    auto evolveFloor(){
+        for(auto i = 0; i < 100; ++i){
+            doADay();
+        }
+    }
+
+    auto getNumberOfBlackTiles() const {
+        return blackTiles.size();
+    }
+};
+
 void updateCoords(auto direction, point& x){
     switch(direction){
     break; case Direction::East:
@@ -65,79 +143,6 @@ auto getNextDirection(auto& line){
     return Direction::SouthEast;
 }
 
-void flipTile(std::set<point>& Tiles, const point& x){
-    auto it = Tiles.insert(x);
-    if(!it.second) Tiles.erase(x);
-}
-
-int countBlackNeighbors(const std::set<point>& blackTiles, const point& tile){
-    int n = 0;
-    for(int i = -1; i <= 1; i++){
-        for(int j = -1; j <= 1; j++){
-            if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) )
-                continue;
-            point x({tile.first + i, tile.second + j});
-            if(blackTiles.find(x) != blackTiles.end()) n++;
-        }
-    }
-    return n;
-}
-
-void checkWhiteTile(const std::set<point>& blackTiles, const point& x, std::set<point>& tilesToFlip){
-    if(blackTiles.find(x) != blackTiles.end()) return;
-
-    int n = countBlackNeighbors(blackTiles, x);
-    if(n == 2) tilesToFlip.insert(x);
-}
-
-void checkNeighbors(const std::set<point>& blackTiles, const point& tile, std::set<point>& tilesToFlip){
-    for(int i = -1; i <= 1; i++){
-        for(int j = -1; j <= 1; j++){
-            if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) )
-                continue;
-            point x = {tile.first + i, tile.second + j};
-            checkWhiteTile(blackTiles, x, tilesToFlip);
-        }
-    }
-}
-
-auto getTilesToFlip(const std::set<point>& blackTiles){
-    auto tilesToFlip = std::set<point>{};
-    for(auto& tile : blackTiles){
-        int n = countBlackNeighbors(blackTiles, tile);
-        if(n == 0 || n > 2) tilesToFlip.insert(tile);
-
-        checkNeighbors(blackTiles, tile, tilesToFlip);
-    }
-    return tilesToFlip;
-}
-
-void flipTiles(std::set<point>& blackTiles, const std::set<point>& tilesToFlip){
-    for(auto& tile : tilesToFlip){
-        flipTile(blackTiles, tile);
-    }
-}
-
-void doADay(std::set<point>& blackTiles){
-    std::set<point> tilesToFlip = getTilesToFlip(blackTiles);
-    flipTiles(blackTiles, tilesToFlip);
-}
-
-auto buildFloor(const auto& tilesToFlip){
-    std::set<point> blackTiles;
-    for(const auto& x : tilesToFlip){
-        flipTile(blackTiles, x);
-    }
-    return blackTiles;
-}
-
-auto evolveFloor(auto& blackTiles){
-    for(auto i = 0; i < 100; ++i){
-        doADay(blackTiles);
-    }
-    return blackTiles.size();
-}
-
 point obtainTileCoords(auto&& lineView){
     point x = {0, 0};
     auto nextDirection = Direction::Center;
@@ -162,13 +167,14 @@ int main(){
     const auto tilesToFlip = parseInput( readFile::vectorOfStrings() );
 
     //Task 1
-    auto blackTiles = buildFloor(tilesToFlip);
-    const auto numberOfBlackTiles = blackTiles.size();
+    auto floor = Floor{tilesToFlip};
+    const auto numberOfBlackTiles = floor.getNumberOfBlackTiles();
     std::cout << "There are " << numberOfBlackTiles << " black tiles.\n";
 
     //Task 2
-    const auto numberOfBlackTilesAfter100Days = evolveFloor(blackTiles);
-    std::cout << "After 100 days, there are " << numberOfBlackTiles << " black tiles.\n";
+    floor.evolveFloor();
+    const auto numberOfBlackTilesAfter100Days = floor.getNumberOfBlackTiles();
+    std::cout << "After 100 days, there are " << numberOfBlackTilesAfter100Days << " black tiles.\n";
 
     VerifySolution::verifySolution(numberOfBlackTiles, numberOfBlackTilesAfter100Days);
 }
