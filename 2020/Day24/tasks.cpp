@@ -37,21 +37,31 @@ void updateCoords(auto direction, point& x){
     }
 }
 
-auto getNextDirection(std::string& line){
+auto getNextDirection(auto& line){
     if(line.empty()) return Direction::Center;
-    char a = line.front();
-    line.erase(0, 1);
-    if(a == 'e') return Direction::East;
-    if(a == 'w') return Direction::West;
 
-    char b = line.front();
-    line.erase(0, 1);
-    if(a == 'n'){
-        if(b == 'w') return Direction::NorthWest;
-        if(b == 'e') return Direction::NorthEast;
+    if( line.starts_with('e') ){
+        line.remove_prefix(1);
+        return Direction::East;
     }
-    if(b == 'w') return Direction::SouthWest;
-    // if(b == 'e')
+    if( line.starts_with('w') ){
+        line.remove_prefix(1);
+        return Direction::West;
+    }
+
+    if( line.starts_with("nw") ){
+        line.remove_prefix(2);
+        return Direction::NorthWest;
+    }
+    if( line.starts_with("ne") ){
+        line.remove_prefix(2);
+        return Direction::NorthEast;
+    }
+    if( line.starts_with("sw") ){
+        line.remove_prefix(2);
+        return Direction::SouthWest;
+    }
+    line.remove_prefix(2);
     return Direction::SouthEast;
 }
 
@@ -128,11 +138,11 @@ auto evolveFloor(auto& blackTiles){
     return blackTiles.size();
 }
 
-point obtainTileCoords(std::string& line){
+point obtainTileCoords(auto&& lineView){
     point x = {0, 0};
     auto nextDirection = Direction::Center;
     do {
-        nextDirection = getNextDirection(line);
+        nextDirection = getNextDirection(lineView);
         updateCoords(nextDirection, x);
     } while(nextDirection != Direction::Center);
     return x;
@@ -141,7 +151,7 @@ point obtainTileCoords(std::string& line){
 auto parseInput(auto&& input){
     auto tilesToFlip = std::set<point>{};
     for(auto& line : input){
-        const auto x = obtainTileCoords(line);
+        const auto x = obtainTileCoords(std::string_view{line});
         const auto inserted = tilesToFlip.insert(x).second;
         if(!inserted) tilesToFlip.erase(x);
     }
