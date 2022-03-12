@@ -5,20 +5,12 @@
 #include "../../lib/matrix.hpp"
 
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
-#include <cmath>
-#include <fstream>
 #include <iostream>
-#include <queue>
-#include <regex>
 #include <set>
 #include <string>
 #include <vector>
 
-typedef std::set<std::string> strset;
-typedef std::vector<strset> strsetvec;
-typedef std::vector<std::string> strvec;
-typedef std::pair<int, int> point;
+using point = Utilities::Position<int>;
 
 unsigned long result1 = 0, result2 = 0;
 
