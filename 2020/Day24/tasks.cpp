@@ -83,7 +83,8 @@ struct Floor{
         auto neighborCounts = std::unordered_map<point, unsigned int>{};
         std::ranges::transform(blackTiles, std::inserter(neighborCounts, std::begin(neighborCounts)), [](const auto& tile){
             return std::make_pair(tile, 0u);
-        });
+        }); //We need to insert every black tile, because black tiles need to be flipped if they have 0 black neighbors
+            //and the next loop only inserts tiles that have at least one black neighbor
         for(const auto& tile : blackTiles){
             ingrementTileNeighborCounts(tile, neighborCounts);
         }
