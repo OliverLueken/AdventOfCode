@@ -39,14 +39,9 @@ void updateCoords(auto direction, point& x){
     }
 }
 
-struct Floor{
+class Floor{
 
     std::set<point> blackTiles{};
-
-    void addTile(point&& x){
-        auto it = blackTiles.emplace(std::move(x));
-        if(!it.second) blackTiles.erase(it.first);
-    }
 
     void flipTile(const auto& tile, const auto count){
         if(isBlackTile(tile)){
@@ -106,6 +101,13 @@ struct Floor{
     void evolve(){
         const auto neighborCounts = getNeighborCounts();
         flipTiles(neighborCounts);
+    }
+    
+public:
+
+    void addTile(point&& x){
+        auto it = blackTiles.emplace(std::move(x));
+        if(!it.second) blackTiles.erase(it.first);
     }
 
     auto evolveFloor(){
