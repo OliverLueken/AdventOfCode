@@ -6,8 +6,7 @@ CPP = g++
 CPPDEBUG = -g
 CPPWARNINGS = -Wall -Wpedantic -Wextra -Wconversion -Wshadow -Werror
 CPPSANITIZER = -fsanitize=undefined,address
-CPPFLAGS = -std=c++20 -O3 $(CPPWARNINGS) -I /usr/local/boost_1_78_0 $(CPPDEBUG) $(CPPSANITIZER)
-#CPPFLAGS = -std=c++20 -O3 $(CPPWARNINGS) -I /usr/local/boost_1_78_0
+CPPFLAGS = -std=c++20 -O3 $(CPPWARNINGS) $(CPPDEBUG) $(CPPSANITIZER)
 LIBS = -L/usr/lib/cryptopp/ -lcryptopp
 
 SUBDIRS = 20*/Day*
