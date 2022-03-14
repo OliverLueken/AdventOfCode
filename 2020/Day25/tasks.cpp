@@ -19,16 +19,9 @@ typedef std::vector<strset> strsetvec;
 typedef std::vector<std::string> strvec;
 typedef std::pair<int, int> point;
 
-unsigned long result1 = 0, result2 = 0;
+unsigned long result1 = 0;
 
-void calcEncriptionKey(long k1, long k2, int l1, int l2){
-    std::cout << k1 << ": " << l1 << std::endl << k2 << ": " << l2 << std::endl;
-    // if(l2 < l1){
-    //   l1=l2;
-    // }else{
-    //   k1=k2;
-    // }
-    long s = k1;
+void calcEncriptionKey(long k1, int l2){
     long n = 1;
     for (int i = 0; i < l2; i++){
         n *= k1;
@@ -49,12 +42,12 @@ int getLoopSize(long key){
 }
 
 void doStuff(strvec& input){
-    long key1 = stol(input[0]), key2 = stol(input[1]);
+    long key1 = stol(input[0]);
+    long key2 = stol(input[1]);
 
-    int l1 = getLoopSize(key1);
     int l2 = getLoopSize(key2);
 
-    calcEncriptionKey(key1, key2, l1, l2);
+    calcEncriptionKey(key1, l2);
 }
 
 int main(){
