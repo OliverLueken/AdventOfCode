@@ -103,14 +103,14 @@ struct Floor{
         }
     }
 
-    void doADay(){
+    void evolve(){
         const auto neighborCounts = getNeighborCounts();
         flipTiles(neighborCounts);
     }
 
     auto evolveFloor(){
         for(auto i = 0; i < 100; ++i){
-            doADay();
+            evolve();
         }
     }
 
