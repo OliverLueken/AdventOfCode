@@ -54,7 +54,7 @@ struct Floor{
         if(!it.second) blackTiles.erase(x);
     }
 
-    auto addNeighbor(const auto& tile, auto& neighborCounts) const {
+    auto ingrementTileNeighborCounts(const auto& tile, auto& neighborCounts) const {
         const auto directions = std::array<Direction, 6>{
             Direction::NorthEast,
             Direction::East,
@@ -76,7 +76,7 @@ struct Floor{
             return std::make_pair(tile, 0u);
         });
         for(const auto& tile : blackTiles){
-            addNeighbor(tile, neighborCounts);
+            ingrementTileNeighborCounts(tile, neighborCounts);
         }
         auto tilesToFlip = std::set<point>{};
         for(const auto& [tile, count] : neighborCounts){
