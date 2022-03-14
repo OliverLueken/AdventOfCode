@@ -43,15 +43,9 @@ struct Floor{
 
     std::set<point> blackTiles{};
 
-    Floor(const auto& tilesToFlip){
-        for(const auto& x : tilesToFlip){
-            flipTile(x);
-        }
-    }
-
-    void flipTile(const point& x){
-        auto it = blackTiles.insert(x);
-        if(!it.second) blackTiles.erase(x);
+    void addTile(point&& x){
+        auto it = blackTiles.emplace(std::move(x));
+        if(!it.second) blackTiles.erase(it.first);
     }
 
     void flipTile(const auto& tile, const auto count){
@@ -164,20 +158,18 @@ point obtainTileCoords(auto&& lineView){
 }
 
 auto parseInput(auto&& input){
-    auto tilesToFlip = std::set<point>{};
+    auto floor = Floor{};
     for(auto& line : input){
-        const auto x = obtainTileCoords(std::string_view{line});
-        const auto inserted = tilesToFlip.insert(x).second;
-        if(!inserted) tilesToFlip.erase(x);
+        auto x = obtainTileCoords(std::string_view{line});
+        floor.addTile(std::move(x));
     }
-    return tilesToFlip;
+    return floor;
 }
 
 int main(){
-    const auto tilesToFlip = parseInput( readFile::vectorOfStrings() );
+    auto floor = parseInput( readFile::vectorOfStrings() );
 
     //Task 1
-    auto floor = Floor{tilesToFlip};
     const auto numberOfBlackTiles = floor.getNumberOfBlackTiles();
     std::cout << "There are " << numberOfBlackTiles << " black tiles.\n";
 
