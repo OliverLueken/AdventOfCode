@@ -14,11 +14,6 @@
 #include <string>
 #include <vector>
 
-typedef std::set<std::string> strset;
-typedef std::vector<strset> strsetvec;
-typedef std::vector<std::string> strvec;
-typedef std::pair<int, int> point;
-
 unsigned long result1 = 0;
 
 void calcEncriptionKey(long k1, int l2){
@@ -41,19 +36,22 @@ int getLoopSize(long key){
     return loopsize;
 }
 
-void doStuff(strvec& input){
-    long key1 = stol(input[0]);
-    long key2 = stol(input[1]);
-
+void doStuff(const auto key1, const auto key2){
     int l2 = getLoopSize(key2);
-
     calcEncriptionKey(key1, l2);
 }
 
-int main(){
-    auto input = readFile::vectorOfStrings();
+auto parseInput(auto&& input){
+    return std::make_pair(
+        std::stoul(input[0]),
+        std::stoul(input[1])
+    );
+}
 
-    doStuff(input);
+int main(){
+    const auto [key1, key2] = parseInput(readFile::vectorOfStrings());
+
+    doStuff(key1, key2);
 
     std::cout << result1 << "\n";
 
