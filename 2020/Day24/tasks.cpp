@@ -9,9 +9,35 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 using point = Utilities::Position<int>;
 enum Direction{Center = 0, East, SouthEast, SouthWest, West, NorthWest, NorthEast};
+
+
+void updateCoords(auto direction, point& x){
+    switch(direction){
+    break; case Direction::East:
+        x.first  += 1;
+        x.second += 0;
+    break; case Direction::SouthEast:
+        x.first  += 0;
+        x.second += -1;
+    break; case Direction::SouthWest:
+        x.first  += -1;
+        x.second += -1;
+    break; case Direction::West:
+        x.first  += -1;
+        x.second += 0;
+    break; case Direction::NorthWest:
+        x.first  += 0;
+        x.second += 1;
+    break; case Direction::NorthEast:
+        x.first  += 1;
+        x.second += 1;
+    break; case Direction::Center: break;
+    }
+}
 
 struct Floor{
 
@@ -58,14 +84,52 @@ struct Floor{
         }
     }
 
-    auto getTilesToFlip() const {
-        auto tilesToFlip = std::set<point>{};
-        for(auto& tile : blackTiles){
-            int n = countBlackNeighbors(tile);
-            if(n == 0 || n > 2) tilesToFlip.insert(tile);
-
-            checkNeighbors(tile, tilesToFlip);
+    auto addNeighbor(const auto& tile, auto& neighborCounts) const {
+        const auto directions = std::array<Direction, 6>{
+            Direction::NorthEast,
+            Direction::East,
+            Direction::SouthEast,
+            Direction::SouthWest,
+            Direction::West,
+            Direction::NorthWest
+        };
+        for(const auto direction : directions){
+            auto p = tile;
+            updateCoords(direction, p);
+            neighborCounts[p]++;
         }
+    }
+
+    auto getTilesToFlip() const {
+        auto neighborCounts = std::unordered_map<point, unsigned int>{};
+        std::ranges::transform(blackTiles, std::inserter(neighborCounts, std::begin(neighborCounts)), [](const auto& tile){
+            return std::make_pair(tile, 0u);
+        });
+        for(const auto& tile : blackTiles){
+            addNeighbor(tile, neighborCounts);
+        }
+        auto tilesToFlip = std::set<point>{};
+        for(const auto& [tile, count] : neighborCounts){
+            if(blackTiles.contains(tile)){
+                if(count == 0 || count > 2){
+                    tilesToFlip.insert(tile);
+                }
+            }
+            else{
+                if(count == 2){
+                    tilesToFlip.insert(tile);
+                }
+            }
+        }
+
+
+        // auto tilesToFlip = std::set<point>{};
+        // for(auto& tile : blackTiles){
+        //     int n = countBlackNeighbors(tile);
+        //     if(n == 0 || n > 2) tilesToFlip.insert(tile);
+        //
+        //     checkNeighbors(tile, tilesToFlip);
+        // }
         return tilesToFlip;
     }
 
@@ -90,30 +154,6 @@ struct Floor{
         return blackTiles.size();
     }
 };
-
-void updateCoords(auto direction, point& x){
-    switch(direction){
-    break; case Direction::East:
-        x.first  += 1;
-        x.second += 0;
-    break; case Direction::SouthEast:
-        x.first  += 0;
-        x.second += -1;
-    break; case Direction::SouthWest:
-        x.first  += -1;
-        x.second += -1;
-    break; case Direction::West:
-        x.first  += -1;
-        x.second += 0;
-    break; case Direction::NorthWest:
-        x.first  += 0;
-        x.second += 1;
-    break; case Direction::NorthEast:
-        x.first  += 1;
-        x.second += 1;
-    break; case Direction::Center: break;
-    }
-}
 
 auto getNextDirection(auto& line){
     if(line.empty()) return Direction::Center;
