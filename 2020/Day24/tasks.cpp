@@ -18,23 +18,19 @@ enum Direction{Center = 0, East, SouthEast, SouthWest, West, NorthWest, NorthEas
 void updateCoords(auto direction, point& x){
     switch(direction){
     break; case Direction::East:
-        x.first  += 1;
-        x.second += 0;
+        ++x.first;
     break; case Direction::SouthEast:
-        x.first  += 0;
-        x.second += -1;
+        --x.second;
     break; case Direction::SouthWest:
-        x.first  += -1;
-        x.second += -1;
+        --x.first;
+        --x.second;
     break; case Direction::West:
-        x.first  += -1;
-        x.second += 0;
+        --x.first;
     break; case Direction::NorthWest:
-        x.first  += 0;
-        x.second += 1;
+        ++x.second;
     break; case Direction::NorthEast:
-        x.first  += 1;
-        x.second += 1;
+        ++x.first;
+        ++x.second;
     break; case Direction::Center: break;
     }
 }
@@ -64,7 +60,7 @@ class Floor{
         for(const auto direction : directions){
             auto p = tile;
             updateCoords(direction, p);
-            neighborCounts[p]++;
+            ++neighborCounts[p];
         }
     }
 
@@ -102,7 +98,7 @@ class Floor{
         const auto neighborCounts = getNeighborCounts();
         flipTiles(neighborCounts);
     }
-    
+
 public:
 
     void addTile(point&& x){
