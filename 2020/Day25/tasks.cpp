@@ -3,27 +3,20 @@
 #include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 
-#include <algorithm>
-#include <boost/algorithm/string.hpp>
-#include <cmath>
-#include <fstream>
 #include <iostream>
-#include <queue>
-#include <regex>
-#include <set>
 #include <string>
 #include <vector>
 
-auto calcEncriptionKey(long k1, int l2){
+auto calcEncriptionKey(const long k1, const int loopsize){
     long n = 1l;
-    for (int i = 0; i < l2; i++){
+    for (int i = 0; i < loopsize; ++i){
         n *= k1;
         n %= 20201227;
     }
     return n;
 }
 
-int getLoopSize(long key){
+int getLoopSize(const long key){
     long n = 1l;
     int loopsize = 0;
     while(n != key){
@@ -35,8 +28,8 @@ int getLoopSize(long key){
 }
 
 auto doStuff(const auto key1, const auto key2){
-    const auto l2 = getLoopSize(key2);
-    return calcEncriptionKey(key1, l2);
+    const auto loopsize = getLoopSize(key2);
+    return calcEncriptionKey(key1, loopsize);
 }
 
 auto parseInput(auto&& input){
