@@ -9,20 +9,20 @@
 
 auto calcEncriptionKey(const long k1, const int loopsize){
     long n = 1l;
-    for (int i = 0; i < loopsize; ++i){
+    for(int i = 0; i < loopsize; ++i){
         n *= k1;
         n %= 20201227;
     }
     return n;
 }
 
-int getLoopSize(const long key){
+auto getLoopSize(const long key){
     long n = 1l;
     int loopsize = 0;
     while(n != key){
         n *= 7;
         n %= 20201227;
-        loopsize++;
+        ++loopsize;
     }
     return loopsize;
 }
