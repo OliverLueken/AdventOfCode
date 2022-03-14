@@ -49,9 +49,9 @@ auto parseInput(auto&& input){
 int main(){
     const auto [key1, key2] = parseInput(readFile::vectorOfStrings());
 
+    //Task 1
     const auto encryptionKey = doStuff(key1, key2);
-
-    std::cout << encryptionKey << "\n";
+    std::cout << "The handshake is trying to establish the encryption key " << encryptionKey << ".\n";
 
     VerifySolution::verifySolution(encryptionKey);
 }
