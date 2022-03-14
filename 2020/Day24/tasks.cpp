@@ -101,7 +101,7 @@ class Floor{
 
 public:
 
-    void addTile(point&& x){
+    void flipTile(point&& x){
         auto it = blackTiles.emplace(std::move(x));
         if(!it.second) blackTiles.erase(it.first);
     }
@@ -159,7 +159,7 @@ auto parseInput(auto&& input){
     auto floor = Floor{};
     for(auto& line : input){
         auto x = obtainTileCoords(std::string_view{line});
-        floor.addTile(std::move(x));
+        floor.flipTile(std::move(x));
     }
     return floor;
 }
