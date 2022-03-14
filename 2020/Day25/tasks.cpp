@@ -14,19 +14,17 @@
 #include <string>
 #include <vector>
 
-unsigned long result1 = 0;
-
-void calcEncriptionKey(long k1, int l2){
-    long n = 1;
+auto calcEncriptionKey(long k1, int l2){
+    long n = 1l;
     for (int i = 0; i < l2; i++){
         n *= k1;
         n %= 20201227;
     }
-    result1 = n;
+    return n;
 }
 
 int getLoopSize(long key){
-    long n = 1;
+    long n = 1l;
     int loopsize = 0;
     while(n != key){
         n *= 7;
@@ -36,9 +34,9 @@ int getLoopSize(long key){
     return loopsize;
 }
 
-void doStuff(const auto key1, const auto key2){
-    int l2 = getLoopSize(key2);
-    calcEncriptionKey(key1, l2);
+auto doStuff(const auto key1, const auto key2){
+    const auto l2 = getLoopSize(key2);
+    return calcEncriptionKey(key1, l2);
 }
 
 auto parseInput(auto&& input){
@@ -51,9 +49,9 @@ auto parseInput(auto&& input){
 int main(){
     const auto [key1, key2] = parseInput(readFile::vectorOfStrings());
 
-    doStuff(key1, key2);
+    const auto encryptionKey = doStuff(key1, key2);
 
-    std::cout << result1 << "\n";
+    std::cout << encryptionKey << "\n";
 
-    VerifySolution::verifySolution(result1);
+    VerifySolution::verifySolution(encryptionKey);
 }
