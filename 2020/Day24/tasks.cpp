@@ -70,7 +70,7 @@ struct Floor{
         }
     }
 
-    auto getTilesToFlip() const {
+    auto getNeighborCounts() const {
         auto neighborCounts = std::unordered_map<point, unsigned int>{};
         std::ranges::transform(blackTiles, std::inserter(neighborCounts, std::begin(neighborCounts)), [](const auto& tile){
             return std::make_pair(tile, 0u);
@@ -78,31 +78,27 @@ struct Floor{
         for(const auto& tile : blackTiles){
             ingrementTileNeighborCounts(tile, neighborCounts);
         }
-        auto tilesToFlip = std::set<point>{};
+        return neighborCounts;
+    }
+
+    void flipTiles(const auto& neighborCounts){
         for(const auto& [tile, count] : neighborCounts){
             if(blackTiles.contains(tile)){
                 if(count == 0 || count > 2){
-                    tilesToFlip.insert(tile);
+                    blackTiles.erase(tile);
                 }
             }
             else{
                 if(count == 2){
-                    tilesToFlip.insert(tile);
+                    blackTiles.insert(tile);
                 }
             }
-        }
-        return tilesToFlip;
-    }
-
-    void flipTiles(const std::set<point>& tilesToFlip){
-        for(auto& tile : tilesToFlip){
-            flipTile(tile);
         }
     }
 
     void doADay(){
-        std::set<point> tilesToFlip = getTilesToFlip();
-        flipTiles(tilesToFlip);
+        const auto neighborCounts = getNeighborCounts();
+        flipTiles(neighborCounts);
     }
 
     auto evolveFloor(){
