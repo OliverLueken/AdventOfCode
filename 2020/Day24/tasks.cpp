@@ -9,9 +9,11 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 using point = Utilities::Position<int>;
 enum Direction{Center = 0, East, SouthEast, SouthWest, West, NorthWest, NorthEast};
+
 
 void updateCoords(auto direction, point& x){
     switch(direction){
@@ -36,6 +38,92 @@ void updateCoords(auto direction, point& x){
     break; case Direction::Center: break;
     }
 }
+
+struct Floor{
+
+    std::set<point> blackTiles{};
+
+    Floor(const auto& tilesToFlip){
+        for(const auto& x : tilesToFlip){
+            flipTile(x);
+        }
+    }
+
+    void flipTile(const point& x){
+        auto it = blackTiles.insert(x);
+        if(!it.second) blackTiles.erase(x);
+    }
+
+    void flipTile(const auto& tile, const auto count){
+        if(isBlackTile(tile)){
+            if(blackTileShouldBeFlipped(count)) blackTiles.erase(tile);
+        }
+        else{
+            if(whiteTileShouldBeFlipped(count)) blackTiles.insert(tile);
+        }
+    }
+
+    auto ingrementTileNeighborCounts(const auto& tile, auto& neighborCounts) const {
+        const auto directions = std::array<Direction, 6>{
+            Direction::NorthEast,
+            Direction::East,
+            Direction::SouthEast,
+            Direction::SouthWest,
+            Direction::West,
+            Direction::NorthWest
+        };
+        for(const auto direction : directions){
+            auto p = tile;
+            updateCoords(direction, p);
+            neighborCounts[p]++;
+        }
+    }
+
+    auto getNeighborCounts() const {
+        auto neighborCounts = std::unordered_map<point, unsigned int>{};
+        std::ranges::transform(blackTiles, std::inserter(neighborCounts, std::begin(neighborCounts)), [](const auto& tile){
+            return std::make_pair(tile, 0u);
+        }); //We need to insert every black tile, because black tiles need to be flipped if they have 0 black neighbors
+            //and the next loop only inserts tiles that have at least one black neighbor
+        for(const auto& tile : blackTiles){
+            ingrementTileNeighborCounts(tile, neighborCounts);
+        }
+        return neighborCounts;
+    }
+
+    auto isBlackTile(const auto& tile) const {
+        return blackTiles.contains(tile);
+    }
+
+    bool blackTileShouldBeFlipped(const auto count) const {
+        return count == 0 || count > 2;
+    }
+
+    bool whiteTileShouldBeFlipped(const auto count) const {
+        return count == 2;
+    }
+
+    void flipTiles(const auto& neighborCounts){
+        for(const auto& [tile, count] : neighborCounts){
+            flipTile(tile, count);
+        }
+    }
+
+    void doADay(){
+        const auto neighborCounts = getNeighborCounts();
+        flipTiles(neighborCounts);
+    }
+
+    auto evolveFloor(){
+        for(auto i = 0; i < 100; ++i){
+            doADay();
+        }
+    }
+
+    auto getNumberOfBlackTiles() const {
+        return blackTiles.size();
+    }
+};
 
 auto getNextDirection(auto& line){
     if(line.empty()) return Direction::Center;
@@ -65,79 +153,6 @@ auto getNextDirection(auto& line){
     return Direction::SouthEast;
 }
 
-void flipTile(std::set<point>& Tiles, const point& x){
-    auto it = Tiles.insert(x);
-    if(!it.second) Tiles.erase(x);
-}
-
-int countBlackNeighbors(const std::set<point>& blackTiles, const point& tile){
-    int n = 0;
-    for(int i = -1; i <= 1; i++){
-        for(int j = -1; j <= 1; j++){
-            if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) )
-                continue;
-            point x({tile.first + i, tile.second + j});
-            if(blackTiles.find(x) != blackTiles.end()) n++;
-        }
-    }
-    return n;
-}
-
-void checkWhiteTile(const std::set<point>& blackTiles, const point& x, std::set<point>& tilesToFlip){
-    if(blackTiles.find(x) != blackTiles.end()) return;
-
-    int n = countBlackNeighbors(blackTiles, x);
-    if(n == 2) tilesToFlip.insert(x);
-}
-
-void checkNeighbors(const std::set<point>& blackTiles, const point& tile, std::set<point>& tilesToFlip){
-    for(int i = -1; i <= 1; i++){
-        for(int j = -1; j <= 1; j++){
-            if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) )
-                continue;
-            point x = {tile.first + i, tile.second + j};
-            checkWhiteTile(blackTiles, x, tilesToFlip);
-        }
-    }
-}
-
-auto getTilesToFlip(const std::set<point>& blackTiles){
-    auto tilesToFlip = std::set<point>{};
-    for(auto& tile : blackTiles){
-        int n = countBlackNeighbors(blackTiles, tile);
-        if(n == 0 || n > 2) tilesToFlip.insert(tile);
-
-        checkNeighbors(blackTiles, tile, tilesToFlip);
-    }
-    return tilesToFlip;
-}
-
-void flipTiles(std::set<point>& blackTiles, const std::set<point>& tilesToFlip){
-    for(auto& tile : tilesToFlip){
-        flipTile(blackTiles, tile);
-    }
-}
-
-void doADay(std::set<point>& blackTiles){
-    std::set<point> tilesToFlip = getTilesToFlip(blackTiles);
-    flipTiles(blackTiles, tilesToFlip);
-}
-
-auto buildFloor(const auto& tilesToFlip){
-    std::set<point> blackTiles;
-    for(const auto& x : tilesToFlip){
-        flipTile(blackTiles, x);
-    }
-    return blackTiles;
-}
-
-auto evolveFloor(auto& blackTiles){
-    for(auto i = 0; i < 100; ++i){
-        doADay(blackTiles);
-    }
-    return blackTiles.size();
-}
-
 point obtainTileCoords(auto&& lineView){
     point x = {0, 0};
     auto nextDirection = Direction::Center;
@@ -162,13 +177,14 @@ int main(){
     const auto tilesToFlip = parseInput( readFile::vectorOfStrings() );
 
     //Task 1
-    auto blackTiles = buildFloor(tilesToFlip);
-    const auto numberOfBlackTiles = blackTiles.size();
+    auto floor = Floor{tilesToFlip};
+    const auto numberOfBlackTiles = floor.getNumberOfBlackTiles();
     std::cout << "There are " << numberOfBlackTiles << " black tiles.\n";
 
     //Task 2
-    const auto numberOfBlackTilesAfter100Days = evolveFloor(blackTiles);
-    std::cout << "After 100 days, there are " << numberOfBlackTiles << " black tiles.\n";
+    floor.evolveFloor();
+    const auto numberOfBlackTilesAfter100Days = floor.getNumberOfBlackTiles();
+    std::cout << "After 100 days, there are " << numberOfBlackTilesAfter100Days << " black tiles.\n";
 
     VerifySolution::verifySolution(numberOfBlackTiles, numberOfBlackTilesAfter100Days);
 }
