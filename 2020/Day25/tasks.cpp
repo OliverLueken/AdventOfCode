@@ -27,7 +27,7 @@ int getLoopSize(const long key){
     return loopsize;
 }
 
-auto doStuff(const auto key1, const auto key2){
+auto getEncryptionKey(const auto key1, const auto key2){
     const auto loopsize = getLoopSize(key2);
     return calcEncriptionKey(key1, loopsize);
 }
@@ -43,7 +43,7 @@ int main(){
     const auto [key1, key2] = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto encryptionKey = doStuff(key1, key2);
+    const auto encryptionKey = getEncryptionKey(key1, key2);
     std::cout << "The handshake is trying to establish the encryption key " << encryptionKey << ".\n";
 
     VerifySolution::verifySolution(encryptionKey);
