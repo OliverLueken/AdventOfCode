@@ -54,6 +54,15 @@ struct Floor{
         if(!it.second) blackTiles.erase(x);
     }
 
+    void flipTile(const auto& tile, const auto count){
+        if(isBlackTile(tile)){
+            if(blackTileShouldBeFlipped(count)) blackTiles.erase(tile);
+        }
+        else{
+            if(whiteTileShouldBeFlipped(count)) blackTiles.insert(tile);
+        }
+    }
+
     auto ingrementTileNeighborCounts(const auto& tile, auto& neighborCounts) const {
         const auto directions = std::array<Direction, 6>{
             Direction::NorthEast,
@@ -81,18 +90,21 @@ struct Floor{
         return neighborCounts;
     }
 
+    auto isBlackTile(const auto& tile) const {
+        return blackTiles.contains(tile);
+    }
+
+    bool blackTileShouldBeFlipped(const auto count) const {
+        return count == 0 || count > 2;
+    }
+
+    bool whiteTileShouldBeFlipped(const auto count) const {
+        return count == 2;
+    }
+
     void flipTiles(const auto& neighborCounts){
         for(const auto& [tile, count] : neighborCounts){
-            if(blackTiles.contains(tile)){
-                if(count == 0 || count > 2){
-                    blackTiles.erase(tile);
-                }
-            }
-            else{
-                if(count == 2){
-                    blackTiles.insert(tile);
-                }
-            }
+            flipTile(tile, count);
         }
     }
 
