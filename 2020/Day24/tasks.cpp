@@ -54,36 +54,6 @@ struct Floor{
         if(!it.second) blackTiles.erase(x);
     }
 
-    int countBlackNeighbors(const point& tile) const {
-        int n = 0;
-        for(int i = -1; i <= 1; i++){
-            for(int j = -1; j <= 1; j++){
-                if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) ) continue;
-                point x({tile.first + i, tile.second + j});
-                if(blackTiles.find(x) != blackTiles.end()) n++;
-            }
-        }
-        return n;
-    }
-
-    void checkWhiteTile(const point& x, std::set<point>& tilesToFlip) const {
-        if(blackTiles.find(x) != blackTiles.end()) return;
-
-        int n = countBlackNeighbors(x);
-        if(n == 2) tilesToFlip.insert(x);
-    }
-
-    void checkNeighbors(const point& tile, std::set<point>& tilesToFlip) const {
-        for(int i = -1; i <= 1; i++){
-            for(int j = -1; j <= 1; j++){
-                if( (i == -1 && j == 1) || (i == 0 && j == 0) || (i == 1 && j == -1) )
-                    continue;
-                point x = {tile.first + i, tile.second + j};
-                checkWhiteTile(x, tilesToFlip);
-            }
-        }
-    }
-
     auto addNeighbor(const auto& tile, auto& neighborCounts) const {
         const auto directions = std::array<Direction, 6>{
             Direction::NorthEast,
@@ -121,15 +91,6 @@ struct Floor{
                 }
             }
         }
-
-
-        // auto tilesToFlip = std::set<point>{};
-        // for(auto& tile : blackTiles){
-        //     int n = countBlackNeighbors(tile);
-        //     if(n == 0 || n > 2) tilesToFlip.insert(tile);
-        //
-        //     checkNeighbors(tile, tilesToFlip);
-        // }
         return tilesToFlip;
     }
 
