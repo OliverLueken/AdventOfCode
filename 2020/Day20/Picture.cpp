@@ -72,7 +72,7 @@ void Picture::updateBounds(const Position& p) {
     height = maxy - miny + 1;
 }
 
-enum Side{left, right, up, down};
+enum class Side{left, right, up, down};
 
 template<Side>
 auto fitsWith = [](const auto& tile, const auto& pos, const auto& field){
