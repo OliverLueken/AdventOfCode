@@ -10,13 +10,13 @@
 #include <string>
 #include <vector>
 
-enum precedenceOrder{leftToRight, additionBeforeMultiplication};
+enum class precedenceOrder{leftToRight, additionBeforeMultiplication};
 
 template<precedenceOrder>
 auto innerExpression(std::string&&);
 
 template<>
-auto innerExpression<leftToRight>(std::string&& expression) {
+auto innerExpression<precedenceOrder::leftToRight>(std::string&& expression) {
     auto a = expression.find_first_of("+*");
     while (a != std::string::npos) {
         const auto b = expression.find_first_of("+*", a + 1);
@@ -33,7 +33,7 @@ auto innerExpression<leftToRight>(std::string&& expression) {
 }
 
 template<>
-auto innerExpression<additionBeforeMultiplication>(std::string&& expression) {
+auto innerExpression<precedenceOrder::additionBeforeMultiplication>(std::string&& expression) {
     auto b = expression.find("+");
     while (b != std::string::npos) {
         auto a = expression.find_last_of("+*", b - 1);
@@ -49,7 +49,7 @@ auto innerExpression<additionBeforeMultiplication>(std::string&& expression) {
 
         b = expression.find("+");
     }
-    return innerExpression<leftToRight>(std::move(expression));
+    return innerExpression<precedenceOrder::leftToRight>(std::move(expression));
 }
 
 template<precedenceOrder order>
@@ -74,11 +74,11 @@ int main(){
     const auto input = readFile::vectorOfStrings();
 
     //Task 1
-    const auto sumOfSolutionsWithLeftToRight = sumSolutions<leftToRight>(input);
+    const auto sumOfSolutionsWithLeftToRight = sumSolutions<precedenceOrder::leftToRight>(input);
     std::cout << "The sum of the solutions evaluated left to right is " << sumOfSolutionsWithLeftToRight << ".\n";
 
     //Task 2
-    const auto sumOfSolutionsWithAdditionBeforeMultiplication = sumSolutions<additionBeforeMultiplication>(input);
+    const auto sumOfSolutionsWithAdditionBeforeMultiplication = sumSolutions<precedenceOrder::additionBeforeMultiplication>(input);
     std::cout << "The sum of the solutions evaluated with the new rules is " << sumOfSolutionsWithAdditionBeforeMultiplication << ".\n";
 
     VerifySolution::verifySolution(sumOfSolutionsWithLeftToRight, sumOfSolutionsWithAdditionBeforeMultiplication);
