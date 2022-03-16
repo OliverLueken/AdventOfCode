@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-enum Winner{NoWinner = 0, Player1, Player2};
+enum class Winner{NoWinner = 0, Player1, Player2};
 
 struct Deck : public std::deque<unsigned int>{
     auto deal(){
