@@ -14,7 +14,7 @@
 
 using Position = Utilities::Position<int>;
 
-enum Son{left, right};
+enum class Son{left, right};
 
 template<Son son>
 constexpr Son getSibling(){
@@ -157,10 +157,10 @@ auto getReceivingNumber(Node* nodePtr) -> std::optional<std::reference_wrapper<i
 }
 
 auto explodeNode(Node* nodePtr){
-    const auto leftValue      = nodePtr->getSonValue<left>();
-    const auto rightValue     = nodePtr->getSonValue<right>();
-    auto leftReceivingNumber  = getReceivingNumber<left>(nodePtr);
-    auto rightReceivingNumber = getReceivingNumber<right>(nodePtr);
+    const auto leftValue      = nodePtr->getSonValue<Son::left>();
+    const auto rightValue     = nodePtr->getSonValue<Son::right>();
+    auto leftReceivingNumber  = getReceivingNumber<Son::left>(nodePtr);
+    auto rightReceivingNumber = getReceivingNumber<Son::right>(nodePtr);
 
     if( leftReceivingNumber)  leftReceivingNumber.value()+=leftValue;
     if(rightReceivingNumber) rightReceivingNumber.value()+=rightValue;
