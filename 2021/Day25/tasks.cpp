@@ -7,7 +7,7 @@
 #include <iostream>
 #include <ranges>
 
-enum seaFloorOccupant {Nothing, EastFacingSeaCucumber, SouthFacingSeaCucumber};
+enum class seaFloorOccupant {Nothing, EastFacingSeaCucumber, SouthFacingSeaCucumber};
 
 auto parseInput = [](const auto& input){
     Matrix::Matrix<seaFloorOccupant> seaCucumberPositions{input.size(), input[0].size(),
