@@ -12,7 +12,7 @@
 #include <unordered_map>
 
 using point = Utilities::Position<int>;
-enum Direction{Center = 0, East, SouthEast, SouthWest, West, NorthWest, NorthEast};
+enum class Direction{Center, East, SouthEast, SouthWest, West, NorthWest, NorthEast};
 
 
 void updateCoords(auto direction, point& x){
