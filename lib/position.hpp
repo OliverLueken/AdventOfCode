@@ -1,6 +1,10 @@
 #ifndef POSITION_HPP
 #define POSITION_HPP
 
+#include <functional>
+
+#include "concepts.hpp"
+
 
 namespace Utilities{
 
