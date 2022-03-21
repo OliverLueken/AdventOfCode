@@ -3,6 +3,7 @@
 
 #include "readFile.hpp"
 #include "utilities.hpp"
+#include "concepts.hpp"
 
 #include <string>
 #include <iostream>
@@ -25,7 +26,7 @@ namespace VerifySolution{
         }
 
     private:
-        template<Utilities::number T>
+        template<number T>
         auto verify(const T& answer, const std::string& solution) const {
             verify(std::to_string(answer), solution);
         }

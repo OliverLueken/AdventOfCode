@@ -10,6 +10,7 @@
 #include <complex>
 
 #include "algorithms.hpp"
+#include "concepts.hpp"
 
 namespace Utilities{
 
@@ -103,11 +104,6 @@ struct std::hash<std::complex<T>>{
 };
 
 
-template<typename T, typename S>
-concept Addable = requires (T x, S y){ x + y; };
-
-template<typename T, typename S>
-concept Subtractable = requires (T x, S y){ x - y; };
 
 template<typename T, typename S>
 requires Addable<T, S>
