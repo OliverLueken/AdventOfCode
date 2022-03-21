@@ -1,10 +1,10 @@
+#ifndef ALGORITHMS_HPP
+#define ALGORITHMS_HPP
+
+#include "concepts.hpp"
+
 namespace Utilities{
 
-
-    template<typename T>
-    concept number = std::integral<T> || std::floating_point<T>;
-
-    
     struct contains_{
         /*
         An algorithm that searches for the element value in the range [first, last)
@@ -230,3 +230,5 @@ namespace Utilities{
     };
     inline constexpr sum_ sum;
 };
+
+#endif
