@@ -32,10 +32,10 @@ auto bfs = [](const auto& riskLevelMatrix){
         const auto currentRisk = lowestRiskLevelMatrix(i, j);
         const auto neighbors = getNeighbors(lowestRiskLevelMatrix, i, j);
         for(const auto& neighbor : neighbors){
-            const auto neighborRiskLevel = riskLevelMatrix(neighbor.first, neighbor.second);
-            if(currentRisk + neighborRiskLevel < lowestRiskLevelMatrix(neighbor.first, neighbor.second)){
-                lowestRiskLevelMatrix(neighbor.first, neighbor.second) = currentRisk + neighborRiskLevel;
-                search.emplace_back(neighbor.first, neighbor.second);
+            const auto neighborRiskLevel = riskLevelMatrix(neighbor);
+            if(currentRisk + neighborRiskLevel < lowestRiskLevelMatrix(neighbor)){
+                lowestRiskLevelMatrix(neighbor) = currentRisk + neighborRiskLevel;
+                search.emplace_back(neighbor);
             }
         }
     }
