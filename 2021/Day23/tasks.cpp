@@ -39,8 +39,8 @@ auto hash = [](const Amphipods& amphipods){
 
 auto parseInput = [](const auto& parsedInput){
     Amphipods amphipods{};
-    for(auto row =1u; row<parsedInput.size(); row++){
-        for(auto col = 1u; col < parsedInput[row].size(); col++){
+    for(auto row =1; std::less{}(row, parsedInput.size()); row++){
+        for(auto col = 1; std::less{}(col, parsedInput[row].size()); col++){
             if(!Utilities::contains(" .#", parsedInput[row][col]) ){
                 amphipods.emplace_back(false, parsedInput[row][col]-'A', Position{row-1, col-1});
             }
