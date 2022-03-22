@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <numeric>
 
-using Position = Utilities::Position<int>;
+using Position = Utilities::Position<long int>;
 
 auto getPlacesOfInterest(const auto& mace){
     std::unordered_map<int, Position> placesOfInterest;
@@ -24,7 +24,7 @@ auto getPlacesOfInterest(const auto& mace){
             if( it==std::end(row) ) break;
 
             const auto colIdx = std::distance(std::begin(row), it);
-            placesOfInterest[*it-'0']= std::make_pair(rowIdx, colIdx);
+            placesOfInterest[*it-'0']= Utilities::make_position(rowIdx, colIdx);
             it++;
         }
         rowIdx++;
