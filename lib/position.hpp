@@ -13,15 +13,15 @@ namespace Utilities{
         T first{};
         T second{};
 
-        Position() = default;
+        constexpr Position() = default;
 
-        Position(const T& _first, const T& _second)
+        constexpr Position(const T& _first, const T& _second)
         : first{_first}, second{_second}{}
 
-        Position(T&& _first, T&& _second)
+        constexpr Position(T&& _first, T&& _second)
         : first{std::move(_first)}, second{std::move(_second)}{}
 
-        Position(const std::pair<T, T>& pair)
+        constexpr Position(const std::pair<T, T>& pair)
         : first{pair.first}, second{pair.second}{}
 
         constexpr auto
@@ -33,19 +33,22 @@ namespace Utilities{
     // using Position = std::pair<T, T>;
 
     template<typename T, typename S>
-    auto make_position(const T& first, const S& second){
+    constexpr auto
+    make_position(const T& first, const S& second){
         return Position<typename std::common_type<T, S>::type>{first, second};
     }
 
     template<typename T, typename S>
-    auto make_position(T&& first, S&& second){
+    constexpr auto
+    make_position(T&& first, S&& second){
         return Position<typename std::common_type<T, S>::type>{std::move(first), std::move(second)};
     }
 }
 
 template<class T>
 struct std::hash<Utilities::Position<T>>{
-    size_t operator()(const Utilities::Position<T>& position) const noexcept{
+        constexpr size_t
+        operator()(const Utilities::Position<T>& position) const noexcept{
         const std::size_t h1 = std::hash<T>{}(position.first);
         const std::size_t h2 = std::hash<T>{}(position.second);
         return h1^(h2<<1);
