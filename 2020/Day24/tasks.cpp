@@ -18,19 +18,19 @@ enum class Direction{Center, East, SouthEast, SouthWest, West, NorthWest, NorthE
 void updateCoords(auto direction, point& x){
     switch(direction){
     break; case Direction::East:
-        ++x.first;
+        ++x.x;
     break; case Direction::SouthEast:
-        --x.second;
+        --x.y;
     break; case Direction::SouthWest:
-        --x.first;
-        --x.second;
+        --x.x;
+        --x.y;
     break; case Direction::West:
-        --x.first;
+        --x.x;
     break; case Direction::NorthWest:
-        ++x.second;
+        ++x.y;
     break; case Direction::NorthEast:
-        ++x.first;
-        ++x.second;
+        ++x.x;
+        ++x.y;
     break; case Direction::Center: break;
     }
 }
