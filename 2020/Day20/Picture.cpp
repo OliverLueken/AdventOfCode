@@ -63,7 +63,7 @@ bool Picture::tryInsert(Tile& tile) {
 }
 
 void Picture::updateBounds(const Position& p) {
-    int x = p.first, y = p.second;
+    const auto& [x,y] = p;
     minx = std::min(minx, x);
     maxx = std::max(maxx, x);
     miny = std::min(miny, y);
@@ -82,7 +82,7 @@ auto fitsWith = [](const auto& tile, const auto& pos, const auto& field){
 template<>
 auto fitsWith<Side::left> = [](const auto& tile, const auto& pos, const auto& field){
     const auto [n,m] = tile.size();
-    const auto neighborPos = Position{pos.first - 1, pos.second    };
+    const auto neighborPos = Position{pos.x - 1, pos.y    };
     if (field.contains(neighborPos)){
         const auto& neighborTile = field.at(neighborPos);
         return std::ranges::equal( tile.col(0), neighborTile.col(m-1) );
@@ -93,7 +93,7 @@ auto fitsWith<Side::left> = [](const auto& tile, const auto& pos, const auto& fi
 template<>
 auto fitsWith<Side::right> = [](const auto& tile, const auto& pos, const auto& field){
     const auto [n,m] = tile.size();
-    const auto neighborPos = Position{pos.first + 1, pos.second    };
+    const auto neighborPos = Position{pos.x + 1, pos.y    };
     if (field.contains(neighborPos)){
         const auto& neighborTile = field.at(neighborPos);
         return std::ranges::equal( tile.col(m-1), neighborTile.col(0) );
@@ -104,7 +104,7 @@ auto fitsWith<Side::right> = [](const auto& tile, const auto& pos, const auto& f
 template<>
 auto fitsWith<Side::up> = [](const auto& tile, const auto& pos, const auto& field){
     const auto [n,m] = tile.size();
-    const auto neighborPos = Position{pos.first    , pos.second + 1};
+    const auto neighborPos = Position{pos.x    , pos.y + 1};
     if (field.contains(neighborPos)){
         const auto& neighborTile = field.at(neighborPos);
         return std::ranges::equal( tile.row(0), neighborTile.row(n-1) );
@@ -115,7 +115,7 @@ auto fitsWith<Side::up> = [](const auto& tile, const auto& pos, const auto& fiel
 template<>
 auto fitsWith<Side::down> = [](const auto& tile, const auto& pos, const auto& field){
     const auto [n,m] = tile.size();
-    const auto neighborPos = Position{pos.first    , pos.second - 1};
+    const auto neighborPos = Position{pos.x    , pos.y - 1};
     if (field.contains(neighborPos)){
         const auto& neighborTile = field.at(neighborPos);
         return std::ranges::equal( tile.row(n-1), neighborTile.row(0) );
@@ -150,10 +150,10 @@ void Picture::updateFreePoints(const Position& p) {
         }
     };
 
-    addToFreePositions( Position{p.first - 1, p.second    } );
-    addToFreePositions( Position{p.first + 1, p.second    } );
-    addToFreePositions( Position{p.first    , p.second + 1} );
-    addToFreePositions( Position{p.first    , p.second - 1} );
+    addToFreePositions( Position{p.x - 1, p.y    } );
+    addToFreePositions( Position{p.x + 1, p.y    } );
+    addToFreePositions( Position{p.x    , p.y + 1} );
+    addToFreePositions( Position{p.x    , p.y - 1} );
 }
 
 Tile Picture::picToTile() const {
