@@ -7,9 +7,14 @@
 
 
 namespace Utilities{
-
-    template<class T = size_t>
-    using Position = std::pair<T, T>;
+    template<typename T>
+    class Position{
+    public:
+        T first;
+        T second;
+    };
+    // template<class T = size_t>
+    // using Position = std::pair<T, T>;
 
 }
 
