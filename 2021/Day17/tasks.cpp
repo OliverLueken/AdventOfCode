@@ -10,13 +10,13 @@
 #include <ranges>
 #include <cmath>
 
-using Position = Utilities::Position<int>;
+using Pair = Utilities::Position<int>;
 
 
 auto parseInput = [](const auto& input){
     const auto split = Utilities::splitOnEach(input, "=.");
-    const auto xBounds = Position(std::stoi(split[1]), std::stoi(split[2]));
-    const auto yBounds = Position(std::stoi(split[3]), std::stoi(split[4]));
+    const auto xBounds = Pair(std::stoi(split[1]), std::stoi(split[2]));
+    const auto yBounds = Pair(std::stoi(split[3]), std::stoi(split[4]));
     return std::make_pair(xBounds, yBounds);
 };
 
@@ -53,9 +53,9 @@ auto addValidVelocityValuesToHit = [](const auto xn, const auto yn, auto& validV
 };
 
 auto getValidVelocityValues(auto xBounds, auto yBounds){
-    std::unordered_set<Position> validVelocityValues{};
-    for(auto xn = xBounds.first; xn<=xBounds.second; xn++){
-        for(auto yn = yBounds.first; yn<=yBounds.second; yn++){
+    std::unordered_set<Pair> validVelocityValues{};
+    for(auto xn = xBounds.x; xn<=xBounds.y; xn++){
+        for(auto yn = yBounds.x; yn<=yBounds.y; yn++){
             addValidVelocityValuesToHit(xn, yn, validVelocityValues);
         }
     }
@@ -63,7 +63,7 @@ auto getValidVelocityValues(auto xBounds, auto yBounds){
 }
 
 auto getHighestYPosition(const auto& validVelocityValues){
-    const auto maxYVelocity     = std::ranges::max( validVelocityValues, std::less{}, [](const auto& pair){return pair.second;} ).second;
+    const auto maxYVelocity     = std::ranges::max( validVelocityValues, std::less{}, [](const auto& pair){return pair.y;} ).y;
     const auto highestYPosition = maxYVelocity*(maxYVelocity+1)/2;
     return highestYPosition;
 };
