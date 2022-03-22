@@ -20,8 +20,7 @@ struct Amphipod{
 
     void set(const bool _moved, const auto& newPos){
         moved = _moved;
-        pos.first = newPos.first;
-        pos.second = newPos.second;
+        pos = newPos;
     }
 };
 
@@ -31,7 +30,7 @@ using Amphipods = std::vector<Amphipod>;
 auto hash = [](const Amphipods& amphipods){
     std::string hashVal(50, ' ');
     for(const auto& amphipod : amphipods){
-        const auto i = 10*amphipod.pos.first + amphipod.pos.second;
+        const auto i = 10*amphipod.pos.x + amphipod.pos.y;
         hashVal[i] = (char)amphipod.type+'A';
     }
     return std::hash<std::string>{}(hashVal);
@@ -52,7 +51,7 @@ auto parseInput = [](const auto& parsedInput){
 auto getGoalHash(const auto& amphipods){
     Amphipods goalAmphipod{amphipods};
     for(auto& amphipod : goalAmphipod){
-        amphipod.type = amphipod.pos.second/2-1;
+        amphipod.type = amphipod.pos.y/2-1;
     }
     return hash(goalAmphipod);
 }
@@ -99,7 +98,7 @@ auto moveAmphipodToItsRoom(const size_t index, const Amphipods& amphipods, auto&
     if(isReachableFrom(amphipod.pos, Position{0, goalColumn}, amphipods) == false) return;
 
     //move the amphipod as far into it's room as possible
-    const auto depth = std::ranges::max(amphipods | std::views::transform(&Amphipod::pos) | std::views::transform(&Position::first));
+    const auto depth = std::ranges::max(amphipods | std::views::transform(&Amphipod::pos) | std::views::transform(&Position::x));
     auto destinationPosition = Position{depth, goalColumn};
     const auto i = getMaxReachableDistance(Position{0, goalColumn}, destinationPosition, amphipods);
 
@@ -114,11 +113,11 @@ auto moveAmphipodOutside(const auto index, const auto& amphipods, auto& next, au
     const auto& amphipod = amphipods[index];
 
     //checking if the outside is reachable for the amphipod
-    if(isReachableFrom(amphipod.pos, Position{0, amphipod.pos.second}, amphipods) == false) return;
+    if(isReachableFrom(amphipod.pos, Position{0, amphipod.pos.y}, amphipods) == false) return;
 
     //move the amphipod to reachable positions to the left and to the right
-    const auto leftFreeUntil  = amphipod.pos.second-getMaxReachableDistance(Position{0, amphipod.pos.second}, Position{0, 0}, amphipods);
-    const auto rightFreeUntil = amphipod.pos.second+getMaxReachableDistance(Position{0, amphipod.pos.second}, Position{0,10}, amphipods);
+    const auto leftFreeUntil  = amphipod.pos.y-getMaxReachableDistance(Position{0, amphipod.pos.y}, Position{0, 0}, amphipods);
+    const auto rightFreeUntil = amphipod.pos.y+getMaxReachableDistance(Position{0, amphipod.pos.y}, Position{0,10}, amphipods);
 
     auto validColumns = std::views::iota(leftFreeUntil, rightFreeUntil+1)
                       | std::views::filter([](const auto i){ return i%2==1 || i==0 || i==10; });
@@ -129,7 +128,7 @@ auto moveAmphipodOutside(const auto index, const auto& amphipods, auto& next, au
 }
 
 auto addNextMovesForThisAmphipod(const auto index, const auto& amphipods, auto& next, auto& visited){
-    if(amphipods[index].pos.first == 0){
+    if(amphipods[index].pos.x == 0){
         moveAmphipodToItsRoom(index, amphipods, next, visited);
     }
     else if(amphipods[index].moved == false){
