@@ -53,9 +53,9 @@ public:
 class Spreader{
     Mace* macePtr{nullptr};
     std::unordered_set<Position> nextSpreadFrom{};
-    static const std::array<std::pair<int,int>, 4> directions;
+    static const std::array<Utilities::Position<int>, 4> directions;
 
-    void spreadTo(const Position currentPos, const std::pair<int,int> direction){
+    void spreadTo(const Position& currentPos, const auto& direction){
         if( (int)currentPos.first + direction.first < 0 || (int)currentPos.second + direction.second < 0 ) return;
         const auto nextPos = currentPos+direction;
         if(macePtr->isWall(nextPos)) return;
@@ -78,7 +78,7 @@ public:
         }
     }
 };
-const std::array<std::pair<int,int>, 4> Spreader::directions
+const std::array<Utilities::Position<int>, 4> Spreader::directions
     = {std::make_pair(1,0),std::make_pair(-1,0),std::make_pair(0,1),std::make_pair(0,-1)};
 
 
@@ -121,8 +121,8 @@ int main(){
     const auto input = 1364u;
 
     Mace mace{input};
-    const Position start = std::make_pair(1,1);
-    const Position end   = std::make_pair(31,39);
+    const Position start = std::make_pair(1u,1u);
+    const Position end   = std::make_pair(31u,39u);
 
     const auto shortestPath = findShortestPath(mace, start, end);
     std::cout << "To reach the end there are at least " << shortestPath << " steps required.\n";
