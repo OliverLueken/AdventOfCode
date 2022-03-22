@@ -32,6 +32,15 @@ namespace Utilities{
     // template<class T = size_t>
     // using Position = std::pair<T, T>;
 
+    template<typename T, typename S>
+    auto make_position(const T& first, const S& second){
+        return Position<typename std::common_type<T, S>::type>{first, second};
+    }
+
+    template<typename T, typename S>
+    auto make_position(T&& first, S&& second){
+        return Position<typename std::common_type<T, S>::type>{std::move(first), std::move(second)};
+    }
 }
 
 template<class T>
