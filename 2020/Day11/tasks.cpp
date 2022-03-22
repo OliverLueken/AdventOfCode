@@ -99,9 +99,9 @@ auto getVisibleNeighbors2 = [](const Chairs& chairs){
 
     VisibleNeighbors visibleNeighbors{n, m, 0};
     constexpr std::array<Position, 8> directions{{ {-1,-1}, {0,-1}, {1,-1}, {-1,0}, {1,0}, {-1,1}, {0,1}, {1,1} }};
-    for(auto index = 0u; index<n*m; ++index){
+    for(auto index = 0l; std::less{}(index, n*m); ++index){
         if(chairs[index] == '#'){
-            const Position currentPos{index/m, index%m};
+            const Position currentPos{static_cast<int>(index/m), static_cast<int>(index%m)};
             auto incrementVisibleSeat = [isInBounds, &visibleNeighbors, &chairs, &currentPos](const auto& direction){
                 auto pos = currentPos;
                 do{
