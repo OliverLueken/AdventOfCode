@@ -31,10 +31,18 @@ auto parseInput = [](const auto& input){
     return std::make_pair(points, instructions);
 };
 
+auto getMaxValues(const auto& points){
+    auto [max_i, max_j] = points.front();
+    for(const auto& [i, j] : points | std::views::drop(1)){
+        max_i = std::max(max_i, i);
+        max_j = std::max(max_j, j);
+    }
+    return Utilities::make_position(max_i, max_j);
+}
+
 auto printPaper(const auto& points){
 
-    auto max_i=std::ranges::max(points | std::views::elements<0>);
-    auto max_j=std::ranges::max(points | std::views::elements<1>);
+    const auto [max_i, max_j] = getMaxValues(points);
 
     Matrix::Matrix<int> paper{max_i+1,max_j+1};
     for(const auto& [i,j] : points){
