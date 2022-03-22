@@ -120,13 +120,15 @@ namespace Matrix{
             return matrix[i*_m+j];
         }
 
-        constexpr       std::vector<T>::reference       operator()(const Position<size_t> pos)       {
+        template<typename indexType>
+        constexpr       std::vector<T>::reference       operator()(const Position<indexType>& pos)       {
             const auto& [i,j] = pos;
             checkBounds(i,j);
             return matrix[i*_m+j];
         }
 
-        constexpr const std::vector<T>::const_reference operator()(const Position<size_t> pos) const {
+        template<typename indexType>
+        constexpr const std::vector<T>::const_reference operator()(const Position<indexType>& pos) const {
             const auto& [i,j] = pos;
             checkBounds(i,j);
             return matrix[i*_m+j];
