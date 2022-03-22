@@ -31,7 +31,7 @@ auto getNewValue(const auto& pos, const auto& image, const auto defaultVal){
     int val = 0;
     for(auto i=-1; i<=1; i++){
         for(auto j=-1; j<=1; j++){
-            const auto neighborPos = Position{pos.first+i, pos.second+j};
+            const auto neighborPos = Position{pos.x+i, pos.y+j};
             val<<=1;
             val+= (image.contains(neighborPos) ? image.at(neighborPos) : defaultVal );
         }
@@ -40,8 +40,8 @@ auto getNewValue(const auto& pos, const auto& image, const auto defaultVal){
 }
 
 auto getBounds(const auto& image){
-    const auto [leftBound, rightBound]  = std::ranges::minmax(image | std::views::keys | std::views::transform(&Position::first));
-    const auto [upperBound, lowerBound] = std::ranges::minmax(image | std::views::keys | std::views::transform(&Position::second));
+    const auto [leftBound, rightBound]  = std::ranges::minmax(image | std::views::keys | std::views::transform(&Position::x));
+    const auto [upperBound, lowerBound] = std::ranges::minmax(image | std::views::keys | std::views::transform(&Position::y));
     return std::make_tuple(leftBound, rightBound, upperBound, lowerBound);
 }
 
