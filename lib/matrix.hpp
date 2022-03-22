@@ -337,8 +337,7 @@ namespace Matrix{
     */
     template<class T, class S>
     auto getNeighbors(const Matrix<T>& matrix, const Position<S>& pos){
-        const auto i = pos.first;
-        const auto j = pos.second;
+        const auto& [i,j] = pos;
         return getNeighbors(matrix, i, j);
     }
 
