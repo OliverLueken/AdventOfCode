@@ -23,32 +23,32 @@ auto advance = [](const auto& path, auto& nextPaths){
     const auto hash = MD5::getMD5Hash(path.passcode);
 
     if(Utilities::contains("BCDEF", hash[0])){ //Up
-        if(path.pos.second > 0){
+        if(path.pos.y > 0){
             auto newPos{path.pos};
-            newPos.second-=1;
+            newPos.y-=1;
             nextPaths.emplace_back(path.passcode+'U', newPos);
         }
     }
     if(Utilities::contains("BCDEF", hash[1])){ //down
-        if(path.pos.second < 3){
+        if(path.pos.y < 3){
             auto newPos{path.pos};
-            newPos.second+=1;
+            newPos.y+=1;
             nextPaths.emplace_back(path.passcode+'D', newPos);
         }
 
     }
     if(Utilities::contains("BCDEF", hash[2])){ //left
-        if(path.pos.first > 0){
+        if(path.pos.x > 0){
             auto newPos{path.pos};
-            newPos.first-=1;
+            newPos.x-=1;
             nextPaths.emplace_back(path.passcode+'L', newPos);
         }
 
     }
     if(Utilities::contains("BCDEF", hash[3])){ //right
-        if(path.pos.first < 3){
+        if(path.pos.x < 3){
             auto newPos{path.pos};
-            newPos.first+=1;
+            newPos.x+=1;
             nextPaths.emplace_back(path.passcode+'R', newPos);
         }
     }
@@ -62,7 +62,7 @@ auto getShortestPath = [](const auto& input){
             advance(path, nextPaths);
         }
         for(const auto& path : nextPaths){
-            if(path.pos.first == 3 && path.pos.second == 3){
+            if(path.pos.x == 3 && path.pos.y == 3){
                 return path.passcode.substr(input.size());
             }
         }
@@ -75,7 +75,7 @@ auto getLongestPathLength = [](const auto& input){
     auto longestPathLength = 0lu;
 
     auto reachedEnd = [&longestPathLength, &input](const auto& path){
-        if(path.pos.first == 3 && path.pos.second == 3){
+        if(path.pos.x == 3 && path.pos.y == 3){
             longestPathLength = path.passcode.size()-input.size();
             return true;
         }
