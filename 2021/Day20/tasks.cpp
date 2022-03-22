@@ -19,8 +19,8 @@ auto parseInput = [](const auto& input){
     );
 
     std::unordered_map<Position, bool> image{};
-    for(auto i=1u; i<input.size(); i++){
-        for(auto j=0u; j<input[i].size(); j++){
+    for(auto i=1; std::less{}(i, input.size()); i++){
+        for(auto j=0; std::less{}(j, input[i].size()); j++){
             image[Position{i,j}] = input[i][j]=='#';
         }
     }
