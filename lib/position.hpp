@@ -15,6 +15,11 @@ namespace Utilities{
 
         Position(const std::pair<T, T>& pair)
         : first{pair.first}, second{pair.second}{}
+
+        constexpr auto
+        operator==(const Position<T>& rhs) const {
+            return first == rhs.first && second == rhs.second;
+        }
     };
     // template<class T = size_t>
     // using Position = std::pair<T, T>;
