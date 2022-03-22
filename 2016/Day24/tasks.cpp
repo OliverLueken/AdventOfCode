@@ -1,6 +1,7 @@
 
 #include "../../lib/readFile.hpp"
 #include "../../lib/verifySolution.hpp"
+#include "../../lib/matrix.hpp"
 #include "../../lib/utilities.hpp"
 
 #include <iostream>
@@ -10,35 +11,27 @@
 #include <deque>
 #include <unordered_map>
 #include <numeric>
+#include <ranges>
 
 using Position = Utilities::Position<long int>;
 
 auto getPlacesOfInterest(const auto& mace){
     std::unordered_map<int, Position> placesOfInterest;
-    auto rowIdx = 0u;
-    auto addPOIs = [&rowIdx, &placesOfInterest](const auto& row){
-        const std::string pois = "0123456789";
-        auto it = std::begin(row);
-        while(true){
-            it = std::ranges::find_first_of(it, std::end(row), std::begin(pois), std::end(pois));
-            if( it==std::end(row) ) break;
 
-            const auto colIdx = std::distance(std::begin(row), it);
-            placesOfInterest[*it-'0']= Utilities::make_position(rowIdx, colIdx);
-            it++;
+    for(auto it = std::begin(mace); it!=std::end(mace); ++it){
+        if(std::isdigit(*it)){
+            const auto longIndex = std::distance(mace.begin(), it);
+            const long int m = mace.cols();
+            placesOfInterest[*it-'0']= Utilities::make_position(longIndex/m, longIndex%m);
+
         }
-        rowIdx++;
-    };
-
-    std::ranges::for_each(mace, addPOIs);
+    }
     return placesOfInterest;
 }
 
 auto advance = [](const auto& currPos, const auto dx, const auto dy, auto& next, const auto& mace, auto& distances){
-    const auto x = currPos.first+dx;
-    const auto y = currPos.second+dy;
-    const auto pos = std::make_pair(x,y);
-    if(mace[x][y] != '#' && !distances.contains(pos)) {
+    const auto pos = currPos+Utilities::make_position(dx, dy);
+    if(mace(currPos) != '#' && !distances.contains(pos)) {
         distances[pos] = distances[currPos]+1;
         next.push_back(pos);
     }
@@ -102,8 +95,14 @@ auto getShortestRoute = [](const auto& distanceMatrix, const bool returnToStart 
     return shortestRouteLength;
 };
 
+auto parseInput(const auto& input){
+    const auto n = input.size();
+    const auto m = input[0].size();
+    return Matrix::Matrix<char>{n, m, input | std::views::join};
+}
+
 int main(){
-    const auto mace = readFile::vectorOfStrings("input.txt");
+    const auto mace = parseInput(readFile::vectorOfStrings("input.txt"));
     const auto distanceMatrix = getdistanceMatrix(mace);
 
     //Task 1
