@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <ranges>
 
-using Position = Utilities::Position<unsigned int>;
+using Position = Utilities::Position<long unsigned int>;
 
 auto parseInput = [](const auto& input){
     auto toInt = [](const auto c) -> int {return 0+c-'0';};
@@ -34,7 +34,7 @@ auto getLowpoints = [](const auto& heightmap){
     for(auto longIndex=0u; longIndex<n*m; longIndex++){
         if( isLowPoint(heightmap, longIndex) ){
             // lowpoints.push_back(longIndex);
-            lowpoints.push_back( std::make_pair(longIndex/m, longIndex%m) );
+            lowpoints.push_back( Utilities::make_position(longIndex/m, longIndex%m) );
         }
     }
     return lowpoints;
