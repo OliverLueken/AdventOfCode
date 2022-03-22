@@ -28,6 +28,14 @@ namespace Utilities{
         operator==(const Position<T>& rhs) const {
             return first == rhs.first && second == rhs.second;
         }
+
+        constexpr auto
+        operator<(const Position<T>& rhs) const {
+            if (first == rhs.first){
+                return second < rhs.second;
+            }
+            return first < rhs.first;
+        }
     };
     // template<class T = size_t>
     // using Position = std::pair<T, T>;
