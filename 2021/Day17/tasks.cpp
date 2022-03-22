@@ -63,7 +63,7 @@ auto getValidVelocityValues(auto xBounds, auto yBounds){
 }
 
 auto getHighestYPosition(const auto& validVelocityValues){
-    const auto maxYVelocity     = std::ranges::max( validVelocityValues | std::views::elements<1> );
+    const auto maxYVelocity     = std::ranges::max( validVelocityValues, std::less{}, [](const auto& pair){return pair.second;} ).second;
     const auto highestYPosition = maxYVelocity*(maxYVelocity+1)/2;
     return highestYPosition;
 };
