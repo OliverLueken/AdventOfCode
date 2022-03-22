@@ -18,7 +18,8 @@ class Mace{
     unsigned int maceDesignersFavoriteNumber{};
     std::unordered_map<Position, int> spaceMap{};
 
-    int generate(const unsigned int x, const unsigned int y) const{
+    int generate(const auto& pos) const{
+        const auto& [x,y] = pos;
         auto n = x*x+3*x+2*x*y+y+y*y+maceDesignersFavoriteNumber;
         return std::popcount(n)%2==0 ? INT_MAX : -1;
     }
@@ -26,16 +27,11 @@ class Mace{
 public:
     Mace(unsigned int input) : maceDesignersFavoriteNumber{input}{ }
 
-    int getValueAt( const unsigned int x, const unsigned int y){
-        const auto pos = std::make_pair(x,y);
+    int getValueAt(const Position& pos) {
         if(!spaceMap.contains(pos)){
-            spaceMap[pos] = generate(x,y);
+            spaceMap[pos] = generate(pos);
         }
         return spaceMap[pos];
-    }
-
-    int getValueAt(const Position& pos) {
-        return getValueAt(pos.first, pos.second);
     }
 
     bool isWall(const Position& pos) {
@@ -56,7 +52,7 @@ class Spreader{
     static const std::array<Utilities::Position<int>, 4> directions;
 
     void spreadTo(const Position& currentPos, const auto& direction){
-        if( (int)currentPos.first + direction.first < 0 || (int)currentPos.second + direction.second < 0 ) return;
+        if( (int)currentPos.x + direction.x < 0 || (int)currentPos.y + direction.y < 0 ) return;
         const auto nextPos = currentPos+direction;
         if(macePtr->isWall(nextPos)) return;
         const auto currentVal = macePtr->getValueAt(currentPos);
