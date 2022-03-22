@@ -10,8 +10,10 @@ namespace Utilities{
     template<typename T>
     class Position{
     public:
-        T first;
-        T second;
+        T first{};
+        T second{};
+
+        Position() = default;
 
         Position(T&& _first, T&& _second)
         : first{std::move(_first)}, second{std::move(_second)}{}
