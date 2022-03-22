@@ -12,6 +12,9 @@ namespace Utilities{
     public:
         T first;
         T second;
+
+        Position(const std::pair<T, T>& pair)
+        : first{pair.first}, second{pair.second}{}
     };
     // template<class T = size_t>
     // using Position = std::pair<T, T>;
