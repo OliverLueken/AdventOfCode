@@ -13,6 +13,9 @@ namespace Utilities{
         T first;
         T second;
 
+        Position(T&& _first, T&& _second)
+        : first{std::move(_first)}, second{std::move(_second)}{}
+
         Position(const std::pair<T, T>& pair)
         : first{pair.first}, second{pair.second}{}
 
