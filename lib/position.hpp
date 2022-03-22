@@ -30,11 +30,11 @@ namespace Utilities{
         }
 
         constexpr auto
-        operator<(const Position<T>& rhs) const {
+        operator<=>(const Position<T>& rhs) const {
             if (first == rhs.first){
-                return second < rhs.second;
+                return second - rhs.second;
             }
-            return first < rhs.first;
+            return first - rhs.first;
         }
     };
     // template<class T = size_t>
