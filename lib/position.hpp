@@ -15,6 +15,9 @@ namespace Utilities{
 
         Position() = default;
 
+        Position(const T& _first, const T& _second)
+        : first{_first}, second{_second}{}
+
         Position(T&& _first, T&& _second)
         : first{std::move(_first)}, second{std::move(_second)}{}
 
