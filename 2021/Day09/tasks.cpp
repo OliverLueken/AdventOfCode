@@ -27,12 +27,11 @@ auto getLowpoints = [](const auto& heightmap){
         return std::ranges::all_of(getNeighbors(heightmap, longIndex), isHigher);
     };
 
-    std::vector<Position> lowpoints{};
+    std::vector<size_t> lowpoints{};
     const auto [n, m] = heightmap.size();
-    std::ranges::transform(
+    std::ranges::move(
         std::views::iota(0lu, n*m) | std::views::filter(isLowPoint),
-        std::back_inserter(lowpoints),
-        [&heightmap](const auto& longIndex){ return heightmap.longIndexToPosition(longIndex); }
+        std::back_inserter(lowpoints)
     );
     return lowpoints;
 };
