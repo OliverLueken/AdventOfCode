@@ -348,9 +348,7 @@ namespace Matrix{
     */
     template<class T, std::unsigned_integral S = uint32_t>
     auto getNeighbors(const Matrix<T>& matrix, const S longIndex){
-        const auto _m = matrix.cols();
-        const auto i = longIndex/_m;
-        const auto j = longIndex%_m;
+        const auto [i, j] = matrix.longIndexToPosition(longIndex);
         return getNeighbors(matrix, i, j);
     }
 
@@ -391,9 +389,7 @@ namespace Matrix{
     */
     template<class T, std::unsigned_integral S = uint32_t>
     auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, const S longIndex){
-        const auto _m = matrix.cols();
-        const auto i = longIndex/_m;
-        const auto j = longIndex%_m;
+        const auto [i, j] = matrix.longIndexToPosition(longIndex);
         return getNeighborsIncludingDiagonals(matrix, i, j);
     }
 
@@ -402,8 +398,7 @@ namespace Matrix{
     */
     template<class T, class S>
     auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, const Position<S>& pos){
-        const auto i = pos.first;
-        const auto j = pos.second;
+        const auto [i, j] = pos;
         return getNeighborsIncludingDiagonals(matrix, i, j);
     }
 
