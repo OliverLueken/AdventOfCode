@@ -19,22 +19,21 @@ auto parseInput = [](const auto& input){
     return matrix;
 };
 
-auto isLowPoint = [](const auto& heightmap, const auto longIndex){
-    auto isHigher = [myHeight=heightmap[longIndex], &heightmap](const auto& neighborPosition){
-        return myHeight < heightmap(neighborPosition);
-    };
-    return std::ranges::all_of(getNeighbors(heightmap, longIndex), isHigher);
-};
-
 auto getLowpoints = [](const auto& heightmap){
+    auto isLowPoint = [&heightmap](const auto& longIndex){
+        auto isHigher = [myHeight=heightmap[longIndex], &heightmap](const auto& neighborPosition){
+            return myHeight < heightmap(neighborPosition);
+        };
+        return std::ranges::all_of(getNeighbors(heightmap, longIndex), isHigher);
+    };
+
     std::vector<Position> lowpoints{};
-    const auto n = heightmap.rows();
-    const auto m = heightmap.cols();
-    for(auto longIndex=0u; longIndex<n*m; longIndex++){
-        if( isLowPoint(heightmap, longIndex) ){
-            lowpoints.push_back( heightmap.longIndexToPosition(longIndex));
-        }
-    }
+    const auto [n, m] = heightmap.size();
+    std::ranges::transform(
+        std::views::iota(0lu, n*m) | std::views::filter(isLowPoint),
+        std::back_inserter(lowpoints),
+        [&heightmap](const auto& longIndex){ return heightmap.longIndexToPosition(longIndex); }
+    );
     return lowpoints;
 };
 
