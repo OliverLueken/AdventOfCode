@@ -27,14 +27,12 @@ auto isLowPoint = [](const auto& heightmap, const auto longIndex){
 };
 
 auto getLowpoints = [](const auto& heightmap){
-    // std::vector<unsigned int> lowpoints{};
     std::vector<Position> lowpoints{};
     const auto n = heightmap.rows();
     const auto m = heightmap.cols();
     for(auto longIndex=0u; longIndex<n*m; longIndex++){
         if( isLowPoint(heightmap, longIndex) ){
-            // lowpoints.push_back(longIndex);
-            lowpoints.push_back( Utilities::make_position(longIndex/m, longIndex%m) );
+            lowpoints.push_back( heightmap.longIndexToPosition(longIndex));
         }
     }
     return lowpoints;
