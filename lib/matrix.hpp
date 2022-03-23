@@ -69,7 +69,7 @@ namespace Matrix{
             _n=nn;
             _m=mm;
         }
-        
+
     public:
 
         [[nodiscard]] constexpr auto
@@ -322,7 +322,7 @@ namespace Matrix{
             fillResizedMatrix(nn, mm, std::move(newMatrix));
         }
 
-        void swap(Matrix<T>& newMatrix) noexcept {
+        constexpr void swap(Matrix<T>& newMatrix) noexcept {
             std::swap(matrix, newMatrix.data());
             std::swap(_n, newMatrix._n);
             std::swap(_m, newMatrix._m);
