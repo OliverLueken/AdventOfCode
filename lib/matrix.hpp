@@ -156,6 +156,14 @@ namespace Matrix{
             return matrix[positionToLongIndex(pos)];
         }
 
+        constexpr       std::vector<T>::reference       operator()(const size_t& longIndex)       {
+            return matrix.at(longIndex);
+        }
+
+        constexpr const std::vector<T>::const_reference operator()(const size_t& longIndex) const {
+            return matrix.at(longIndex);
+        }
+
         constexpr std::vector<T>::reference operator[](const size_t longIndex){
             return matrix.at(longIndex);
         }
