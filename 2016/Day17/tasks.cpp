@@ -55,7 +55,7 @@ auto advance = [](const auto& path, auto& nextPaths){
 };
 
 auto getShortestPath = [](const auto& input){
-    std::vector<Path> paths{Path{input}};
+    auto paths = std::vector<Path>{Path{input}};
     while(!paths.empty()){
         std::vector<Path> nextPaths{};
         for(const auto& path : paths){
@@ -82,7 +82,7 @@ auto getLongestPathLength = [](const auto& input){
         return false;
     };
 
-    std::vector<Path> paths{Path{input}};
+    auto paths = std::vector<Path>{Path{input}};
     while(!paths.empty()){
         std::vector<Path> nextPaths{};
         for(const auto& path : paths){
@@ -96,7 +96,7 @@ auto getLongestPathLength = [](const auto& input){
 
 
 int main(){
-    const std::string input = "awrkjxxr";
+    const auto input = std::string{"awrkjxxr"};
 
     //Task 1
     const auto shortestPath = getShortestPath(input);
