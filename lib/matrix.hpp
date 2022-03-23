@@ -41,6 +41,12 @@ namespace Matrix{
             checkColBound(j);
         }
 
+        template<typename indexType>
+        constexpr void checkBounds(const Position<indexType>& pos) const {
+            const auto& [i,j] = pos;
+            checkBounds(i, j);
+        }
+
         constexpr void fillResizedMatrix(const size_t nn, const size_t mm, std::vector<T>&& newMatrix){
             auto newMatrixIt = std::begin(newMatrix);
             auto matrixIt = std::begin(matrix);
@@ -63,8 +69,26 @@ namespace Matrix{
             _n=nn;
             _m=mm;
         }
-
+        
     public:
+
+        [[nodiscard]] constexpr auto
+        longIndexToPosition(const size_t longIndex) const noexcept {
+            return Utilities::make_position( longIndex/_m, longIndex%_m );
+        }
+
+        template<typename indexType>
+        [[nodiscard]] constexpr auto
+        positionToLongIndex(const Position<indexType>& pos) const noexcept {
+            const auto& [i,j] = pos;
+            return i*_m+j;
+        }
+
+        [[nodiscard]] constexpr auto
+        doubleIndexToLongIndex(const size_t i, const size_t j) const noexcept {
+            return i*_m+j;
+        }
+
         constexpr Matrix() = default;
         constexpr Matrix(const size_t __n, const size_t __m)                    : _n{__n}, _m{__m}, matrix(__n*__m){}
         constexpr Matrix(const size_t __n, const size_t __m, const T& _value)   : _n{__n}, _m{__m}, matrix(__n*__m, _value){}
@@ -112,26 +136,24 @@ namespace Matrix{
 
         constexpr       std::vector<T>::reference       operator()(const size_t i, const size_t j)       {
             checkBounds(i,j);
-            return matrix[i*_m+j];
+            return matrix[doubleIndexToLongIndex(i, j)];
         }
 
         constexpr const std::vector<T>::const_reference operator()(const size_t i, const size_t j) const {
             checkBounds(i,j);
-            return matrix[i*_m+j];
+            return matrix[doubleIndexToLongIndex(i, j)];
         }
 
         template<typename indexType>
         constexpr       std::vector<T>::reference       operator()(const Position<indexType>& pos)       {
-            const auto& [i,j] = pos;
-            checkBounds(i,j);
-            return matrix[i*_m+j];
+            checkBounds(pos);
+            return matrix[positionToLongIndex(pos)];
         }
 
         template<typename indexType>
         constexpr const std::vector<T>::const_reference operator()(const Position<indexType>& pos) const {
-            const auto& [i,j] = pos;
-            checkBounds(i,j);
-            return matrix[i*_m+j];
+            checkBounds(pos);
+            return matrix[positionToLongIndex(pos)];
         }
 
         constexpr std::vector<T>::reference operator[](const size_t longIndex){
