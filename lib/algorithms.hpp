@@ -3,6 +3,11 @@
 
 #include "concepts.hpp"
 
+#include <ranges>
+#include <iterator>
+#include <algorithm>
+#include <numeric>
+
 namespace Utilities{
 
     struct contains_{
