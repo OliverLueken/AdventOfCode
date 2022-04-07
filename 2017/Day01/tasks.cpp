@@ -39,8 +39,14 @@ auto getResult = [](const auto& parsedInput){
 };
 
 auto getResult2 = [](const auto& parsedInput){
-
-    return 0;
+    auto sum = 0;
+    const auto offset = parsedInput.size()/2;
+    for(auto it = parsedInput.begin(); it!=parsedInput.end()-offset; ++it){
+        if(*it == *(it+offset)){
+            sum+=2* *it;
+        }
+    }
+    return sum;
 };
 
 int main(){
@@ -50,9 +56,9 @@ int main(){
     const auto result = getResult(parsedInput);
     std::cout << "Task 1: " << result << ".\n";
 
-    // //Task 2
-    // const auto result2 = getResult2(parsedInput);
-    // std::cout << "Task 2: " << result2 << ".\n";
+    //Task 2
+    const auto result2 = getResult2(parsedInput);
+    std::cout << "Task 2: " << result2 << ".\n";
 
-    // VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(result, result2);
 }
