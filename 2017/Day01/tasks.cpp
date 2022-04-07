@@ -28,9 +28,9 @@ auto parseInput = [](const auto& input){
     return parsed;
 };
 
-auto getResult = [](const auto& parsedInput){
+auto getResult = [](const auto& digits){
     auto sum = 0;
-    for(auto it = parsedInput.begin(); it!=parsedInput.end()-1; ++it){
+    for(auto it = digits.begin(); it!=digits.end()-1; ++it){
         if(*it == *(it+1)){
             sum+=*it;
         }
@@ -38,10 +38,10 @@ auto getResult = [](const auto& parsedInput){
     return sum;
 };
 
-auto getResult2 = [](const auto& parsedInput){
+auto getResult2 = [](const auto& digits){
     auto sum = 0;
-    const auto offset = parsedInput.size()/2;
-    for(auto it = parsedInput.begin(); it!=parsedInput.end()-offset; ++it){
+    const auto offset = digits.size()/2;
+    for(auto it = digits.begin(); it!=digits.end()-offset; ++it){
         if(*it == *(it+offset)){
             sum+=2* *it;
         }
@@ -50,15 +50,15 @@ auto getResult2 = [](const auto& parsedInput){
 };
 
 int main(){
-    const auto parsedInput = parseInput(readFile::string());
+    const auto digits = parseInput(readFile::string());
 
     //Task 1
-    const auto result = getResult(parsedInput);
-    std::cout << "Task 1: " << result << ".\n";
+    const auto nextNeighborSum = getResult(digits);
+    std::cout << "The sum of digits matching their next neighbor is " << nextNeighborSum << ".\n";
 
     //Task 2
-    const auto result2 = getResult2(parsedInput);
-    std::cout << "Task 2: " << result2 << ".\n";
+    const auto halfwayRoundNeighbor = getResult2(digits);
+    std::cout << "The sum of digits matching the digit halfway around is " << halfwayRoundNeighbor << ".\n";
 
-    VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(nextNeighborSum, halfwayRoundNeighbor);
 }
