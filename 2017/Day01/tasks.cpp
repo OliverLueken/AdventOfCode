@@ -2,24 +2,11 @@
 #include "../../lib/readFile.hpp"
 #include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
-#include "../../lib/matrix.hpp"
 
 #include <iostream>
 #include <string>
 #include <vector>
-#include <array>
-#include <unordered_map>
-#include <unordered_set>
-#include <deque>
 #include <algorithm>
-#include <numeric>
-#include <climits>
-#include <memory>
-#include <ranges>
-#include <cmath>
-#include <deque>
-
-using Position = Utilities::Position<int>;
 
 auto parseInput = [](const auto& input){
     std::vector<int> parsed;
