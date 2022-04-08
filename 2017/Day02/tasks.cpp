@@ -17,13 +17,13 @@ auto getInput(){
     return input;
 }
 
-auto getResult = [](const auto& parsedInput){
-    return Utilities::sum(parsedInput, 0, [](const auto& row){
+auto getSumOfMinMaxDifferences = [](const auto& spreadSheet){
+    return Utilities::sum(spreadSheet, 0, [](const auto& row){
         return row.back()-row.front();
     });
 };
 
-auto getResult2 = [](const auto& parsedInput){
+auto getSumOfDivisiblePairDifferences = [](const auto& spreadSheet){
 
     auto getDivisiblePair = [](const auto& row){
         for(auto i=0u; i<row.size(); ++i){
@@ -36,22 +36,22 @@ auto getResult2 = [](const auto& parsedInput){
         return std::make_pair(1,1);
     };
 
-    return Utilities::sum(parsedInput, 0, [getDivisiblePair](const auto& row){
+    return Utilities::sum(spreadSheet, 0, [getDivisiblePair](const auto& row){
         const auto [numerator, denominator] = getDivisiblePair(row);
         return numerator/denominator;
     });
 };
 
 int main(){
-    const auto parsedInput = getInput();
+    const auto spreadSheet = getInput();
 
     //Task 1
-    const auto result = getResult(parsedInput);
-    std::cout << "Task 1: " << result << ".\n";
+    const auto sumOfMinMaxDifferences = getSumOfMinMaxDifferences(spreadSheet);
+    std::cout << "The sum of the differences of between the max and min values of each row is " << sumOfMinMaxDifferences << ".\n";
 
     //Task 2
-    const auto result2 = getResult2(parsedInput);
-    std::cout << "Task 2: " << result2 << ".\n";
+    const auto sumOfDivisiblePairDifferences = getSumOfDivisiblePairDifferences(spreadSheet);
+    std::cout << "The sum of the differences between the two divisible pairs of each row is " << sumOfDivisiblePairDifferences << ".\n";
 
-    VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(sumOfMinMaxDifferences, sumOfDivisiblePairDifferences);
 }
