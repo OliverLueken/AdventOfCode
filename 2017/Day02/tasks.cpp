@@ -9,13 +9,18 @@
 #include <algorithm>
 #include <ranges>
 
-
+auto getInput(){
+    auto input = readFile::vectorOfVectorOfInts("input.txt", '\n', '\t');
+    std::ranges::for_each(input, [](auto& row){
+        std::ranges::sort(row);
+    });
+    return input;
+}
 
 auto getResult = [](const auto& parsedInput){
     auto sum = 0;
     for(const auto& row : parsedInput){
-        const auto [min, max] = std::ranges::minmax(row);
-        sum += max-min;
+        sum+=row.back()-row.front();
     }
     return sum;
 };
@@ -26,7 +31,7 @@ auto getResult2 = [](const auto& parsedInput){
 };
 
 int main(){
-    const auto parsedInput = readFile::vectorOfVectorOfInts("input.txt", '\n', '\t');
+    const auto parsedInput = getInput();
 
     //Task 1
     const auto result = getResult(parsedInput);
