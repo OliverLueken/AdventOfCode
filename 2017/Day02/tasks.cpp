@@ -18,11 +18,9 @@ auto getInput(){
 }
 
 auto getResult = [](const auto& parsedInput){
-    auto sum = 0;
-    for(const auto& row : parsedInput){
-        sum+=row.back()-row.front();
-    }
-    return sum;
+    return Utilities::sum(parsedInput, 0, [](const auto& row){
+        return row.back()-row.front();
+    });
 };
 
 auto getResult2 = [](const auto& parsedInput){
