@@ -34,7 +34,6 @@ auto wordsAreUnique = [](const auto& words){
     return wordCount == uniqueWords.size();
 };
 
-
 auto wordsAreNotAnagrams = [](const auto& words){
     auto wordLengthToHashes = std::unordered_map<size_t, std::unordered_set<size_t>>{};
     auto getHash = [](const auto& word){
@@ -53,18 +52,11 @@ auto wordsAreNotAnagrams = [](const auto& words){
     return std::ranges::all_of(words, isNotAnagram);
 };
 
-auto getResult = [](const auto& passphrases){
-    isValidPassphrase everyWordIsUnique{wordsAreUnique};
+template<typename... Conditions>
+auto countValidPassphrases(const std::vector<std::string>& passphrases, Conditions&&... conditions){
+    isValidPassphrase passphraseValidator{std::forward<Conditions>(conditions)...};
     return std::ranges::count_if(passphrases, [&](const auto& passphrase){
-        return everyWordIsUnique.isValid(passphrase);
-    });
-};
-
-auto getResult2 = [](const auto& passphrases){
-
-    isValidPassphrase everyWordIsUnique{wordsAreUnique, wordsAreNotAnagrams};
-    return std::ranges::count_if(passphrases, [&](const auto& passphrase){
-        return everyWordIsUnique.isValid(passphrase);
+        return passphraseValidator.isValid(passphrase);
     });
 };
 
@@ -72,12 +64,12 @@ int main(){
     const auto passphrases = readFile::vectorOfStrings();
 
     //Task 1
-    const auto result = getResult(passphrases);
-    std::cout << "Task 1: " << result << ".\n";
+    const auto numberOfValidPassphrases = countValidPassphrases(passphrases, wordsAreUnique);
+    std::cout << "There are " << numberOfValidPassphrases << " passphrases without duplicate words.\n";
 
     //Task 2
-    const auto result2 = getResult2(passphrases);
-    std::cout << "Task 2: " << result2 << ".\n";
+    const auto newNumberOfValidPassphrases = countValidPassphrases(passphrases, wordsAreUnique, wordsAreNotAnagrams);
+    std::cout << "There are " << newNumberOfValidPassphrases << " passphrases without duplicate words or anagrams.\n";
 
-    VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(numberOfValidPassphrases, newNumberOfValidPassphrases);
 }
