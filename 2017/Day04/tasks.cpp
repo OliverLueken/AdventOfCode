@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 #include <algorithm>
 #include <numeric>
 #include <ranges>
@@ -33,8 +34,23 @@ auto wordsAreUnique = [](const auto& words){
 };
 
 
-auto other = [](const auto& words){
-    return true;
+auto wordsAreNotAnagrams = [](const auto& words){
+    auto wordLengthToHashes = std::unordered_map<size_t, std::unordered_set<size_t>>{};
+    auto getHash = [](const auto& word){
+        const auto wordLength = word.size();
+        const auto hash = Utilities::sum(word, 0ul, [wordLength](const char c){
+            const auto val = c-'a';
+            return std::pow(val, wordLength);
+        });
+        return std::make_pair(wordLength, hash);
+    };
+    auto isNotAnagram = [&](const auto& word){
+        auto [wordLength, hash] = getHash(word);
+        if(wordLengthToHashes[wordLength].contains(hash)) return false;
+        wordLengthToHashes[wordLength].insert(hash);
+        return true;
+    };
+    return std::ranges::all_of(words, isNotAnagram);
 };
 
 auto getResult = [](const auto& passphrases){
@@ -46,7 +62,7 @@ auto getResult = [](const auto& passphrases){
 
 auto getResult2 = [](const auto& passphrases){
 
-    isValidPassphrase everyWordIsUnique{wordsAreUnique, other};
+    isValidPassphrase everyWordIsUnique{wordsAreUnique, wordsAreNotAnagrams};
     return std::ranges::count_if(passphrases, [&](const auto& passphrase){
         return everyWordIsUnique.isValid(passphrase);
     });
@@ -63,5 +79,5 @@ int main(){
     const auto result2 = getResult2(passphrases);
     std::cout << "Task 2: " << result2 << ".\n";
 
-    // VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(result, result2);
 }
