@@ -13,15 +13,17 @@
 #include <ranges>
 #include <cassert>
 
-struct isValidPassphrase{
-    std::vector<bool(*)(const std::vector<std::string>&)> lambdas{};
+struct PassphraseValidator{
+private:
+    std::vector<bool(*)(const std::vector<std::string>&)> conditions{};
 
-    template<typename... Lambdas>
-    isValidPassphrase(Lambdas&&... lambdas_) : lambdas{std::forward<Lambdas>(lambdas_)...}{}
+public:
+    template<typename... Conditions>
+    PassphraseValidator(Conditions&&... _conditions) : conditions{std::forward<Conditions>(_conditions)...}{}
 
     bool isValid(const std::string& passphrase){
         const auto words = Utilities::split(passphrase);
-        return std::ranges::all_of(lambdas, [&words](auto& lambda){
+        return std::ranges::all_of(conditions, [&words](auto& lambda){
             return lambda(words);
         });
     }
@@ -54,7 +56,7 @@ auto wordsAreNotAnagrams = [](const auto& words){
 
 template<typename... Conditions>
 auto countValidPassphrases(const std::vector<std::string>& passphrases, Conditions&&... conditions){
-    isValidPassphrase passphraseValidator{std::forward<Conditions>(conditions)...};
+    PassphraseValidator passphraseValidator{std::forward<Conditions>(conditions)...};
     return std::ranges::count_if(passphrases, [&](const auto& passphrase){
         return passphraseValidator.isValid(passphrase);
     });
