@@ -1,6 +1,7 @@
 
 #include "../../lib/readFile.hpp"
 #include "../../lib/verifySolution.hpp"
+#include "../../lib/views.hpp"
 
 #include <iostream>
 #include <string>
@@ -21,23 +22,16 @@ size_t getHash(const auto& memory){
     return std::hash<std::string>{}(stream.str());
 }
 
-template<std::ranges::range Range>
-struct circularView : public std::ranges::borrowed_iterator_t<Range>{
-
-};
-
 auto getResult = [](auto memory){
     auto hash = std::unordered_set<size_t>{};
     auto count = 0;
     while(hash.insert(getHash(memory)).second){
-        auto maxPos = std::ranges::max_element(memory);
+        auto range = views::circle(memory);
+        auto maxPos = std::ranges::max_element(range | std::views::take(memory.size()));
         auto val = *maxPos;
         *maxPos = 0;
-        auto currentPos = maxPos+1;
+        auto currentPos = ++maxPos;
         while(val>0){
-            if(currentPos == memory.end()){
-                currentPos = memory.begin();
-            }
             ++*currentPos;
             --val;
             ++currentPos;
