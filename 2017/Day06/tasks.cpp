@@ -23,9 +23,10 @@ size_t getHash(const auto& memory){
 }
 
 auto getResult = [](auto memory){
-    auto hash = std::unordered_set<size_t>{};
+    auto hash = std::unordered_map<size_t, int>{};
     auto count = 0;
-    while(hash.insert(getHash(memory)).second){
+    hash.insert_or_assign(getHash(memory), count);
+    while(true){
         auto range = views::circle(memory);
         auto maxPos = std::ranges::max_element(range | std::views::take(memory.size()));
         auto val = *maxPos;
@@ -37,25 +38,22 @@ auto getResult = [](auto memory){
             ++currentPos;
         }
         ++count;
+        
+        const auto newhash = getHash(memory);
+        if(hash.contains(newhash)){
+            return std::make_pair(count, count-hash[newhash]);
+        }
+        hash[newhash]=count;
     }
-    return count;
-};
-
-auto getResult2 = [](const auto& memory){
-
-    return 0;
 };
 
 int main(){
     const auto parsedInput = readFile::vectorOfInts("input.txt", '\t');
 
     //Task 1
-    const auto result = getResult(parsedInput);
+    const auto [result, result2] = getResult(parsedInput);
     std::cout << "Task 1: " << result << ".\n";
+    std::cout << "Task 2: " << result2 << ".\n";
 
-    // //Task 2
-    // const auto result2 = getResult2(parsedInput);
-    // std::cout << "Task 2: " << result2 << ".\n";
-
-    // VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(result, result2);
 }
