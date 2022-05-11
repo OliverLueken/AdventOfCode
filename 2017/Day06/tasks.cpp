@@ -15,6 +15,7 @@
 
 class Memory{
 
+    std::vector<int> mem{};
 
     auto max_element() {
         auto range = views::circle(mem);
@@ -22,7 +23,6 @@ class Memory{
     }
 
 public:
-    std::vector<int> mem{};
     Memory(std::vector<int>&& _mem) : mem{std::move(_mem)}{}
 
     auto operator==(const Memory& other) const {
@@ -39,13 +39,20 @@ public:
             --blocks;
         }
     }
+
+    auto begin() const {
+        return mem.begin();
+    }
+    auto end() const {
+        return mem.end();
+    }
 };
 
 template<>
 struct std::hash<Memory>{
     std::size_t operator()(const Memory& memory) const noexcept{
         auto stream = std::stringstream{};
-        for(const auto& val : memory.mem){
+        for(const auto& val : memory){
             stream << val;
         }
         return std::hash<std::string>{}(stream.str());
@@ -71,7 +78,7 @@ auto getMemoryLoopValues = [](auto& memory){
 int main(){
     auto memory = Memory{readFile::vectorOfInts("input.txt", '\t')};
 
-    //Task 1
+    //Task 1 & 2
     const auto [redestributionCycles, loopPeriod] = getMemoryLoopValues(memory);
     std::cout << "It takes " << redestributionCycles << " cycles to reach a memory state a second time.\n";
     std::cout << "The memory state has a period of " << loopPeriod << " cycles.\n";
