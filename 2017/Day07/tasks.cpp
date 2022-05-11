@@ -10,21 +10,24 @@
 #include <numeric>
 #include <ranges>
 #include <set>
+#include <unordered_map>
 
 struct Disc{
     int weight{};
-    std::string name{};
     std::vector<std::string> discsAbove{};
 };
 
 auto parseInput = [](const auto& input){
-    std::vector<Disc> discs{};
+    std::unordered_map<std::string, Disc> discs{};
     for(const auto& row : input){
         auto split = Utilities::splitOnEach(row, " ,()->");
         auto name = std::move(split[0]);
         auto weight = std::stoi(split[1]);
         split.erase(split.begin(), split.begin()+2);
-        discs.emplace_back(weight, std::move(name), std::move(split));
+        discs.emplace(std::make_pair(
+            std::move(name),
+            Disc{weight, std::move(split)}
+        ));
     }
     return discs;
 };
@@ -33,12 +36,12 @@ auto getBaseDisc = [](const auto& discs){
 
     auto baseDiscs = std::set<std::string>{};
     std::ranges::copy(
-        discs | std::views::filter([](const auto& disc){return !disc.discsAbove.empty();}) | std::views::transform(&Disc::name),
+        discs | std::views::filter([](const auto& disc){return !disc.second.discsAbove.empty();}) | std::views::keys,
         std::inserter(baseDiscs, std::begin(baseDiscs))
     );
     auto topDiscs  = std::set<std::string>{};
     std::ranges::copy(
-        discs | std::views::transform(&Disc::discsAbove) | std::views::join,
+        discs | std::views::values | std::views::transform(&Disc::discsAbove) | std::views::join,
         std::inserter(topDiscs, std::begin(topDiscs))
     );
 
