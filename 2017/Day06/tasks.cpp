@@ -40,7 +40,7 @@ struct std::hash<Memory>{
     }
 };
 
-auto getResult = [](auto& memory){
+auto getMemoryLoopValues = [](auto& memory){
     auto hash = std::unordered_map<Memory, int>{};
     auto count = 0;
     hash.insert_or_assign(memory, count);
@@ -64,12 +64,12 @@ auto getResult = [](auto& memory){
 };
 
 int main(){
-    auto parsedInput = Memory{readFile::vectorOfInts("input.txt", '\t')};
+    auto memory = Memory{readFile::vectorOfInts("input.txt", '\t')};
 
     //Task 1
-    const auto [result, result2] = getResult(parsedInput);
-    std::cout << "Task 1: " << result << ".\n";
-    std::cout << "Task 2: " << result2 << ".\n";
+    const auto [redestributionCycles, loopPeriod] = getMemoryLoopValues(memory);
+    std::cout << "It takes " << redestributionCycles << " cycles to reach a memory state a second time.\n";
+    std::cout << "The memory state has a period of " << loopPeriod << " cycles.\n";
 
-    VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(redestributionCycles, loopPeriod);
 }
