@@ -27,6 +27,16 @@ public:
         auto range = views::circle(mem);
         return std::ranges::max_element(range | std::views::take(mem.size()));
     }
+
+    auto redistributeBlocks(auto currentPos){
+        auto blocks = *currentPos;
+        *currentPos = 0;
+        while(blocks>0){
+            ++currentPos;
+            ++*currentPos;
+            --blocks;
+        }
+    }
 };
 
 template<>
@@ -46,14 +56,7 @@ auto getMemoryLoopValues = [](auto& memory){
     memoryStateLastSeenAtCycle.insert_or_assign(memory, currentCycle);
     while(true){
         auto maxPos = memory.max_element();
-        auto val = *maxPos;
-        *maxPos = 0;
-        auto currentPos = ++maxPos;
-        while(val>0){
-            ++*currentPos;
-            --val;
-            ++currentPos;
-        }
+        memory.redistributeBlocks(maxPos);
         ++currentCycle;
 
         if(memoryStateLastSeenAtCycle.contains(memory)){
