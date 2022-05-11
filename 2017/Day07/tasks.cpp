@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <numeric>
 #include <ranges>
+#include <set>
 
 struct Disc{
     int weight{};
@@ -28,15 +29,23 @@ auto parseInput = [](const auto& input){
     return discs;
 };
 
-auto getResult = [](const auto& discs){
-    for(const auto& disc : discs){
-        std::cout << disc.name << ' ' << disc.weight << ' ';
-        for(const auto& discAbove : disc.discsAbove){
-            std::cout << discAbove << ' ';
-        }
-        std::cout << '\n';
-    }
-    return 0;
+auto getBaseDisc = [](const auto& discs){
+
+    auto baseDiscs = std::set<std::string>{};
+    std::ranges::copy(
+        discs | std::views::filter([](const auto& disc){return !disc.discsAbove.empty();}) | std::views::transform(&Disc::name),
+        std::inserter(baseDiscs, std::begin(baseDiscs))
+    );
+    auto topDiscs  = std::set<std::string>{};
+    std::ranges::copy(
+        discs | std::views::transform(&Disc::discsAbove) | std::views::join,
+        std::inserter(topDiscs, std::begin(topDiscs))
+    );
+
+    auto baseDisc = std::set<std::string>{};
+    std::ranges::set_difference(baseDiscs, topDiscs, std::inserter(baseDisc, std::begin(baseDisc)));
+
+    return *baseDisc.begin();
 };
 
 auto getResult2 = [](const auto& discs){
@@ -48,12 +57,12 @@ int main(){
     const auto discs = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result = getResult(discs);
-    std::cout << "Task 1: " << result << ".\n";
+    const auto baseDisc = getBaseDisc(discs);
+    std::cout << "The program at the bottom is called " << baseDisc << ".\n";
 
     // //Task 2
     // const auto result2 = getResult2(discs);
     // std::cout << "Task 2: " << result2 << ".\n";
 
-    // VerifySolution::verifySolution(result, result2);
+    // VerifySolution::verifySolution(baseDisc, result2);
 }
