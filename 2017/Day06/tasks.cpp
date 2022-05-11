@@ -13,22 +13,35 @@
 #include <ranges>
 #include <sstream>
 
+class Memory{
 
-size_t getHash(const auto& memory){
-    auto stream = std::stringstream{};
-    for(const auto& val : memory){
-        stream << val;
+public:
+    std::vector<int> mem{};
+    constexpr Memory(std::vector<int>&& _mem) : mem{std::move(_mem)}{}
+
+    constexpr auto operator==(const Memory& other) const {
+        return mem == other.mem;
     }
-    return std::hash<std::string>{}(stream.str());
-}
+};
+
+template<>
+struct std::hash<Memory>{
+    std::size_t operator()(const Memory& memory) const noexcept{
+        auto stream = std::stringstream{};
+        for(const auto& val : memory.mem){
+            stream << val;
+        }
+        return std::hash<std::string>{}(stream.str());
+    }
+};
 
 auto getResult = [](auto memory){
-    auto hash = std::unordered_map<size_t, int>{};
+    auto hash = std::unordered_map<Memory, int>{};
     auto count = 0;
-    hash.insert_or_assign(getHash(memory), count);
+    hash.insert_or_assign(memory, count);
     while(true){
-        auto range = views::circle(memory);
-        auto maxPos = std::ranges::max_element(range | std::views::take(memory.size()));
+        auto range = views::circle(memory.mem);
+        auto maxPos = std::ranges::max_element(range | std::views::take(memory.mem.size()));
         auto val = *maxPos;
         *maxPos = 0;
         auto currentPos = ++maxPos;
@@ -38,17 +51,17 @@ auto getResult = [](auto memory){
             ++currentPos;
         }
         ++count;
-        
-        const auto newhash = getHash(memory);
-        if(hash.contains(newhash)){
-            return std::make_pair(count, count-hash[newhash]);
+
+        // const auto newhash = getHash(memory);
+        if(hash.contains(memory)){
+            return std::make_pair(count, count-hash[memory]);
         }
-        hash[newhash]=count;
+        hash[memory]=count;
     }
 };
 
 int main(){
-    const auto parsedInput = readFile::vectorOfInts("input.txt", '\t');
+    const auto parsedInput = Memory{readFile::vectorOfInts("input.txt", '\t')};
 
     //Task 1
     const auto [result, result2] = getResult(parsedInput);
