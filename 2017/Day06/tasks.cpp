@@ -17,10 +17,15 @@ class Memory{
 
 public:
     std::vector<int> mem{};
-    constexpr Memory(std::vector<int>&& _mem) : mem{std::move(_mem)}{}
+    Memory(std::vector<int>&& _mem) : mem{std::move(_mem)}{}
 
-    constexpr auto operator==(const Memory& other) const {
+    auto operator==(const Memory& other) const {
         return mem == other.mem;
+    }
+
+    auto max_element() {
+        auto range = views::circle(mem);
+        return std::ranges::max_element(range | std::views::take(mem.size()));
     }
 };
 
@@ -35,13 +40,12 @@ struct std::hash<Memory>{
     }
 };
 
-auto getResult = [](auto memory){
+auto getResult = [](auto& memory){
     auto hash = std::unordered_map<Memory, int>{};
     auto count = 0;
     hash.insert_or_assign(memory, count);
     while(true){
-        auto range = views::circle(memory.mem);
-        auto maxPos = std::ranges::max_element(range | std::views::take(memory.mem.size()));
+        auto maxPos = memory.max_element();
         auto val = *maxPos;
         *maxPos = 0;
         auto currentPos = ++maxPos;
@@ -52,7 +56,6 @@ auto getResult = [](auto memory){
         }
         ++count;
 
-        // const auto newhash = getHash(memory);
         if(hash.contains(memory)){
             return std::make_pair(count, count-hash[memory]);
         }
@@ -61,7 +64,7 @@ auto getResult = [](auto memory){
 };
 
 int main(){
-    const auto parsedInput = Memory{readFile::vectorOfInts("input.txt", '\t')};
+    auto parsedInput = Memory{readFile::vectorOfInts("input.txt", '\t')};
 
     //Task 1
     const auto [result, result2] = getResult(parsedInput);
