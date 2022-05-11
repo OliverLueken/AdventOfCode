@@ -30,13 +30,13 @@ public:
     }
 
     auto redistributeBlocks(){
-        auto currentPos = max_element();
-        auto blocks = *currentPos;
-        *currentPos = 0;
-        while(blocks>0){
-            ++currentPos;
-            ++*currentPos;
-            --blocks;
+        auto currentIt = max_element();
+        auto blockCount = *currentIt;
+        *currentIt = 0;
+        while(blockCount>0){
+            ++currentIt;
+            ++*currentIt;
+            --blockCount;
         }
     }
 
