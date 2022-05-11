@@ -41,9 +41,9 @@ struct std::hash<Memory>{
 };
 
 auto getMemoryLoopValues = [](auto& memory){
-    auto hash = std::unordered_map<Memory, int>{};
-    auto count = 0;
-    hash.insert_or_assign(memory, count);
+    auto memoryStateLastSeenAtCycle = std::unordered_map<Memory, int>{};
+    auto currentCycle = 0;
+    memoryStateLastSeenAtCycle.insert_or_assign(memory, currentCycle);
     while(true){
         auto maxPos = memory.max_element();
         auto val = *maxPos;
@@ -54,12 +54,12 @@ auto getMemoryLoopValues = [](auto& memory){
             --val;
             ++currentPos;
         }
-        ++count;
+        ++currentCycle;
 
-        if(hash.contains(memory)){
-            return std::make_pair(count, count-hash[memory]);
+        if(memoryStateLastSeenAtCycle.contains(memory)){
+            return std::make_pair(currentCycle, currentCycle-memoryStateLastSeenAtCycle[memory]);
         }
-        hash[memory]=count;
+        memoryStateLastSeenAtCycle[memory]=currentCycle;
     }
 };
 
