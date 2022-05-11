@@ -15,6 +15,12 @@
 
 class Memory{
 
+
+    auto max_element() {
+        auto range = views::circle(mem);
+        return std::ranges::max_element(range | std::views::take(mem.size()));
+    }
+
 public:
     std::vector<int> mem{};
     Memory(std::vector<int>&& _mem) : mem{std::move(_mem)}{}
@@ -23,12 +29,8 @@ public:
         return mem == other.mem;
     }
 
-    auto max_element() {
-        auto range = views::circle(mem);
-        return std::ranges::max_element(range | std::views::take(mem.size()));
-    }
-
-    auto redistributeBlocks(auto currentPos){
+    auto redistributeBlocks(){
+        auto currentPos = max_element();
         auto blocks = *currentPos;
         *currentPos = 0;
         while(blocks>0){
@@ -55,15 +57,15 @@ auto getMemoryLoopValues = [](auto& memory){
     auto currentCycle = 0;
     memoryStateLastSeenAtCycle.insert_or_assign(memory, currentCycle);
     while(true){
-        auto maxPos = memory.max_element();
-        memory.redistributeBlocks(maxPos);
+        memory.redistributeBlocks();
         ++currentCycle;
 
         if(memoryStateLastSeenAtCycle.contains(memory)){
-            return std::make_pair(currentCycle, currentCycle-memoryStateLastSeenAtCycle[memory]);
+            break;
         }
         memoryStateLastSeenAtCycle[memory]=currentCycle;
     }
+    return std::make_pair(currentCycle, currentCycle-memoryStateLastSeenAtCycle[memory]);
 };
 
 int main(){
