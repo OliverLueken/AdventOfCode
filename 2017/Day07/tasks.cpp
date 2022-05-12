@@ -51,20 +51,50 @@ auto getBaseDisc = [](const auto& discs){
     return *baseDisc.begin();
 };
 
-auto getWeight(const auto& discs, const auto& disc) -> int {
+auto getOffWeight(const auto& discs, auto& weights, const auto& weightOf){
+    if(weights.size() > 1){
+        auto commonWeight = 0;
+        auto offDisc = std::string{};
+        for(const auto& [weight, discsOfThisWeight] : weights){
+            if(discsOfThisWeight.size() == 1){
+                offDisc = discsOfThisWeight.front();
+            }
+            else{
+                commonWeight = weightOf.at(discsOfThisWeight.front());
+            }
+        }
+        auto neededWeight = discs.at(offDisc).weight + (commonWeight - weightOf.at(offDisc));
+        return std::make_pair(true, neededWeight);
+    }
+    return std::make_pair(false, 0);
+}
+
+auto getWeight(const auto& discs, const auto& disc) -> std::pair<bool, int> {
     static auto weightOf = std::unordered_map<std::string, int>{};
 
     if(!weightOf.contains(disc)){
-        weightOf[disc] = Utilities::sum(discs.at(disc).discsAbove, discs.at(disc).weight, [&discs](const auto& son){
-            return getWeight(discs, son);
-        });
+        weightOf[disc] = discs.at(disc).weight;
+        auto weightsOfSons = std::unordered_map<int, std::vector<std::string>>{};
+        for(const auto& son : discs.at(disc).discsAbove){
+            auto [weightOff, weight] = getWeight(discs, son);
+            if(weightOff){
+                return std::make_pair(true, weight);
+            }
+            weightsOfSons[weight].push_back(son);
+            weightOf[disc]+=weight;
+        }
+
+        auto [weightOff, weight] = getOffWeight(discs, weightsOfSons, weightOf);
+        if(weightOff){
+            return std::make_pair(true, weight);
+        }
     }
-    return weightOf[disc];
+    return std::make_pair(false, weightOf[disc]);
 }
 
 auto getCorrectWeight(const auto& discs, const auto& base){
 
-    return 0;
+    return getWeight(discs, base).second;
 };
 
 int main(){
