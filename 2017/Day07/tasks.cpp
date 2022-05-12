@@ -106,7 +106,7 @@ int main(){
 
     //Task 2
     const auto correctedWeight = getCorrectWeight(discs, baseDisc);
-    std::cout << "Task 2: " << correctedWeight << ".\n";
+    std::cout << "The correct weight for the odd program would be " << correctedWeight << ".\n";
 
     VerifySolution::verifySolution(baseDisc, correctedWeight);
 }
