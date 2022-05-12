@@ -51,7 +51,18 @@ auto getBaseDisc = [](const auto& discs){
     return *baseDisc.begin();
 };
 
-auto getResult2 = [](const auto& discs){
+auto getWeight(const auto& discs, const auto& disc) -> int {
+    static auto weightOf = std::unordered_map<std::string, int>{};
+
+    if(!weightOf.contains(disc)){
+        weightOf[disc] = Utilities::sum(discs.at(disc).discsAbove, discs.at(disc).weight, [&discs](const auto& son){
+            return getWeight(discs, son);
+        });
+    }
+    return weightOf[disc];
+}
+
+auto getCorrectWeight(const auto& discs, const auto& base){
 
     return 0;
 };
@@ -63,9 +74,9 @@ int main(){
     const auto baseDisc = getBaseDisc(discs);
     std::cout << "The program at the bottom is called " << baseDisc << ".\n";
 
-    // //Task 2
-    // const auto result2 = getResult2(discs);
-    // std::cout << "Task 2: " << result2 << ".\n";
+    //Task 2
+    const auto correctedWeight = getCorrectWeight(discs, baseDisc);
+    std::cout << "Task 2: " << correctedWeight << ".\n";
 
-    // VerifySolution::verifySolution(baseDisc, result2);
+    VerifySolution::verifySolution(baseDisc, correctedWeight);
 }
