@@ -35,6 +35,13 @@ struct Computer{
     //     };
     //     instructions.emplace_back(std::make_unique<Wrapper<decltype(jump)>>(std::move(jump)));
     // }
+    void addJump(const auto offset){
+        auto jump = [_offset = offset, this] () mutable {
+            this->currentInstructionPosition+=_offset;
+            // ++_offset;
+        };
+        instructions.emplace_back(std::make_unique<Wrapper<decltype(jump)>>(std::move(jump)));
+    }
     //
     // void addOddJump(const auto offset){
     //     auto jump = [_offset = offset, this] () mutable {
