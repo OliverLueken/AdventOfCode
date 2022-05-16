@@ -25,7 +25,8 @@ struct Computer{
         void execute() override { Lambda::operator()(); }
     };
 
-    std::vector<std::unique_ptr<Instruction>> instructions{};
+    using Register = std::unordered_map<std::string, int>;
+    using Instructions = std::vector<std::unique_ptr<Instruction>>;
     int currentInstructionPosition{0};
 
     // void addJump(const auto offset){
