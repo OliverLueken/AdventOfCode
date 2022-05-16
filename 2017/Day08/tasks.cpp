@@ -27,7 +27,10 @@ struct Computer{
 
     using Register = std::unordered_map<std::string, int>;
     using Instructions = std::vector<std::unique_ptr<Instruction>>;
+
     int currentInstructionPosition{0};
+    Instructions instructions{};
+    Register reg{};
 
     // void addJump(const auto offset){
     //     auto jump = [_offset = offset, this] () mutable {
