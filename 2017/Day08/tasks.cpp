@@ -34,8 +34,8 @@ class Computer{
 
     template<typename Lambda>
     auto add(Lambda&& l){
-        instructions.emplace_back(std::make_unique<Wrapper<Lambda>>(std::forward(l)));
-        return instructions.size();
+        instructions.emplace_back(std::make_unique<Wrapper<Lambda>>(std::forward<Lambda>(l)));
+    }
     }
 
 public:
