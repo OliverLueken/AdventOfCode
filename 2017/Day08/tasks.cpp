@@ -97,7 +97,12 @@ auto split(auto& instr){
 }
 
 auto parseInput(const auto& input){
-    return 0;
+    auto comp = Computer{};
+    for(const auto& instr : input){
+        auto [ifInstructions, condition] = split(instr);
+        comp.addIf(condition[1], condition[0], condition[2], ifInstructions);
+    }
+    return comp;
 }
 
 auto getResult1 = [](const auto& input){
