@@ -91,6 +91,11 @@ public:
     }
 };
 
+auto split(auto& instr){
+    const auto i = instr.find(" if ");
+    return std::make_pair(instr.substr(0, i), Utilities::split(instr.substr(i+4)));
+}
+
 auto parseInput(const auto& input){
     return 0;
 }
