@@ -121,8 +121,9 @@ auto parseInput(const auto& input){
     return comp;
 }
 
-    return 0;
 auto getResult1 = [](auto& computer){
+    computer.execute();
+    return std::ranges::max( computer.getRegisterView() | std::views::values );
 };
 
 auto getResult2 = [](const auto& computer){
