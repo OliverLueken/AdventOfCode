@@ -36,6 +36,14 @@ class Computer{
     auto add(Lambda&& l){
         instructions.emplace_back(std::make_unique<Wrapper<Lambda>>(std::forward<Lambda>(l)));
     }
+
+    auto getComparison(const auto comparator) -> std::function<bool(int, int)>{
+        if(comparator == "<")  return std::less<>{};
+        if(comparator == "<=") return std::less_equal<>{};
+        if(comparator == ">")  return std::greater<>{};
+        if(comparator == ">=") return std::greater_equal<>{};
+        if(comparator == "==") return std::equal_to<>{};
+        return std::not_equal_to<>{};
     }
 
 public:
