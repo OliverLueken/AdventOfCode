@@ -65,6 +65,10 @@ public:
         return instructions.size();
     }
 
+    auto addRegisterDecrease(const auto _regAddress, const auto _amount){
+        return addRegisterIncrease(_regAddress, -1*_amount);
+    }
+
     bool currentInstructionPositionIsValid(){
         return 0<=currentInstructionPosition && std::less{}(currentInstructionPosition, instructions.size());
     }
