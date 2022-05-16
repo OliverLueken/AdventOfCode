@@ -56,6 +56,10 @@ public:
     //     instructions.emplace_back(std::make_unique<Wrapper<decltype(jump)>>(std::move(jump)));
     // }
 
+    auto addIf(const auto condition, const auto regAddress, const auto val, const auto registerModificationInstr){
+        return instructions.size();
+    }
+
     auto addRegisterModification(const auto regAddress, const auto mode, const auto amount){
         if(mode == "inc") return addRegisterIncrease(regAddress, amount);
         if(mode == "dec") return addRegisterDecrease(regAddress, amount);
