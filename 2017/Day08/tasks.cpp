@@ -50,6 +50,16 @@ struct Computer{
         if(mode == "dec") return addRegisterDecrease(regAddress, amount);
         return instructions.size();
     }
+
+    auto addRegisterIncrease(const auto _regAddress, const auto _amount){
+        auto increase = [regAddress = _regAddress, amount = _amount, this] () mutable {
+            this->reg[regAddress]+=amount;
+            ++this->currentInstructionPosition;
+        };
+        instructions.emplace_back(std::make_unique<Wrapper<decltype(increase)>>(std::move(increase)));
+        return instructions.size();
+    }
+
     bool currentInstructionPositionIsValid(){
         return 0<=currentInstructionPosition && std::less{}(currentInstructionPosition, instructions.size());
     }
