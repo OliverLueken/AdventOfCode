@@ -6,7 +6,7 @@
 #include <vector>
 #include <memory>
 
-struct Computer{
+class Computer{
 
     struct Instruction{
         Instruction() = default;
@@ -32,13 +32,7 @@ struct Computer{
     Instructions instructions{};
     Register reg{};
 
-    // void addJump(const auto offset){
-    //     auto jump = [_offset = offset, this] () mutable {
-    //         this->currentInstructionPosition+=_offset;
-    //         ++_offset;
-    //     };
-    //     instructions.emplace_back(std::make_unique<Wrapper<decltype(jump)>>(std::move(jump)));
-    // }
+public:
     void addJump(const auto offset){
         auto jump = [_offset = offset, this] () mutable {
             this->currentInstructionPosition+=_offset;
