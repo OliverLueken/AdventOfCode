@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <unordered_map>
+#include <ranges>
 
 class Computer{
 
@@ -108,6 +110,10 @@ public:
     }
 };
 
+    auto getRegisterView() const {
+        return std::views::all(reg);
+    }
+};
 
 auto parseInput(const auto& input){
     auto comp = Computer{};
