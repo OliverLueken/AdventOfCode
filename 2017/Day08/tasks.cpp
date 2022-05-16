@@ -32,13 +32,19 @@ class Computer{
     Instructions instructions{};
     Register reg{};
 
+    template<typename Lambda>
+    auto add(Lambda&& l){
+        instructions.emplace_back(std::make_unique<Wrapper<Lambda>>(std::forward(l)));
+        return instructions.size();
+    }
+
 public:
-    void addJump(const auto offset){
+    auto addJump(const auto offset){
         auto jump = [_offset = offset, this] () mutable {
             this->currentInstructionPosition+=_offset;
             // ++_offset;
         };
-        instructions.emplace_back(std::make_unique<Wrapper<decltype(jump)>>(std::move(jump)));
+        return add(std::move(jump));
     }
     //
     // void addOddJump(const auto offset){
@@ -61,8 +67,9 @@ public:
             this->reg[regAddress]+=amount;
             ++this->currentInstructionPosition;
         };
-        instructions.emplace_back(std::make_unique<Wrapper<decltype(increase)>>(std::move(increase)));
-        return instructions.size();
+        return add(std::move(increase));
+        // instructions.emplace_back(std::make_unique<Wrapper<decltype(increase)>>(std::move(increase)));
+        // return instructions.size();
     }
 
     auto addRegisterDecrease(const auto _regAddress, const auto _amount){
