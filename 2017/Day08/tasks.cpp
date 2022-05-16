@@ -64,8 +64,17 @@ public:
     //     instructions.emplace_back(std::make_unique<Wrapper<decltype(jump)>>(std::move(jump)));
     // }
 
-    auto addIf(const auto condition, const auto regAddress, const auto val, const auto registerModificationInstr){
-        return instructions.size();
+    auto addIf(const auto comparator, const auto _regAddress, const auto _val){
+        auto _conditional = getComparison(comparator);
+        auto ifLambda = [regAddress = _regAddress, conditional = _conditional, val = _val, this](){
+            if(conditional( this->reg[regAddress], val )){
+                ++this->currentInstructionPosition;
+            }
+            else{
+                this->currentInstructionPosition+=2;
+            }
+        };
+        return add(std::move(ifLambda));
     }
 
     auto addRegisterModification(const auto regAddress, const auto mode, const auto amount){
