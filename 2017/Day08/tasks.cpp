@@ -119,23 +119,23 @@ auto parseInput(const auto& input){
     return comp;
 }
 
-auto getResult1 = [](const auto& input){
     return 0;
+auto getResult1 = [](auto& computer){
 };
 
-auto getResult2 = [](const auto& input){
+auto getResult2 = [](const auto& computer){
     return 0;
 };
 
 int main(){
-    const auto input = parseInput(readFile::vectorOfStrings());
+    auto computer = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result1 = getResult1(input);
+    const auto result1 = getResult1(computer);
     std::cout << "Task 1: " << result1 << ".\n";
 
     // //Task 2
-    // const auto result2 = getResult2(input);
+    // const auto result2 = getResult2(computer);
     // std::cout << "Task 2: " << result2 << ".\n";
     //
     // VerifySolution::verifySolution(result1, result2);
