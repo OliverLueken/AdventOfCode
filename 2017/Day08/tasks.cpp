@@ -23,7 +23,7 @@ class Computer{
 
     template<typename Lambda>
     struct Wrapper : public Instruction, public Lambda{
-        Wrapper(Lambda &&lambda): Lambda{std::forward<Lambda>(lambda)} {}
+        Wrapper(Lambda&& lambda): Lambda{std::forward<Lambda>(lambda)} {}
         void execute() override { Lambda::operator()(); }
     };
 
@@ -82,7 +82,6 @@ public:
     auto addRegisterModification(const auto regAddress, const auto mode, const auto amount){
         if(mode == "inc") return addRegisterIncrease(regAddress, amount);
         if(mode == "dec") return addRegisterDecrease(regAddress, amount);
-        return instructions.size();
     }
 
     auto addRegisterIncrease(const auto _regAddress, const auto _amount){
@@ -91,8 +90,6 @@ public:
             ++this->currentInstructionPosition;
         };
         return add(std::move(increase));
-        // instructions.emplace_back(std::make_unique<Wrapper<decltype(increase)>>(std::move(increase)));
-        // return instructions.size();
     }
 
     auto addRegisterDecrease(const auto _regAddress, const auto _amount){
@@ -108,7 +105,6 @@ public:
             instructions[currentInstructionPosition]->execute();
         }
     }
-};
 
     auto getRegisterView() const {
         return std::views::all(reg);
