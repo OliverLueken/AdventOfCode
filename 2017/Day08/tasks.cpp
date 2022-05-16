@@ -116,8 +116,9 @@ auto split(auto& instr){
 auto parseInput(const auto& input){
     auto comp = Computer{};
     for(const auto& instr : input){
-        auto [ifInstructions, condition] = split(instr);
-        comp.addIf(condition[1], condition[0], condition[2], ifInstructions);
+        auto split = Utilities::split(instr);
+        comp.addIf(split[5], split[4], std::stoi(split[6]));
+        comp.addRegisterModification(split[0], split[1], std::stoi(split[2]));
     }
     return comp;
 }
