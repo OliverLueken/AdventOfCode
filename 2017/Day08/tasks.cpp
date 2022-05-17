@@ -131,6 +131,21 @@ public:
     }
 };
 
+struct RegisterValueLogger : public Logger {
+    Computer* computer{nullptr};
+    std::vector<int> maxRegisterValueAfterEachExecution{};
+
+    RegisterValueLogger(Computer* comp) : computer{comp}{
+        computer->addLogger(this);
+    }
+
+    void update() override {
+        maxRegisterValueAfterEachExecution.push_back(
+            std::ranges::max( computer->getRegisterView() | std::views::values )
+        );
+    }
+};
+
 auto parseInput(const auto& input){
     auto comp = Computer{};
     for(const auto& instr : input){
