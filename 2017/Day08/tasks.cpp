@@ -156,7 +156,7 @@ auto parseInput(const auto& input){
     return comp;
 }
 
-auto getHighestRegisterValue = [](auto& computer){
+auto getHighestRegisterValues = [](auto& computer){
     auto logger = RegisterValueLogger{&computer};
 
     computer.execute();
@@ -170,7 +170,7 @@ int main(){
     auto computer = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto [maxRegisterValueAfterExecution, maxRegisterValueDuringExecution] = getHighestRegisterValue(computer);
+    const auto [maxRegisterValueAfterExecution, maxRegisterValueDuringExecution] = getHighestRegisterValues(computer);
     std::cout << "Task 1: " << maxRegisterValueAfterExecution << ".\n";
 
     //Task 2
