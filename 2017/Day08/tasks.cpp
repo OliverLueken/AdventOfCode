@@ -7,6 +7,25 @@
 #include <memory>
 #include <unordered_map>
 #include <ranges>
+#include <functional>
+#include <algorithm>
+
+struct Logger{
+    virtual void update() = 0;
+};
+
+struct Subject{
+    std::vector<Logger*> logger{};
+    void addLogger(Logger& log){
+        logger.push_back(&log);
+    }
+    void removeLogger(const Logger& log){
+        std::erase(logger, &log);
+    }
+    void notifyLogger() const {
+        std::ranges::for_each(logger, [](Logger* log){log->update();});
+    }
+};
 
 class Computer{
 
