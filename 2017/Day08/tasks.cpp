@@ -157,12 +157,13 @@ auto parseInput(const auto& input){
 }
 
 auto getHighestRegisterValue = [](auto& computer){
-    computer.execute();
-    return std::ranges::max( computer.getRegisterView() | std::views::values );
-};
+    auto logger = RegisterValueLogger{&computer};
 
-auto getResult2 = [](const auto& computer){
-    return 0;
+    computer.execute();
+
+    const auto maxRegisterValueAfterExecution  = logger.maxRegisterValueAfterEachExecution.back();
+    const auto maxRegisterValueDuringExecution = std::ranges::max( logger.maxRegisterValueAfterEachExecution );
+    return std::make_pair(maxRegisterValueAfterExecution, maxRegisterValueDuringExecution);
 };
 
 int main(){
