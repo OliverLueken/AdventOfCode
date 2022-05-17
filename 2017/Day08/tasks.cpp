@@ -171,10 +171,10 @@ int main(){
 
     //Task 1
     const auto [maxRegisterValueAfterExecution, maxRegisterValueDuringExecution] = getHighestRegisterValues(computer);
-    std::cout << "Task 1: " << maxRegisterValueAfterExecution << ".\n";
+    std::cout << "The largest register value after execution is " << maxRegisterValueAfterExecution << ".\n";
 
     //Task 2
-    std::cout << "Task 2: " << maxRegisterValueDuringExecution << ".\n";
+    std::cout << "While executing the largest register value was " << maxRegisterValueDuringExecution << ".\n";
 
     VerifySolution::verifySolution(maxRegisterValueAfterExecution, maxRegisterValueDuringExecution);
 }
