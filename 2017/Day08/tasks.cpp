@@ -16,11 +16,11 @@ struct Logger{
 
 struct Subject{
     std::vector<Logger*> logger{};
-    void addLogger(Logger& log){
-        logger.push_back(&log);
+    void addLogger(Logger* log){
+        logger.push_back(log);
     }
-    void removeLogger(const Logger& log){
-        std::erase(logger, &log);
+    void removeLogger(const Logger* log){
+        std::erase(logger, log);
     }
     void notifyLogger() const {
         std::ranges::for_each(logger, [](Logger* log){log->update();});
