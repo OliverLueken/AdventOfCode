@@ -27,7 +27,7 @@ struct Subject{
     }
 };
 
-class Computer{
+class Computer : public Subject {
 
     struct Instruction{
         Instruction() = default;
@@ -122,6 +122,7 @@ public:
     auto execute(){
         for(currentInstructionPosition = 0; currentInstructionPositionIsValid();){
             instructions[currentInstructionPosition]->execute();
+            notifyLogger();
         }
     }
 
