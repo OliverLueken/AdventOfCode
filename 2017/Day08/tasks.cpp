@@ -121,7 +121,7 @@ auto parseInput(const auto& input){
     return comp;
 }
 
-auto getResult1 = [](auto& computer){
+auto getHighestRegisterValue = [](auto& computer){
     computer.execute();
     return std::ranges::max( computer.getRegisterView() | std::views::values );
 };
@@ -134,7 +134,7 @@ int main(){
     auto computer = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result1 = getResult1(computer);
+    const auto result1 = getHighestRegisterValue(computer);
     std::cout << "Task 1: " << result1 << ".\n";
 
     // //Task 2
