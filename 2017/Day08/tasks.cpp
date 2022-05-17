@@ -58,13 +58,17 @@ class Computer : public Subject {
         instructions.emplace_back(std::make_unique<Wrapper<Lambda>>(std::forward<Lambda>(l)));
     }
 
-    auto getComparison(const auto comparator) -> std::function<bool(int, int)>{
+    auto getComparison(const auto comparator) -> std::function<bool(int, int)> const {
         if(comparator == "<")  return std::less<>{};
         if(comparator == "<=") return std::less_equal<>{};
         if(comparator == ">")  return std::greater<>{};
         if(comparator == ">=") return std::greater_equal<>{};
         if(comparator == "==") return std::equal_to<>{};
         return std::not_equal_to<>{};
+    }
+
+    bool currentInstructionPositionIsValid() const {
+        return 0<=currentInstructionPosition && std::less{}(currentInstructionPosition, instructions.size());
     }
 
 public:
@@ -113,10 +117,6 @@ public:
 
     auto addRegisterDecrease(const auto _regAddress, const auto _amount){
         return addRegisterIncrease(_regAddress, -1*_amount);
-    }
-
-    bool currentInstructionPositionIsValid(){
-        return 0<=currentInstructionPosition && std::less{}(currentInstructionPosition, instructions.size());
     }
 
     auto execute(){
