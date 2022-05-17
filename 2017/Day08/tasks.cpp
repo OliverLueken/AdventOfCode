@@ -170,12 +170,11 @@ int main(){
     auto computer = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result1 = getHighestRegisterValue(computer);
-    std::cout << "Task 1: " << result1 << ".\n";
+    const auto [maxRegisterValueAfterExecution, maxRegisterValueDuringExecution] = getHighestRegisterValue(computer);
+    std::cout << "Task 1: " << maxRegisterValueAfterExecution << ".\n";
 
-    // //Task 2
-    // const auto result2 = getResult2(computer);
-    // std::cout << "Task 2: " << result2 << ".\n";
-    //
-    // VerifySolution::verifySolution(result1, result2);
+    //Task 2
+    std::cout << "Task 2: " << maxRegisterValueDuringExecution << ".\n";
+
+    VerifySolution::verifySolution(maxRegisterValueAfterExecution, maxRegisterValueDuringExecution);
 }
