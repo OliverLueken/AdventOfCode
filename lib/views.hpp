@@ -40,6 +40,29 @@ namespace ViewDetails{
                 }
                 return *this;
             }
+
+            constexpr auto& operator--(){
+                if(static_cast<RangeIteratorType>(*this) == firstIt){
+                    RangeIteratorType::operator=(lastIt);
+                }
+                RangeIteratorType::operator--();
+                return *this;
+            }
+
+            constexpr auto operator--(int){
+                CircularIterator temp{*this};
+                --*this;
+                return temp;
+            }
+
+            constexpr auto& operator-=(long i){
+                i%=std::distance(firstIt, lastIt);
+                if(i > std::distance(firstIt, static_cast<RangeIteratorType>(*this)) ){
+                    RangeIteratorType::operator=( lastIt-i+std::distance(firstIt, static_cast<RangeIteratorType>(*this)) );
+                }
+                else{
+                    RangeIteratorType::operator-=(i);
+                }
                 return *this;
             }
         };
