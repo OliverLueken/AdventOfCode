@@ -49,7 +49,7 @@ int main(){
     const auto [score, garbageCharacterCount] = getScoreAndGarbageCount(characterStream);
     std::cout << "The score of the groups in the stream is " << score << ".\n";
 
-    // //Task 2
+    //Task 2
     std::cout << "There are " << garbageCharacterCount << " non-canceled characters in the garbage.\n";
 
     VerifySolution::verifySolution(score, garbageCharacterCount);
