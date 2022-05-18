@@ -35,7 +35,11 @@ namespace ViewDetails{
                 if(i > std::distance(static_cast<RangeIteratorType>(*this), lastIt) ){
                     RangeIteratorType::operator=(firstIt+i-std::distance(static_cast<RangeIteratorType>(*this), lastIt));
                 }
-                RangeIteratorType::operator+=(i);
+                else{
+                    RangeIteratorType::operator+=(i);
+                }
+                return *this;
+            }
                 return *this;
             }
         };
