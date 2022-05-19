@@ -86,9 +86,9 @@ int main(){
     const auto result = getResult(input);
     std::cout << "Task 1: " << result << ".\n";
 
-    // //Task 2
-    // const auto result2 = getResult2(input);
-    // std::cout << "Task 2: " << result2 << ".\n";
+    //Task 2
+    const auto result2 = getResult2(input);
+    std::cout << "Task 2: " << result2 << ".\n";
 
     // VerifySolution::verifySolution(result, result2);
 }
