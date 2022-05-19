@@ -39,7 +39,7 @@ struct KnotHash{
     std::vector<int> lengths{};
     std::vector<int> numbers{};
 
-    KnotHash(std::vector<int> _lengths)
+    KnotHash(std::vector<int>&& _lengths)
         : skipSize{0}, lengths{std::move(_lengths)}, numbers(std::vector<int>(256)){
         std::iota(numbers.begin(), numbers.end(), 0);
         auto circle = views::circle(numbers);
@@ -89,16 +89,14 @@ struct KnotHash{
 };
 
 auto getResult = [](const auto& input){
-    auto lengths = interpretInputAsListOfIntegers(input);
-    auto hashMaker = KnotHash{lengths};
+    auto hashMaker = KnotHash{interpretInputAsListOfIntegers(input)};
     hashMaker.oneRoundKnotHash();
 
     return std::accumulate(hashMaker.begin(), hashMaker.begin()+2, 1, std::multiplies<>{});
 };
 
 auto getResult2 = [](const auto& input){
-    const auto lengths = interpretInputAsListOfBytes(input);
-    auto hashMaker = KnotHash{lengths};
+    auto hashMaker = KnotHash{interpretInputAsListOfBytes(input)};
     return hashMaker.makeHash();
 };
 
