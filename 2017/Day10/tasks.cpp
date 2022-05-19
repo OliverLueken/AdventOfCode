@@ -52,6 +52,10 @@ struct KnotHash{
         }
     }
 
+    auto makeHash(){
+        return 0;
+    }
+
     auto begin(){
         return numbers.begin();
     }
