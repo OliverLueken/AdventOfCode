@@ -71,8 +71,12 @@ struct KnotHash{
         }
         return stream.str();
     }
+
     auto makeHash(){
-        return 0;
+        for(auto round=0; round<64; ++round){
+            oneRoundKnotHash();
+        }
+        return convertToHexadecimalString(getDenseHash());
     }
 
     auto begin(){
