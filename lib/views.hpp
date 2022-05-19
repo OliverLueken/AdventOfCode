@@ -32,7 +32,7 @@ namespace ViewDetails{
 
             constexpr auto& operator+=(long i){
                 i%=std::distance(firstIt, lastIt);
-                if(i > std::distance(static_cast<RangeIteratorType>(*this), lastIt) ){
+                if(i >= std::distance(static_cast<RangeIteratorType>(*this), lastIt) ){
                     RangeIteratorType::operator=(firstIt+i-std::distance(static_cast<RangeIteratorType>(*this), lastIt));
                 }
                 else{
