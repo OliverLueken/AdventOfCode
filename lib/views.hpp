@@ -69,13 +69,15 @@ namespace ViewDetails{
 
         CircularIterator iter;
     public:
+        using iterator = CircularIterator;
+
         constexpr _CircularView() = default;
         constexpr _CircularView(Range range)
         : iter{range}
         {}
 
-        constexpr CircularIterator begin() const {return iter; }
-        constexpr auto             end()   const {return std::unreachable_sentinel; }
+        constexpr iterator begin() const {return iter; }
+        constexpr auto     end()   const {return std::unreachable_sentinel; }
     };
 
 
@@ -96,6 +98,9 @@ inline constexpr bool std::ranges::enable_borrowed_range<ViewDetails::_CircularV
 
 namespace views{
     ViewDetails::CircleViewAdaptor circle;
+
+    template<typename Range>
+    using iterator = ViewDetails::_CircularView<Range&>::iterator;
 }
 
 template<std::ranges::viewable_range Range>
