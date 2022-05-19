@@ -20,19 +20,20 @@ auto parseInput = [](const auto& input){
     return parsed;
 };
 
-auto getResult = [](const auto& parsedInput){
-    std::vector<int> numbers(256);
-    std::iota(numbers.begin(), numbers.end(), 0);
-
-    auto skipSize = 0;
-    auto circle = views::circle(numbers);
-    auto it = circle.begin();
-    for(const auto& length : parsedInput){
+auto oneRoundKnotHash(auto& circle, const auto lengths){
+    static auto it = circle.begin();
+    static auto skipSize = 0;
+    for(const auto& length : lengths){
         std::ranges::reverse(it, it+length);
         it+=length+skipSize;
         ++skipSize;
     }
+}
 
+auto getResult = [](auto& numbers, const auto& parsedInput){
+    auto circle = views::circle(numbers);
+    oneRoundKnotHash(circle, parsedInput);
+    
     return numbers[0]*numbers[1];
 };
 
@@ -44,8 +45,11 @@ auto getResult2 = [](const auto& parsedInput){
 int main(){
     const auto parsedInput = parseInput(readFile::string());
 
+    auto numbers = std::vector<int>(256);
+    std::iota(numbers.begin(), numbers.end(), 0);
+
     //Task 1
-    const auto result = getResult(parsedInput);
+    const auto result = getResult(numbers, parsedInput);
     std::cout << "Task 1: " << result << ".\n";
 
     // //Task 2
