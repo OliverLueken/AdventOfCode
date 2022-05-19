@@ -34,7 +34,7 @@ auto interpretInputAsListOfBytes(const auto& input){
 }
 
 struct KnotHash{
-    views::iterator<std::vector<int>> it{};
+    views::iterator<std::vector<int>> iterator{};
     int skipSize{0};
     std::vector<int> lengths{};
     std::vector<int> numbers{};
@@ -43,13 +43,13 @@ struct KnotHash{
         : skipSize{0}, lengths{std::move(_lengths)}, numbers(std::vector<int>(256)){
         std::iota(numbers.begin(), numbers.end(), 0);
         auto circle = views::circle(numbers);
-        it = circle.begin();
+        iterator = circle.begin();
     }
 
     auto oneRoundKnotHash(){
         for(const auto& length : lengths){
-            std::ranges::reverse(it, it+length);
-            it+=length+skipSize;
+            std::ranges::reverse(iterator, iterator+length);
+            iterator+=length+skipSize;
             ++skipSize;
         }
     }
@@ -88,16 +88,16 @@ struct KnotHash{
     }
 };
 
-auto getResult = [](const auto& input){
+auto getProductOfFirstTwoValuesAfterOneRoundOfHashKnotting = [](const auto& input){
     auto hashMaker = KnotHash{interpretInputAsListOfIntegers(input)};
     hashMaker.oneRoundKnotHash();
-    
+
     const auto firstValue  = *hashMaker.begin();
     const auto secondValue = *(hashMaker.begin()+1);
     return firstValue*secondValue;
 };
 
-auto getResult2 = [](const auto& input){
+auto getKnotHash = [](const auto& input){
     auto hashMaker = KnotHash{interpretInputAsListOfBytes(input)};
     return hashMaker.makeHash();
 };
@@ -106,12 +106,12 @@ int main(){
     const auto input = readFile::string();
 
     //Task 1
-    const auto result = getResult(input);
-    std::cout << "Task 1: " << result << ".\n";
+    const auto product = getProductOfFirstTwoValuesAfterOneRoundOfHashKnotting(input);
+    std::cout << "The product of the first two numbers in the list after knotting is " << product << ".\n";
 
     //Task 2
-    const auto result2 = getResult2(input);
-    std::cout << "Task 2: " << result2 << ".\n";
+    const auto knotHash = getKnotHash(input);
+    std::cout << "The Knot Hash is " << knotHash << ".\n";
 
-    VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(product, knotHash);
 }
