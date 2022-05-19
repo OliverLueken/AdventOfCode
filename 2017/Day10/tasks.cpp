@@ -73,9 +73,10 @@ auto getResult = [](const auto& input){
     return std::accumulate(hashMaker.begin(), hashMaker.begin()+2, 1, std::multiplies<>{});
 };
 
-auto getResult2 = [](const auto& parsedInput){
-
-    return 0;
+auto getResult2 = [](const auto& input){
+    const auto lengths = interpretInputAsListOfBytes(input);
+    auto hashMaker = KnotHash{lengths};
+    return hashMaker.makeHash();
 };
 
 int main(){
