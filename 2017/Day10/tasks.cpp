@@ -20,23 +20,44 @@ auto interpretInputAsListOfIntegers = [](const auto& input){
     return vecOfInts;
 };
 
-auto oneRoundKnotHash(auto& circle, const auto lengths){
-    static auto it = circle.begin();
-    static auto skipSize = 0;
-    for(const auto& length : lengths){
-        std::ranges::reverse(it, it+length);
-        it+=length+skipSize;
-        ++skipSize;
-    }
 }
 
-auto getResult = [](auto& numbers, const auto& input){
-    const auto lengths = interpretInputAsListOfIntegers(input);
+struct KnotHash{
+    views::iterator<std::vector<int>> it{};
+    int skipSize{0};
+    std::vector<int> lengths{};
+    std::vector<int> numbers{};
 
-    auto circle = views::circle(numbers);
-    oneRoundKnotHash(circle, lengths);
+    KnotHash(std::vector<int> _lengths)
+        : skipSize{0}, lengths{std::move(_lengths)}, numbers(std::vector<int>(256)){
+        std::iota(numbers.begin(), numbers.end(), 0);
+        auto circle = views::circle(numbers);
+        it = circle.begin();
+    }
 
-    return numbers[0]*numbers[1];
+    auto oneRoundKnotHash(){
+        for(const auto& length : lengths){
+            std::ranges::reverse(it, it+length);
+            it+=length+skipSize;
+            ++skipSize;
+        }
+    }
+
+    auto begin(){
+        return numbers.begin();
+    }
+
+    auto end(){
+        return numbers.end();
+    }
+};
+
+auto getResult = [](const auto& input){
+    auto lengths = interpretInputAsListOfIntegers(input);
+    auto hashMaker = KnotHash{lengths};
+    hashMaker.oneRoundKnotHash();
+
+    return std::accumulate(hashMaker.begin(), hashMaker.begin()+2, 1, std::multiplies<>{});
 };
 
 auto getResult2 = [](const auto& parsedInput){
@@ -47,11 +68,8 @@ auto getResult2 = [](const auto& parsedInput){
 int main(){
     const auto input = readFile::string();
 
-    auto numbers = std::vector<int>(256);
-    std::iota(numbers.begin(), numbers.end(), 0);
-
     //Task 1
-    const auto result = getResult(numbers, input);
+    const auto result = getResult(input);
     std::cout << "Task 1: " << result << ".\n";
 
     // //Task 2
