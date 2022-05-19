@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <numeric>
 #include <ranges>
+#include <sstream>
+#include <iomanip>
 
 
 auto interpretInputAsListOfIntegers = [](const auto& input){
@@ -62,6 +64,13 @@ struct KnotHash{
         return denseHash;
     }
 
+    auto convertToHexadecimalString(const auto denseHash) const {
+        auto stream = std::stringstream{};
+        for(const auto& val : denseHash){
+            stream << std::hex << val;
+        }
+        return stream.str();
+    }
     auto makeHash(){
         return 0;
     }
