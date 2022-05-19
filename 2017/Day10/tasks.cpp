@@ -20,6 +20,15 @@ auto interpretInputAsListOfIntegers = [](const auto& input){
     return vecOfInts;
 };
 
+auto interpretInputAsListOfBytes(const auto& input){
+    auto vecOfInts = std::vector<int>{};
+    std::ranges::transform(input, std::back_inserter(vecOfInts), [](const auto& s){return static_cast<int>(s);});
+    vecOfInts.push_back(17);
+    vecOfInts.push_back(31);
+    vecOfInts.push_back(73);
+    vecOfInts.push_back(47);
+    vecOfInts.push_back(23);
+    return vecOfInts;
 }
 
 struct KnotHash{
