@@ -91,10 +91,10 @@ struct KnotHash{
 auto getResult = [](const auto& input){
     auto hashMaker = KnotHash{interpretInputAsListOfIntegers(input)};
     hashMaker.oneRoundKnotHash();
+    
     const auto firstValue  = *hashMaker.begin();
     const auto secondValue = *(hashMaker.begin()+1);
     return firstValue*secondValue;
-    // return std::accumulate(hashMaker.begin(), hashMaker.begin()+2, 1, std::multiplies<>{});
 };
 
 auto getResult2 = [](const auto& input){
