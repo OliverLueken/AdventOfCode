@@ -52,6 +52,16 @@ struct KnotHash{
         }
     }
 
+    auto getDenseHash() const {
+        auto denseHash = std::vector<int>{};
+        for(auto it = std::begin(numbers); it!=std::end(numbers); it+=16){
+            denseHash.push_back(
+                std::accumulate(it+1, it+16, *it, [](const auto& lhs, const auto& rhs){return lhs^rhs;})
+            );
+        }
+        return denseHash;
+    }
+
     auto makeHash(){
         return 0;
     }
