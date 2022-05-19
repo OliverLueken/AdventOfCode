@@ -13,11 +13,11 @@
 #include <ranges>
 
 
-auto parseInput = [](const auto& input){
-    std::vector<int> parsed{};
+auto interpretInputAsListOfIntegers = [](const auto& input){
+    auto vecOfInts = std::vector<int>{};
     auto split = Utilities::split(input, ',');
-    std::ranges::transform(split, std::back_inserter(parsed), [](const auto& s){return std::stoi(s);});
-    return parsed;
+    std::ranges::transform(split, std::back_inserter(vecOfInts), [](const auto& s){return std::stoi(s);});
+    return vecOfInts;
 };
 
 auto oneRoundKnotHash(auto& circle, const auto lengths){
@@ -30,10 +30,12 @@ auto oneRoundKnotHash(auto& circle, const auto lengths){
     }
 }
 
-auto getResult = [](auto& numbers, const auto& parsedInput){
+auto getResult = [](auto& numbers, const auto& input){
+    const auto lengths = interpretInputAsListOfIntegers(input);
+
     auto circle = views::circle(numbers);
-    oneRoundKnotHash(circle, parsedInput);
-    
+    oneRoundKnotHash(circle, lengths);
+
     return numbers[0]*numbers[1];
 };
 
@@ -43,17 +45,17 @@ auto getResult2 = [](const auto& parsedInput){
 };
 
 int main(){
-    const auto parsedInput = parseInput(readFile::string());
+    const auto input = readFile::string();
 
     auto numbers = std::vector<int>(256);
     std::iota(numbers.begin(), numbers.end(), 0);
 
     //Task 1
-    const auto result = getResult(numbers, parsedInput);
+    const auto result = getResult(numbers, input);
     std::cout << "Task 1: " << result << ".\n";
 
     // //Task 2
-    // const auto result2 = getResult2(parsedInput);
+    // const auto result2 = getResult2(input);
     // std::cout << "Task 2: " << result2 << ".\n";
 
     // VerifySolution::verifySolution(result, result2);
