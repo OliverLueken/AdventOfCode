@@ -11,6 +11,8 @@
 #include <numeric>
 #include <ranges>
 
+enum class Direction{North, NorthEast, SouthEast, South, SouthWest, NorthWest};
+
 auto parseInput = [](const auto& input){
     return Utilities::split(input, ',');
 };
