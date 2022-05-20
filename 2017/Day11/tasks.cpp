@@ -11,7 +11,11 @@
 #include <numeric>
 #include <ranges>
 
-enum class Direction{North, NorthEast, SouthEast, South, SouthWest, NorthWest};
+enum class Direction{North=0, NorthEast, SouthEast, South, SouthWest, NorthWest};
+
+Direction rotate(Direction d, int r){
+    return static_cast<Direction>((static_cast<int>(d)+r)%6);
+}
 
 auto parseInput = [](const auto& input){
     const auto split = Utilities::split(input, ',');
