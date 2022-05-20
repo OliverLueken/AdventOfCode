@@ -14,7 +14,17 @@
 enum class Direction{North, NorthEast, SouthEast, South, SouthWest, NorthWest};
 
 auto parseInput = [](const auto& input){
-    return Utilities::split(input, ',');
+    const auto split = Utilities::split(input, ',');
+    auto directions = std::vector<Direction>{};
+    std::ranges::transform(split, std::back_inserter(directions), [](const auto& direction){
+        if(direction == "n")  return Direction::North;
+        if(direction == "ne") return Direction::NorthEast;
+        if(direction == "se") return Direction::SouthEast;
+        if(direction == "s")  return Direction::South;
+        if(direction == "sw") return Direction::SouthWest;
+        return Direction::NorthWest;
+    });
+    return directions;
 };
 
 auto getDistance = [](const auto& directions){
