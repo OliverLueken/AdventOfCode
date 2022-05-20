@@ -31,6 +31,40 @@ auto parseInput = [](const auto& input){
     return directions;
 };
 
+auto getDistance(auto& directionCount){
+    static const auto allDirections = std::vector<Direction>{
+        Direction::North,
+        Direction::NorthEast,
+        Direction::SouthEast,
+        Direction::South,
+        Direction::SouthWest,
+        Direction::NorthWest
+    };
+
+    auto removeOpposingDirections = [&directionCount](){
+        for(const auto& direction : allDirections | std::views::take(3)){
+            const auto val = std::min(directionCount[direction], directionCount[rotate(direction, 3)]);
+            directionCount[direction]-=val;
+            directionCount[rotate(direction, 3)]-=val;
+        }
+    };
+
+    auto straightenDirections = [&directionCount](){
+        for(const auto& direction : allDirections){
+            const auto val = std::min(directionCount[direction], directionCount[rotate(direction, 2)]);
+            directionCount[direction]-=val;
+            directionCount[rotate(direction, 2)]-=val;
+            directionCount[rotate(direction, 1)]+=val;
+        }
+    };
+
+    removeOpposingDirections();
+    straightenDirections();
+    removeOpposingDirections();
+
+    return Utilities::sum(allDirections, 0, [&directionCount](const auto& dir){return directionCount[dir];});
+}
+
 auto getDistanceFromDestination = [](const auto& directions){
     std::unordered_map<Direction, int> directionCount{};
     std::ranges::for_each(directions, [&directionCount](const auto& direction){
