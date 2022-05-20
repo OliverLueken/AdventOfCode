@@ -31,8 +31,12 @@ auto parseInput = [](const auto& input){
     return directions;
 };
 
-auto getShortestDistance = [](const auto& directions){
-    return 0;
+auto getDistanceFromDestination = [](const auto& directions){
+    std::unordered_map<Direction, int> directionCount{};
+    std::ranges::for_each(directions, [&directionCount](const auto& direction){
+        ++directionCount[direction];
+    });
+    return getDistance(directionCount);
 };
 
 auto getResult2 = [](const auto& directions){
@@ -44,7 +48,7 @@ int main(){
     const auto directions = parseInput(readFile::string());
 
     //Task 1
-    const auto shortestDistance = getShortestDistance(directions);
+    const auto shortestDistance = getDistanceFromDestination(directions);
     std::cout << "Task 1: " << shortestDistance << ".\n";
 
     // //Task 2
