@@ -73,9 +73,14 @@ auto getDistanceFromDestination = [](const auto& directions){
     return getDistance(directionCount);
 };
 
-auto getResult2 = [](const auto& directions){
-
-    return 0;
+auto getMaxDistance = [](const auto& directions){
+    std::unordered_map<Direction, int> directionCount{};
+    auto maxDistance = 0;
+    std::ranges::for_each(directions, [&directionCount, &maxDistance](const auto& direction){
+        ++directionCount[direction];
+        maxDistance = std::max(maxDistance, getDistance(directionCount));
+    });
+    return maxDistance;
 };
 
 int main(){
@@ -85,9 +90,9 @@ int main(){
     const auto shortestDistance = getDistanceFromDestination(directions);
     std::cout << "Task 1: " << shortestDistance << ".\n";
 
-    // //Task 2
-    // const auto result2 = getResult2(directions);
-    // std::cout << "Task 2: " << result2 << ".\n";
+    //Task 2
+    const auto maxDistance = getMaxDistance(directions);
+    std::cout << "Task 2: " << maxDistance << ".\n";
 
-    // VerifySolution::verifySolution(shortestDistance, result2);
+    // VerifySolution::verifySolution(shortestDistance, maxDistance);
 }
