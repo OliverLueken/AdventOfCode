@@ -94,5 +94,5 @@ int main(){
     const auto maxDistance = getMaxDistance(directions);
     std::cout << "Task 2: " << maxDistance << ".\n";
 
-    // VerifySolution::verifySolution(shortestDistance, maxDistance);
+    VerifySolution::verifySolution(shortestDistance, maxDistance);
 }
