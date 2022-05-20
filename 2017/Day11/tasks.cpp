@@ -27,8 +27,7 @@ auto parseInput = [](const auto& input){
     return directions;
 };
 
-auto getDistance = [](const auto& directions){
-    
+auto getShortestDistance = [](const auto& directions){
     return 0;
 };
 
