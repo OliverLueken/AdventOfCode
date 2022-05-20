@@ -62,7 +62,7 @@ auto getDistance(auto& directionCount){
     straightenDirections();
     removeOpposingDirections();
 
-    return Utilities::sum(allDirections, 0, [&directionCount](const auto& dir){return directionCount[dir];});
+    return Utilities::sum(directionCount | std::views::values);
 }
 
 auto getDistanceFromDestination = [](const auto& directions){
@@ -75,7 +75,7 @@ auto getDistanceFromDestination = [](const auto& directions){
 
 auto getMaxDistance = [](const auto& directions){
     std::unordered_map<Direction, int> directionCount{};
-    auto maxDistance = 0;
+    auto maxDistance = 0u;
     std::ranges::for_each(directions, [&directionCount, &maxDistance](const auto& direction){
         ++directionCount[direction];
         maxDistance = std::max(maxDistance, getDistance(directionCount));
