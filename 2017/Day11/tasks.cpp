@@ -41,26 +41,26 @@ auto getDistance(auto& directionCount){
         Direction::NorthWest
     };
 
-    auto removeOpposingDirections = [&directionCount](){
+    auto removeOpposingDirections = [](auto& _directionCount){
         for(const auto& direction : allDirections | std::views::take(3)){
-            const auto val = std::min(directionCount[direction], directionCount[rotate(direction, 3)]);
-            directionCount[direction]-=val;
-            directionCount[rotate(direction, 3)]-=val;
+            const auto val = std::min(_directionCount[direction], _directionCount[rotate(direction, 3)]);
+            _directionCount[direction]-=val;
+            _directionCount[rotate(direction, 3)]-=val;
         }
     };
 
-    auto straightenDirections = [&directionCount](){
+    auto straightenDirections = [](auto& _directionCount){
         for(const auto& direction : allDirections){
-            const auto val = std::min(directionCount[direction], directionCount[rotate(direction, 2)]);
-            directionCount[direction]-=val;
-            directionCount[rotate(direction, 2)]-=val;
-            directionCount[rotate(direction, 1)]+=val;
+            const auto val = std::min(_directionCount[direction], _directionCount[rotate(direction, 2)]);
+            _directionCount[direction]-=val;
+            _directionCount[rotate(direction, 2)]-=val;
+            _directionCount[rotate(direction, 1)]+=val;
         }
     };
 
-    removeOpposingDirections();
-    straightenDirections();
-    removeOpposingDirections();
+    removeOpposingDirections(directionCount);
+    straightenDirections(directionCount);
+    removeOpposingDirections(directionCount);
 
     return Utilities::sum(directionCount | std::views::values);
 }
