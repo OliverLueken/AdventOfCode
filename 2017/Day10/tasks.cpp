@@ -67,7 +67,7 @@ struct KnotHash{
     auto convertToHexadecimalString(const auto denseHash) const {
         auto stream = std::stringstream{};
         for(const auto& val : denseHash){
-            stream << std::hex << val;
+            stream << std::setfill('0') << std::setw(2) << std::hex << val;
         }
         return stream.str();
     }
