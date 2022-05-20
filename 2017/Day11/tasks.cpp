@@ -12,33 +12,29 @@
 #include <ranges>
 
 auto parseInput = [](const auto& input){
-    std::vector<> parsed;
-    for(const auto& row : input){
-
-    }
-    return parsed;
+    return Utilities::split(input, ',');
 };
 
-auto getResult = [](const auto& parsedInput){
-
+auto getDistance = [](const auto& directions){
+    
     return 0;
 };
 
-auto getResult2 = [](const auto& parsedInput){
+auto getResult2 = [](const auto& directions){
 
     return 0;
 };
 
 int main(){
-    const auto parsedInput = parseInput(readFile::vectorOfStrings());
+    const auto directions = parseInput(readFile::string());
 
     //Task 1
-    const auto result = getResult(parsedInput);
-    std::cout << "Task 1: " << result << ".\n";
+    const auto shortestDistance = getShortestDistance(directions);
+    std::cout << "Task 1: " << shortestDistance << ".\n";
 
     // //Task 2
-    // const auto result2 = getResult2(parsedInput);
+    // const auto result2 = getResult2(directions);
     // std::cout << "Task 2: " << result2 << ".\n";
 
-    // VerifySolution::verifySolution(result, result2);
+    // VerifySolution::verifySolution(shortestDistance, result2);
 }
