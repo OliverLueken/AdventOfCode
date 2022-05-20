@@ -88,11 +88,11 @@ int main(){
 
     //Task 1
     const auto shortestDistance = getDistanceFromDestination(directions);
-    std::cout << "Task 1: " << shortestDistance << ".\n";
+    std::cout << "The child is " << shortestDistance << " steps away.\n";
 
     //Task 2
     const auto maxDistance = getMaxDistance(directions);
-    std::cout << "Task 2: " << maxDistance << ".\n";
+    std::cout << "The furthest distance the child got from the center was " << maxDistance << " steps away.\n";
 
     VerifySolution::verifySolution(shortestDistance, maxDistance);
 }
