@@ -12,6 +12,11 @@
 #include <numeric>
 #include <ranges>
 
+class Network{
+public:
+    std::unordered_map<int, std::vector<int>> connections{};
+};
+
 auto parseInput = [](const auto& input){
     std::vector<> parsed;
     for(const auto& row : input){
