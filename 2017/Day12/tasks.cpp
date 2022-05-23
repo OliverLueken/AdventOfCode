@@ -6,12 +6,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <unordered_map>
-#include <unordered_set>
 #include <algorithm>
-#include <numeric>
 #include <ranges>
 #include <deque>
+#include <set>
 
 class Network{
 public:
@@ -31,7 +29,7 @@ auto parseInput = [](const auto& input){
 };
 
 auto getGroupWith(const auto& network, const auto id){
-    auto group = std::unordered_set<int>{};
+    auto group = std::set<int>{};
     auto toVisit = std::deque<int>{id};
 
     while(!toVisit.empty()){
@@ -46,8 +44,24 @@ auto getGroupWith(const auto& network, const auto id){
 }
 
 auto getResult = [](const auto& network){
-    const auto group = getGroupWith(network, 0);
-    return group.size();
+    auto groupCount = 0;
+    auto groupSizeWithIdZero = 0ul;
+    auto remainingIds = std::set<int>{};
+    std::ranges::copy(network.connections | std::views::keys, std::inserter(remainingIds, std::begin(remainingIds)));
+    while(!remainingIds.empty()){
+        const auto id = *(remainingIds.begin());
+        const auto group = getGroupWith(network, id);
+
+        if(group.contains(0)){
+            groupSizeWithIdZero = group.size();
+        }
+
+        auto tempDifference = std::set<int>{};
+        std::ranges::set_difference(remainingIds, group, std::inserter(tempDifference, std::begin(tempDifference)));
+        std::swap(remainingIds, tempDifference);
+        ++groupCount;
+    }
+    return std::make_pair(groupSizeWithIdZero, groupCount);
 };
 
 auto getResult2 = [](const auto& network){
@@ -59,12 +73,12 @@ int main(){
     const auto network = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result = getResult(network);
+    const auto [result, result2] = getResult(network);
     std::cout << "Task 1: " << result << ".\n";
 
     // //Task 2
     // const auto result2 = getResult2(network);
-    // std::cout << "Task 2: " << result2 << ".\n";
+    std::cout << "Task 2: " << result2 << ".\n";
 
     // VerifySolution::verifySolution(result, result2);
 }
