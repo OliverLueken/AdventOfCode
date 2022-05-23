@@ -30,7 +30,8 @@ auto parseInput = [](const auto& input){
 };
 
 auto getResult = [](const auto& network){
-    return 0;
+    const auto group = getGroupWith(network, 0);
+    return group.size();
 };
 
 auto getResult2 = [](const auto& network){
