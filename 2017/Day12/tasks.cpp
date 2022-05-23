@@ -41,7 +41,7 @@ auto getGroupWith(const auto& connections, const auto id){
     return group;
 }
 
-auto getResult = [](const auto& connections){
+auto getConnectionGroupInformation = [](const auto& connections){
     auto groupSizeWithIdZero = 0ul;
     auto groupCount = 0;
 
@@ -68,11 +68,11 @@ int main(){
     const auto connections = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto [result, result2] = getResult(connections);
-    std::cout << "Task 1: " << result << ".\n";
+    const auto [groupSizeWithIdZero, groupCount] = getConnectionGroupInformation(connections);
+    std::cout << "The group with programm 0 has a size of " << groupSizeWithIdZero << ".\n";
 
     //Task 2
-    std::cout << "Task 2: " << result2 << ".\n";
+    std::cout << "There are " << groupCount << " different groups.\n";
 
-    VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(groupSizeWithIdZero, groupCount);
 }
