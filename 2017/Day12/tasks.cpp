@@ -29,25 +29,24 @@ auto parseInput = [](const auto& input){
     return network;
 };
 
-auto getResult = [](const auto& parsedInput){
-
+auto getResult = [](const auto& network){
     return 0;
 };
 
-auto getResult2 = [](const auto& parsedInput){
+auto getResult2 = [](const auto& network){
 
     return 0;
 };
 
 int main(){
-    const auto parsedInput = parseInput(readFile::vectorOfStrings());
+    const auto network = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result = getResult(parsedInput);
+    const auto result = getResult(network);
     std::cout << "Task 1: " << result << ".\n";
 
     // //Task 2
-    // const auto result2 = getResult2(parsedInput);
+    // const auto result2 = getResult2(network);
     // std::cout << "Task 2: " << result2 << ".\n";
 
     // VerifySolution::verifySolution(result, result2);
