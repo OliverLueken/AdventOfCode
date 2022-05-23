@@ -42,10 +42,12 @@ auto getGroupWith(const auto& connections, const auto id){
 }
 
 auto getResult = [](const auto& connections){
-    auto groupCount = 0;
     auto groupSizeWithIdZero = 0ul;
+    auto groupCount = 0;
+
     auto remainingIds = std::set<int>{};
     std::ranges::copy(connections | std::views::keys, std::inserter(remainingIds, std::begin(remainingIds)));
+
     while(!remainingIds.empty()){
         const auto id = *(remainingIds.begin());
         const auto group = getGroupWith(connections, id);
@@ -53,18 +55,13 @@ auto getResult = [](const auto& connections){
         if(group.contains(0)){
             groupSizeWithIdZero = group.size();
         }
+        ++groupCount;
 
         auto tempDifference = std::set<int>{};
         std::ranges::set_difference(remainingIds, group, std::inserter(tempDifference, std::begin(tempDifference)));
         std::swap(remainingIds, tempDifference);
-        ++groupCount;
     }
     return std::make_pair(groupSizeWithIdZero, groupCount);
-};
-
-auto getResult2 = [](const auto& connections){
-
-    return 0;
 };
 
 int main(){
