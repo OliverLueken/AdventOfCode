@@ -18,11 +18,15 @@ public:
 };
 
 auto parseInput = [](const auto& input){
-    std::vector<> parsed;
+    auto network = Network{};
     for(const auto& row : input){
-
+        const auto split = Utilities::splitOnEach(row, ", ");
+        const auto id = std::stoi(split[0]);
+        std::ranges::transform(split.begin()+2, split.end(), std::back_inserter(network.connections[id]), [](const auto& neighbor){
+            return std::stoi(neighbor);
+        });
     }
-    return parsed;
+    return network;
 };
 
 auto getResult = [](const auto& parsedInput){
