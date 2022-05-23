@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <numeric>
 #include <ranges>
+#include <deque>
 
 class Network{
 public:
@@ -28,6 +29,21 @@ auto parseInput = [](const auto& input){
     }
     return network;
 };
+
+auto getGroupWith(const auto& network, const auto id){
+    auto group = std::unordered_set<int>{};
+    auto toVisit = std::deque<int>{id};
+
+    while(!toVisit.empty()){
+        const auto nextId = toVisit.front();
+        toVisit.pop_front();
+        if(group.insert(nextId).second){
+            std::ranges::copy(network.connections.at(nextId), std::back_inserter(toVisit));
+        }
+    }
+
+    return group;
+}
 
 auto getResult = [](const auto& network){
     const auto group = getGroupWith(network, 0);
