@@ -11,24 +11,22 @@
 #include <deque>
 #include <set>
 
-class Network{
-public:
-    std::unordered_map<int, std::vector<int>> connections{};
-};
+
+using Connections = std::unordered_map<int, std::vector<int>>;
 
 auto parseInput = [](const auto& input){
-    auto network = Network{};
+    auto connections = Connections{};
     for(const auto& row : input){
         const auto split = Utilities::splitOnEach(row, ", ");
         const auto id = std::stoi(split[0]);
-        std::ranges::transform(split.begin()+2, split.end(), std::back_inserter(network.connections[id]), [](const auto& neighbor){
+        std::ranges::transform(split.begin()+2, split.end(), std::back_inserter(connections[id]), [](const auto& neighbor){
             return std::stoi(neighbor);
         });
     }
-    return network;
+    return connections;
 };
 
-auto getGroupWith(const auto& network, const auto id){
+auto getGroupWith(const auto& connections, const auto id){
     auto group = std::set<int>{};
     auto toVisit = std::deque<int>{id};
 
@@ -36,21 +34,21 @@ auto getGroupWith(const auto& network, const auto id){
         const auto nextId = toVisit.front();
         toVisit.pop_front();
         if(group.insert(nextId).second){
-            std::ranges::copy(network.connections.at(nextId), std::back_inserter(toVisit));
+            std::ranges::copy(connections.at(nextId), std::back_inserter(toVisit));
         }
     }
 
     return group;
 }
 
-auto getResult = [](const auto& network){
+auto getResult = [](const auto& connections){
     auto groupCount = 0;
     auto groupSizeWithIdZero = 0ul;
     auto remainingIds = std::set<int>{};
-    std::ranges::copy(network.connections | std::views::keys, std::inserter(remainingIds, std::begin(remainingIds)));
+    std::ranges::copy(connections | std::views::keys, std::inserter(remainingIds, std::begin(remainingIds)));
     while(!remainingIds.empty()){
         const auto id = *(remainingIds.begin());
-        const auto group = getGroupWith(network, id);
+        const auto group = getGroupWith(connections, id);
 
         if(group.contains(0)){
             groupSizeWithIdZero = group.size();
@@ -64,20 +62,19 @@ auto getResult = [](const auto& network){
     return std::make_pair(groupSizeWithIdZero, groupCount);
 };
 
-auto getResult2 = [](const auto& network){
+auto getResult2 = [](const auto& connections){
 
     return 0;
 };
 
 int main(){
-    const auto network = parseInput(readFile::vectorOfStrings());
+    const auto connections = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto [result, result2] = getResult(network);
+    const auto [result, result2] = getResult(connections);
     std::cout << "Task 1: " << result << ".\n";
 
-    // //Task 2
-    // const auto result2 = getResult2(network);
+    //Task 2
     std::cout << "Task 2: " << result2 << ".\n";
 
     VerifySolution::verifySolution(result, result2);
