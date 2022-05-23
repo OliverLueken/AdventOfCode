@@ -45,8 +45,8 @@ auto getConnectionGroupInformation = [](const auto& connections){
     auto groupSizeWithIdZero = 0ul;
     auto groupCount = 0;
 
-    auto remainingIds = std::set<int>{};
-    std::ranges::copy(connections | std::views::keys, std::inserter(remainingIds, std::begin(remainingIds)));
+    const auto allIds = connections | std::views::keys;
+    auto remainingIds = std::set<int>{std::begin(allIds), std::end(allIds)};
 
     while(!remainingIds.empty()){
         const auto id = *(remainingIds.begin());
