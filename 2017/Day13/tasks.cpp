@@ -10,7 +10,7 @@
 struct Layer{
     int depth;
     int range;
-}
+};
 
 auto parseInput = [](const auto& input){
     std::vector<> parsed;
