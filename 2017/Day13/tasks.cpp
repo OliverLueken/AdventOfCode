@@ -13,9 +13,10 @@ struct Layer{
 };
 
 auto parseInput = [](const auto& input){
-    std::vector<> parsed;
+    std::vector<Layer> parsed;
     for(const auto& row : input){
-
+        auto split = Utilities::split(row);
+        parsed.emplace_back(std::stoi(split[0]), std::stoi(split[1]));
     }
     return parsed;
 };
