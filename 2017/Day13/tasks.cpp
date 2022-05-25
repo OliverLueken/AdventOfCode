@@ -24,7 +24,7 @@ auto parseInput = [](const auto& input){
 auto getSeverity(const auto& firewall, int startTime){
     auto severity = 0;
     for(const auto& layer : firewall){
-        int time = startTime+layer.depth;
+        const int time = startTime+layer.depth;
         if(time%(2*layer.range-2) == 0){
             severity+=layer.depth*layer.range;
         }
