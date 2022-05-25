@@ -7,6 +7,11 @@
 #include <string>
 #include <vector>
 
+struct Layer{
+    int depth;
+    int range;
+}
+
 auto parseInput = [](const auto& input){
     std::vector<> parsed;
     for(const auto& row : input){
