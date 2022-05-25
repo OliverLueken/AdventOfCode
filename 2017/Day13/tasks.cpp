@@ -33,7 +33,7 @@ auto getSeverity(const auto& firewall, int startTime){
 }
 
 auto getResult = [](const auto& firewall){
-    return 0;
+    return getSeverity(firewall, 0);
 };
 
 auto getResult2 = [](const auto& firewall){
