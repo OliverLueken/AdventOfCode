@@ -15,27 +15,27 @@ struct Layer{
 auto parseInput = [](const auto& input){
     std::vector<Layer> firewall;
     for(const auto& row : input){
-        auto split = Utilities::split(row);
-        firewall.emplace_back(std::stoi(split[0]), std::stoi(split[1]));
+        const auto split = Utilities::split(row);
+        firewall.emplace_back(std::stoi(split[0]), 2*std::stoi(split[1])-2);
     }
     return firewall;
 };
 
-auto getSeverity(const auto& firewall, int startTime){
+auto getSeverity(const auto& firewall, const int startTime){
     auto severity = 0;
     for(const auto& layer : firewall){
         const int time = startTime+layer.depth;
-        if(time%(2*layer.range-2) == 0){
-            severity+=layer.depth*layer.range;
+        if(time%layer.range == 0){
+            severity+=layer.depth*(layer.range+2)/2;
         }
     }
     return severity;
 }
 
-auto gotCaught(const auto& firewall, int startTime){
+auto gotCaught(const auto& firewall, const int startTime){
     for(const auto& layer : firewall){
         const int time = startTime+layer.depth;
-        if(time%(2*layer.range-2) == 0) return true;
+        if(time%layer.range == 0) return true;
     }
     return false;
 }
