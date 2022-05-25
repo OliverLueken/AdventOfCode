@@ -13,33 +13,32 @@ struct Layer{
 };
 
 auto parseInput = [](const auto& input){
-    std::vector<Layer> parsed;
+    std::vector<Layer> firewall;
     for(const auto& row : input){
         auto split = Utilities::split(row);
-        parsed.emplace_back(std::stoi(split[0]), std::stoi(split[1]));
+        firewall.emplace_back(std::stoi(split[0]), std::stoi(split[1]));
     }
-    return parsed;
+    return firewall;
 };
 
-auto getResult = [](const auto& parsedInput){
-
+auto getResult = [](const auto& firewall){
     return 0;
 };
 
-auto getResult2 = [](const auto& parsedInput){
+auto getResult2 = [](const auto& firewall){
 
     return 0;
 };
 
 int main(){
-    const auto parsedInput = parseInput(readFile::vectorOfStrings());
+    const auto firewall = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result = getResult(parsedInput);
+    const auto result = getResult(firewall);
     std::cout << "Task 1: " << result << ".\n";
 
     // //Task 2
-    // const auto result2 = getResult2(parsedInput);
+    // const auto result2 = getResult2(firewall);
     // std::cout << "Task 2: " << result2 << ".\n";
 
     // VerifySolution::verifySolution(result, result2);
