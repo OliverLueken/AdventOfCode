@@ -45,8 +45,11 @@ auto getResult = [](const auto& firewall){
 };
 
 auto getResult2 = [](const auto& firewall){
-
-    return 0;
+    auto startTime = 0;
+    while(gotCaught(firewall, startTime)){
+        ++startTime;
+    }
+    return startTime;
 };
 
 int main(){
