@@ -32,6 +32,14 @@ auto getSeverity(const auto& firewall, int startTime){
     return severity;
 }
 
+auto gotCaught(const auto& firewall, int startTime){
+    for(const auto& layer : firewall){
+        const int time = startTime+layer.depth;
+        if(time%(2*layer.range-2) == 0) return true;
+    }
+    return false;
+}
+
 auto getResult = [](const auto& firewall){
     return getSeverity(firewall, 0);
 };
