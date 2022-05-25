@@ -7,6 +7,7 @@
 #include <iterator>
 #include <algorithm>
 #include <numeric>
+#include <set>
 
 namespace Utilities{
 
@@ -234,6 +235,49 @@ namespace Utilities{
 
     };
     inline constexpr sum_ sum;
+
+
+
+    struct setDifference_{
+        /*
+        Returns a set of the elements from the sorted input range [first1, last1) which are not found in the sorted input range [first2, last2)
+        */
+        template<
+            std::forward_iterator I1, std::sentinel_for<I1> S1,
+            std::forward_iterator I2, std::sentinel_for<I2> S2,
+            class Comp = std::ranges::less,
+            class Proj1 = std::identity,
+            class Proj2 = std::identity
+        >
+        constexpr auto
+        operator()(I1 first1, S1 last1, I2 first2, S2 last2, Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {}) const {
+            using T = std::iter_value_t<I1>;
+            auto difference = std::set<T>{};
+            std::ranges::set_difference(first1, last1, first2, last2, std::inserter(difference, std::begin(difference)), comp, proj1, proj2);
+            return difference;
+        }
+
+        /*
+        Returns a set of the elements from the sorted input range r1 which are not found in the sorted input range r2
+        */
+        template<
+            std::ranges::forward_range R1,
+            std::ranges::forward_range R2,
+            class Comp = std::ranges::less,
+            class Proj1 = std::identity,
+            class Proj2 = std::identity
+        >
+        constexpr auto
+        operator()(R1&& r1, R2&& r2, Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {}) const {
+            return (*this)(
+                std::ranges::begin(r1), std::ranges::end(r1),
+                std::ranges::begin(r2), std::ranges::end(r2),
+                std::move(comp), std::move(proj1), std::move(proj2)
+            );
+        }
+
+    };
+    inline constexpr setDifference_ setDifference;
 };
 
 #endif
