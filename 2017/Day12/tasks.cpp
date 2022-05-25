@@ -10,6 +10,7 @@
 #include <ranges>
 #include <deque>
 #include <set>
+#include <unordered_map>
 
 
 using Connections = std::unordered_map<int, std::vector<int>>;
@@ -57,9 +58,8 @@ auto getConnectionGroupInformation = [](const auto& connections){
         }
         ++groupCount;
 
-        auto tempDifference = std::set<int>{};
-        std::ranges::set_difference(remainingIds, group, std::inserter(tempDifference, std::begin(tempDifference)));
-        std::swap(remainingIds, tempDifference);
+        auto remainingIdsTemp = Utilities::setDifference(remainingIds, group);
+        std::swap(remainingIds, remainingIdsTemp);
     }
     return std::make_pair(groupSizeWithIdZero, groupCount);
 };
