@@ -40,11 +40,7 @@ auto gotCaught(const auto& firewall, int startTime){
     return false;
 }
 
-auto getResult = [](const auto& firewall){
-    return getSeverity(firewall, 0);
-};
-
-auto getResult2 = [](const auto& firewall){
+auto getDelayToNotGetCaught = [](const auto& firewall){
     auto startTime = 0;
     while(gotCaught(firewall, startTime)){
         ++startTime;
@@ -56,12 +52,12 @@ int main(){
     const auto firewall = parseInput(readFile::vectorOfStrings());
 
     //Task 1
-    const auto result = getResult(firewall);
-    std::cout << "Task 1: " << result << ".\n";
+    const auto severityOfNotDelaying = getSeverity(firewall, 0);
+    std::cout << "The severity of going through the firewall right away is " << severityOfNotDelaying << ".\n";
 
     //Task 2
-    const auto result2 = getResult2(firewall);
-    std::cout << "Task 2: " << result2 << ".\n";
+    const auto minimumDelay = getDelayToNotGetCaught(firewall);
+    std::cout << "We need to delay " << minimumDelay << " picoseconds to not get caught in the firewall.\n";
 
-    VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(severityOfNotDelaying, minimumDelay);
 }
