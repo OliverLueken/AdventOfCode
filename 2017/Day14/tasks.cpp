@@ -92,6 +92,24 @@ auto hexToBin(const char c){
     return binary.to_string();
 }
 
+auto makeDisc(const auto& input){
+    auto getMemoryRow = [](auto&& _input){
+        auto hashMaker = KnotHash{std::move(_input)};
+        auto hash = hashMaker.makeHash();
+
+        auto stream = std::stringstream{};
+        for(const auto& val : hash){
+            stream << hexToBin(val);
+        }
+        return stream.str();
+    };
+
+    auto disc = std::vector<std::string>{};
+    for(auto row : std::views::iota(0,128)){
+        disc.emplace_back(getMemoryRow(input+'-'+std::to_string(row)));
+    }
+    return disc;
+}
 
 auto getResult = [](const auto& input){
 
