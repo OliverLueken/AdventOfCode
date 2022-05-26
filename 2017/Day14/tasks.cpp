@@ -125,15 +125,15 @@ auto getResult2 = [](const auto& input){
 };
 
 int main(){
-    const auto input = readFile::string();
+    const auto disc = makeDisc(readFile::string());
 
     //Task 1
-    const auto result = getResult(input);
+    const auto result = getResult(disc);
     std::cout << "Task 1: " << result << ".\n";
 
-    // //Task 2
-    // const auto result2 = getResult2(input);
-    // std::cout << "Task 2: " << result2 << ".\n";
+    //Task 2
+    const auto result2 = getResult2(disc);
+    std::cout << "Task 2: " << result2 << ".\n";
 
     // VerifySolution::verifySolution(result, result2);
 }
