@@ -119,9 +119,41 @@ struct Memory{
     bool isGrouped{false};
 };
 
-auto getResult2 = [](const auto& input){
+auto getResult2 = [](const auto& disc){
+    auto discGroups = Matrix::Matrix<Memory>{
+        128, 128, disc | std::views::join | std::views::transform(
+            [](const auto& c){
+                return Memory{c=='1', false};
+            }
+        )
+    };
+    auto groupCount = 0;
 
-    return 0;
+    auto groupMemory = [&groupCount](auto& _discGroups, auto it){
+        auto toVisit = std::deque<decltype(it)>{it};
+        while(!toVisit.empty()){
+            auto currentIt = toVisit.front();
+            toVisit.pop_front();
+            currentIt->isGrouped = true;
+
+            std::ranges::copy_if(
+                getNeighbors(_discGroups, currentIt),
+                std::inserter(toVisit, std::begin(toVisit)),
+                [](const auto _it){
+                    return _it->used && !_it->isGrouped;
+                }
+            );
+        }
+    };
+
+    for(auto it=discGroups.begin(); it!=discGroups.end(); ++it){
+        if(it->used && !it->isGrouped){
+            ++groupCount;
+            groupMemory(discGroups, it);
+        }
+    }
+
+    return groupCount;
 };
 
 int main(){
