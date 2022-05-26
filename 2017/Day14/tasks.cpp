@@ -3,6 +3,7 @@
 #include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
 #include "../../lib/matrix.hpp"
+#include "../../lib/views.hpp"
 
 #include <iostream>
 #include <string>
@@ -21,7 +22,7 @@ struct KnotHash{
     std::vector<int> lengths{};
     std::vector<int> numbers{};
 
-    KnotHash(std::vector<int>&& input)
+    KnotHash(std::string&& input)
         : skipSize{0}, lengths{interpretInputAsListOfBytes(std::move(input))}, numbers(std::vector<int>(256)){
         std::iota(numbers.begin(), numbers.end(), 0);
         auto circle = views::circle(numbers);
@@ -29,7 +30,7 @@ struct KnotHash{
     }
 
 
-    auto interpretInputAsListOfBytes(const auto& input) const {
+    std::vector<int> interpretInputAsListOfBytes(std::string&& input) const {
         auto vecOfInts = std::vector<int>{};
         std::ranges::transform(input, std::back_inserter(vecOfInts), [](const auto& s){return static_cast<int>(s);});
         vecOfInts.push_back(17);
