@@ -111,7 +111,11 @@ auto makeDisc(const auto& input){
     return disc;
 }
 
-auto getResult = [](const auto& input){
+auto getResult = [](const auto& disc){
+    return Utilities::sum(disc | std::views::join | std::views::transform([](const auto& c){
+        return c-'0';
+    }));
+};
 
     return 0;
 };
