@@ -8,13 +8,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <unordered_map>
-#include <unordered_set>
 #include <algorithm>
-#include <numeric>
 #include <ranges>
-
-using Position = Utilities::Position<int>;
+#include <bitset>
+#include <deque>
 
 struct KnotHash{
     views::iterator<std::vector<int>> iterator{};
