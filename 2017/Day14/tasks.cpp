@@ -121,11 +121,9 @@ struct Memory{
 
 auto getGroupCount = [](const auto& disc){
     auto discGroups = Matrix::Matrix<Memory>{
-        128, 128, disc | std::views::join | std::views::transform(
-            [](const auto& c){
-                return Memory{c=='1', false};
-            }
-        )
+        128, 128, disc | std::views::join | std::views::transform([](const auto& c){
+            return Memory{c=='1', false};
+        })
     };
     auto groupCount = 0;
 
