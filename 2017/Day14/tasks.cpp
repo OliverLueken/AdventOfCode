@@ -129,7 +129,11 @@ auto getGroupCount = [](const auto& disc){
     };
     auto groupCount = 0;
 
-    auto groupMemory = [](auto& _discGroups, auto it){
+    auto needsGrouping = [](const auto it){
+        return it->used && !it->isGrouped;
+    };
+
+    auto groupMemory = [&needsGrouping](auto& _discGroups, auto it){
         auto toVisit = std::deque<decltype(it)>{it};
         while(!toVisit.empty()){
             auto currentIt = toVisit.front();
@@ -139,15 +143,15 @@ auto getGroupCount = [](const auto& disc){
             std::ranges::copy_if(
                 getNeighbors(_discGroups, currentIt),
                 std::inserter(toVisit, std::begin(toVisit)),
-                [](const auto _it){
-                    return _it->used && !_it->isGrouped;
+                [&needsGrouping](const auto _it){
+                    return needsGrouping(_it);
                 }
             );
         }
     };
 
     for(auto it=discGroups.begin(); it!=discGroups.end(); ++it){
-        if(it->used && !it->isGrouped){
+        if(needsGrouping(it)){
             ++groupCount;
             groupMemory(discGroups, it);
         }
