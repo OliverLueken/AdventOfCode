@@ -83,6 +83,14 @@ struct KnotHash{
     }
 };
 
+auto hexToBin(const char c){
+    std::stringstream ss{};
+    ss << std::hex <<c;
+    unsigned n;
+    ss >> n;
+    std::bitset<4> binary(n);
+    return binary.to_string();
+}
 
 
 auto getResult = [](const auto& input){
