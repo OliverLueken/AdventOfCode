@@ -108,7 +108,7 @@ auto makeDisc(const auto& input){
     return disc;
 }
 
-auto getResult = [](const auto& disc){
+auto getUsedSquaresCount = [](const auto& disc){
     return Utilities::sum(disc | std::views::join | std::views::transform([](const auto& c){
         return c-'0';
     }));
@@ -119,7 +119,7 @@ struct Memory{
     bool isGrouped{false};
 };
 
-auto getResult2 = [](const auto& disc){
+auto getGroupCount = [](const auto& disc){
     auto discGroups = Matrix::Matrix<Memory>{
         128, 128, disc | std::views::join | std::views::transform(
             [](const auto& c){
@@ -129,7 +129,7 @@ auto getResult2 = [](const auto& disc){
     };
     auto groupCount = 0;
 
-    auto groupMemory = [&groupCount](auto& _discGroups, auto it){
+    auto groupMemory = [](auto& _discGroups, auto it){
         auto toVisit = std::deque<decltype(it)>{it};
         while(!toVisit.empty()){
             auto currentIt = toVisit.front();
@@ -160,12 +160,12 @@ int main(){
     const auto disc = makeDisc(readFile::string());
 
     //Task 1
-    const auto result = getResult(disc);
-    std::cout << "Task 1: " << result << ".\n";
+    const auto usedSquares = getUsedSquaresCount(disc);
+    std::cout << "There are " << usedSquares << " squares used on the disc.\n";
 
     //Task 2
-    const auto result2 = getResult2(disc);
-    std::cout << "Task 2: " << result2 << ".\n";
+    const auto groupCount = getGroupCount(disc);
+    std::cout << "There are " << groupCount << " regions on the disc.\n";
 
-    VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(usedSquares, groupCount);
 }
