@@ -422,8 +422,16 @@ namespace Matrix{
     template<class T, std::forward_iterator I>
     requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
     auto getNeighborsIncludingDiagonals(const Matrix<T>& matrix, I it){
-        const auto longIndex = (size_t) std::ranges::distance(std::begin(matrix), it);
-        return getNeighborsIncludingDiagonals(matrix, longIndex);
+        std::vector<I> neighbors = getNeighbors(matrix, it);
+
+        const auto longIndex = std::ranges::distance(std::begin(matrix), it);
+        const auto [i, j] = matrix.longIndexToPosition(longIndex);
+        if(i>0 && j>0)                             neighbors.emplace_back(it-matrix.cols()-1);
+        if(i<matrix.rows()-1 && j>0)               neighbors.emplace_back(it+matrix.cols()-1);
+        if(i>0               && j<matrix.cols()-1) neighbors.emplace_back(it-matrix.cols()+1);
+        if(i<matrix.rows()-1 && j<matrix.cols()-1) neighbors.emplace_back(it+matrix.cols()+1);
+
+        return neighbors;
     }
 
     template<class T>
