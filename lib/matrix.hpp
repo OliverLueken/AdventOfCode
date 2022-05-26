@@ -375,8 +375,14 @@ namespace Matrix{
     template<class T, std::forward_iterator I>
     requires std::same_as< std::iter_value_t<I>&, std::iter_value_t<const T*>& >
     auto getNeighbors(const Matrix<T>& matrix, I it){
-        auto longIndex = std::ranges::distance(std::begin(matrix), it);
-        return getNeighbors(matrix, longIndex);
+        const auto longIndex = std::ranges::distance(std::begin(matrix), it);
+        const auto [i, j] = matrix.longIndexToPosition(longIndex);
+        std::vector<I> neighbors{};
+        if(i>0)               neighbors.emplace_back(it-matrix.cols());
+        if(i<matrix.rows()-1) neighbors.emplace_back(it+matrix.cols());
+        if(j>0)               neighbors.emplace_back(it-1);
+        if(j<matrix.cols()-1) neighbors.emplace_back(it+1);
+        return neighbors;
     }
 
     /*
