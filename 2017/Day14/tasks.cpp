@@ -117,7 +117,9 @@ auto getResult = [](const auto& disc){
     }));
 };
 
-    return 0;
+struct Memory{
+    bool used{false};
+    bool isGrouped{false};
 };
 
 auto getResult2 = [](const auto& input){
