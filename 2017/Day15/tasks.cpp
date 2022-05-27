@@ -28,13 +28,6 @@ public:
     Judge(auto init1, auto mult1, auto init2, auto mult2)
     : gen1{Gen(init1, mult1)}, gen2{Gen(init2, mult2)}{}
 
-    bool compare(const std::string& val1, const std::string& val2) const {
-        auto getLast16Bits = [](const auto& val){
-            return val | std::views::reverse | std::views::take(16);
-        };
-        const auto lastBitsOfVal1 = getLast16Bits(val1);
-        const auto lastBitsOfVal2 = getLast16Bits(val2);
-        return std::ranges::mismatch(lastBitsOfVal1, lastBitsOfVal2).first == lastBitsOfVal1.end();
     auto operator()(unsigned long rounds) -> size_t {
         return Utilities::sum(std::views::iota(0ul, rounds), 0, [this](const auto){
             return this->gen1() == this->gen2();
