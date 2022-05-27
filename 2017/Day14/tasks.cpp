@@ -14,7 +14,7 @@
 #include <deque>
 
 struct KnotHash{
-    views::iterator<std::vector<int>> iterator{};
+    Views::iterator<std::vector<int>> iterator{};
     int skipSize{0};
     std::vector<int> lengths{};
     std::vector<int> numbers{};
@@ -22,7 +22,7 @@ struct KnotHash{
     KnotHash(std::string&& input)
         : skipSize{0}, lengths{interpretInputAsListOfBytes(std::move(input))}, numbers(std::vector<int>(256)){
         std::iota(numbers.begin(), numbers.end(), 0);
-        auto circle = views::circle(numbers);
+        auto circle = Views::circle(numbers);
         iterator = circle.begin();
     }
 

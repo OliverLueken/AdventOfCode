@@ -34,7 +34,7 @@ auto interpretInputAsListOfBytes(const auto& input){
 }
 
 struct KnotHash{
-    views::iterator<std::vector<int>> iterator{};
+    Views::iterator<std::vector<int>> iterator{};
     int skipSize{0};
     std::vector<int> lengths{};
     std::vector<int> numbers{};
@@ -42,7 +42,7 @@ struct KnotHash{
     KnotHash(std::vector<int>&& _lengths)
         : skipSize{0}, lengths{std::move(_lengths)}, numbers(std::vector<int>(256)){
         std::iota(numbers.begin(), numbers.end(), 0);
-        auto circle = views::circle(numbers);
+        auto circle = Views::circle(numbers);
         iterator = circle.begin();
     }
 

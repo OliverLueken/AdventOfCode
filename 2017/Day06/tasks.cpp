@@ -18,7 +18,7 @@ class Memory{
     std::vector<int> mem{};
 
     auto max_element() {
-        auto range = views::circle(mem);
+        auto range = Views::circle(mem);
         return std::ranges::max_element(range | std::views::take(mem.size()));
     }
 
