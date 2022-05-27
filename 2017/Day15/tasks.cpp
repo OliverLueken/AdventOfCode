@@ -29,9 +29,12 @@ public:
     : gen1{Gen(init1, mult1)}, gen2{Gen(init2, mult2)}{}
 
     auto operator()(unsigned long rounds) -> size_t {
-        return Utilities::sum(std::views::iota(0ul, rounds), 0, [this](const auto){
-            return this->gen1() == this->gen2();
-        });
+        auto count = 0;
+        while(rounds>0){
+            count+=this->gen1() == this->gen2();
+            --rounds;
+        }
+        return count;
     }
 };
 
