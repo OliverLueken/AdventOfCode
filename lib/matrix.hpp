@@ -439,23 +439,9 @@ namespace Matrix{
     void swap(Matrix<T>& rhs, Matrix<T>& lhs) noexcept {
         rhs.swap(lhs);
     }
+}
 
-    void print(const std::string& value, const char separator = '\n'){
-        std::cout << value << separator;
-    }
-
-    template<Printable T>
-    void print(const T& value, const char separator = ' '){
-        std::cout << value << separator;
-    }
-
-    template<Container C>
-    requires (!Printable<C>)
-    auto print(const C& c, const char separator = ' '){
-        std::ranges::for_each(c, [separator](const auto& c_){print(c_, separator);});
-        std::cout << '\n';
-    }
-
+namespace Utilities{
     template<typename T>
     void print(const Matrix<T>& _m, const char columnSeparator = ' ') {
         for(auto i=0u; i<_m.rows(); i++){
@@ -464,5 +450,7 @@ namespace Matrix{
         std::cout << '\n';
     }
 }
+
+
 
 #endif
