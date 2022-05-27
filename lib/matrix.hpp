@@ -443,7 +443,7 @@ namespace Matrix{
 
 namespace Utilities{
     template<typename T>
-    void print(const Matrix<T>& _m, const char columnSeparator = ' ') {
+    void print(const Matrix::Matrix<T>& _m, const char columnSeparator = ' ') {
         for(auto i=0u; i<_m.rows(); i++){
             print(_m.row(i), columnSeparator);
         }
