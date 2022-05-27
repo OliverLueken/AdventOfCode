@@ -96,7 +96,7 @@ inline constexpr bool std::ranges::enable_borrowed_range<ViewDetails::_CircularV
 
 
 
-namespace views{
+namespace Views{
     ViewDetails::CircleViewAdaptor circle;
 
     template<typename Range>
