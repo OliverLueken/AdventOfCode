@@ -52,7 +52,7 @@ auto getResult2 = [](const auto& parsedInput){
 };
 
 int main(){
-    const auto parsedInput = parseInput(readFile::vectorOfStrings());
+    auto parsedInput = parseInput(readFile::vectorOfStrings());
 
     //Task 1
     const auto result = getResult(parsedInput);
