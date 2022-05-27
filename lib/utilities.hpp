@@ -8,13 +8,16 @@
 #include <iostream>
 #include <numeric>
 #include <complex>
+#include <bitset>
+#include <concepts>
+#include <sstream>
 
 #include "algorithms.hpp"
 #include "concepts.hpp"
 #include "position.hpp"
 
 namespace Utilities{
-    
+
     /*
     Takes a string s and returns a new string containing every character of s converted to uppercase
     */
@@ -81,6 +84,31 @@ namespace Utilities{
         }
     };
     inline constexpr solveCRM_ solveCRM;
+
+
+    struct hexToBin_{
+        std::string operator()(const char c) const {
+            std::stringstream ss{};
+            ss << std::hex <<c;
+            unsigned n;
+            ss >> n;
+            std::bitset<4> binary(n);
+            return binary.to_string();
+        }
+
+        std::string operator()(const std::string& s) const {
+            auto bin = std::stringstream{};
+            for(const auto c : s){
+                bin << (*this)(c);
+            }
+            return bin.str();
+        }
+
+        std::string operator()(const std::integral auto hex) const {
+            return (*this)(std::to_string(hex));
+        }
+    };
+    inline hexToBin_ hexToBin;
 }
 
 
