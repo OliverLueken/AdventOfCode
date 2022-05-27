@@ -26,7 +26,7 @@ class Judge{
     Judge(auto init1, auto mult1, auto init2, auto mult2)
     : gen1{Gen(init1, mult1)}, gen2{Gen(init2, mult2)}{}
 
-    bool compare(const std::string& val1, const std::string& val2){
+    bool compare(const std::string& val1, const std::string& val2) const {
         auto getLast16Bits = [](const auto& val){
             return val | std::views::reverse | std::views::take(16);
         };
