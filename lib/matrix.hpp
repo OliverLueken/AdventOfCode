@@ -8,6 +8,7 @@
 #include <span>
 
 #include "utilities.hpp"
+#include "concepts.hpp"
 
 namespace Matrix{
 
@@ -438,12 +439,6 @@ namespace Matrix{
     void swap(Matrix<T>& rhs, Matrix<T>& lhs) noexcept {
         rhs.swap(lhs);
     }
-
-    template<typename T>
-    concept Container = requires (T c){c.begin();};
-
-    template<typename T>
-    concept Printable = requires (T x){ std::cout << x; };
 
     void print(const std::string& value, const char separator = '\n'){
         std::cout << value << separator;
