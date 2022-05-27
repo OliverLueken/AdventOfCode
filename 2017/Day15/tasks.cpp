@@ -42,9 +42,8 @@ auto parseInput = [](const auto& input){
     return Judge{init1, 16807, init2, 48271};
 };
 
-auto getResult = [](const auto& parsedInput){
-
-    return 0;
+auto getResult = [](auto& parsedInput){
+    return parsedInput(40'000'000ul);
 };
 
 auto getResult2 = [](const auto& parsedInput){
