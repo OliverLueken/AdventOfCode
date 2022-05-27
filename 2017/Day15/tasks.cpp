@@ -20,10 +20,11 @@ Coroutines::Generator<std::bitset<16>> Gen(unsigned long initializer, unsigned l
     }
 }
 
-template<class Gen1, class Gen2>
 class Judge{
-    Gen1 gen1;
-    Gen2 gen2;
+    Coroutines::Generator<std::bitset<16>> gen1;
+    Coroutines::Generator<std::bitset<16>> gen2;
+
+public:
     Judge(auto init1, auto mult1, auto init2, auto mult2)
     : gen1{Gen(init1, mult1)}, gen2{Gen(init2, mult2)}{}
 
