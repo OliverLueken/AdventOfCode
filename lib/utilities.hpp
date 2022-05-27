@@ -112,10 +112,6 @@ namespace Utilities{
 
 
 
-    void print(const std::string& value, const char separator = '\n'){
-        std::cout << value << separator;
-    }
-
     template<Printable T>
     void print(const T& value, const char separator = ' '){
         std::cout << value << separator;
