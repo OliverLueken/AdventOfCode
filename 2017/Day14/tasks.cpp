@@ -80,14 +80,6 @@ struct KnotHash{
     }
 };
 
-auto hexToBin(const char c){
-    std::stringstream ss{};
-    ss << std::hex <<c;
-    unsigned n;
-    ss >> n;
-    std::bitset<4> binary(n);
-    return binary.to_string();
-}
 
 auto makeDisc(const auto& input){
     auto getMemoryRow = [](auto&& _input){
@@ -96,7 +88,7 @@ auto makeDisc(const auto& input){
 
         auto stream = std::stringstream{};
         for(const auto& val : hash){
-            stream << hexToBin(val);
+            stream << Utilities::hexToBin(val);
         }
         return stream.str();
     };
