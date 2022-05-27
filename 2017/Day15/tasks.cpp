@@ -35,6 +35,10 @@ public:
         const auto lastBitsOfVal1 = getLast16Bits(val1);
         const auto lastBitsOfVal2 = getLast16Bits(val2);
         return std::ranges::mismatch(lastBitsOfVal1, lastBitsOfVal2).first == lastBitsOfVal1.end();
+    auto operator()(unsigned long rounds) -> size_t {
+        return Utilities::sum(std::views::iota(0ul, rounds), 0, [this](const auto){
+            return this->gen1() == this->gen2();
+        });
     }
 };
 
