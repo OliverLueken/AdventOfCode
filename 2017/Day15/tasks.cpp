@@ -67,5 +67,5 @@ int main(){
     const auto result2 = getResult2(init1, init2);
     std::cout << "Task 2: " << result2 << ".\n";
 
-    // VerifySolution::verifySolution(result, result2);
+    VerifySolution::verifySolution(result, result2);
 }
