@@ -19,6 +19,15 @@ Coroutines::Generator<std::string> Gen(unsigned long initializer, unsigned long 
     }
 }
 
+template<class Gen1, class Gen2>
+class Judge{
+    Gen1 gen1;
+    Gen2 gen2;
+    Judge(auto init1, auto mult1, auto init2, auto mult2)
+    : gen1{Gen(init1, mult1)}, gen2{Gen(init2, mult2)}{}
+};
+
+
 auto parseInput = [](const auto& input){
     std::vector<> parsed;
     for(const auto& row : input){
