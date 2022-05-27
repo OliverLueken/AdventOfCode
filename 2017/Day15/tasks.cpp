@@ -40,11 +40,9 @@ public:
 
 
 auto parseInput = [](const auto& input){
-    std::vector<> parsed;
-    for(const auto& row : input){
-
-    }
-    return parsed;
+    auto init1 = std::stoi(Utilities::split(input[0]).back());
+    auto init2 = std::stoi(Utilities::split(input[1]).back());
+    return Judge{init1, 16807, init2, 48271};
 };
 
 auto getResult = [](const auto& parsedInput){
