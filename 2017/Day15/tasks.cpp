@@ -2,6 +2,7 @@
 #include "../../lib/readFile.hpp"
 #include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
+#include "../../lib/coroutines.hpp"
 
 #include <iostream>
 #include <string>
@@ -10,6 +11,13 @@
 #include <numeric>
 #include <ranges>
 
+Coroutines::Generator<std::string> Gen(unsigned long initializer, unsigned long multiplier){
+    auto val = initializer;
+    while(true){
+        val = (val*multiplier)%2147483647;
+        co_yield Utilities::hexToBin(val);
+    }
+}
 
 auto parseInput = [](const auto& input){
     std::vector<> parsed;
