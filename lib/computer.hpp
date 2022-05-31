@@ -108,7 +108,7 @@ namespace Computer{
         }
 
         auto getRegisterView() const {
-            return std::views::all(reg);
+            return std::views::all(*reg);
         }
     };
 
