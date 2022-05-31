@@ -91,9 +91,8 @@ namespace Computer{
             return 0<=currentInstructionPosition && std::less{}(currentInstructionPosition, instructions.size());
         }
 
-    public:
-
-        Computer() = default;
+        Computer()
+        : currentInstructionPosition{0}, instructions{}, reg{std::make_unique<Register>()} {}
         Computer(const Computer&) = default;
         Computer& operator=(const Computer&) = default;
         Computer(Computer&&) = default;
