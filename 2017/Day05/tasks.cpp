@@ -7,14 +7,13 @@
 #include <vector>
 #include <memory>
 
-using Computer_ = Computer::Computer<int>;
+using JumpingComputer = Computer::Computer<int>;
 
 struct ExecutionLogger : public Computer::Logger {
-    Computer_* computer{nullptr};
     unsigned int executionCount{};
 
-    ExecutionLogger(Computer_* comp) : computer{comp}{
-        computer->addLogger(this);
+    ExecutionLogger(JumpingComputer* comp){
+        comp->addLogger(this);
     }
 
     void update() override {
@@ -25,11 +24,10 @@ struct ExecutionLogger : public Computer::Logger {
 enum class JumpVariant{IncreasingJump, ResettingJump};
 
 template<JumpVariant>
-auto makeJumpInstruction(const int offset, Computer_* comp);
-
+auto makeJumpInstruction(const int offset, JumpingComputer* comp);
 
 template<>
-auto makeJumpInstruction<JumpVariant::IncreasingJump>(const int offset, Computer_* comp){
+auto makeJumpInstruction<JumpVariant::IncreasingJump>(const int offset, JumpingComputer* comp){
     auto jump = [_offset = offset, comp] () mutable {
         comp->advanceCurrentPosition(_offset);
         ++_offset;
@@ -38,7 +36,7 @@ auto makeJumpInstruction<JumpVariant::IncreasingJump>(const int offset, Computer
 }
 
 template<>
-auto makeJumpInstruction<JumpVariant::ResettingJump>(const int offset, Computer_* comp){
+auto makeJumpInstruction<JumpVariant::ResettingJump>(const int offset, JumpingComputer* comp){
     auto jump = [_offset = offset, comp] () mutable {
         comp->advanceCurrentPosition(_offset);
         if(_offset>=3) --_offset;
@@ -47,12 +45,13 @@ auto makeJumpInstruction<JumpVariant::ResettingJump>(const int offset, Computer_
     return jump;
 }
 
+
 template<JumpVariant mode>
 struct ComputerFactory{
-    static Computer_ make(const auto& input){
-        Computer_ comp{};
+    static JumpingComputer make_computer(const auto& jumpOffsets){
+        auto comp = JumpingComputer{};
 
-        for(const auto& offset : input){
+        for(const auto& offset : jumpOffsets){
             comp.add(makeJumpInstruction<mode>(offset, &comp));
         }
         return comp;
@@ -60,8 +59,8 @@ struct ComputerFactory{
 };
 
 template<JumpVariant mode>
-auto getStepCount = [](const auto& input){
-    auto computer = ComputerFactory<mode>::make(input);
+auto getStepCount = [](const auto& jumpOffsets){
+    auto computer = ComputerFactory<mode>::make_computer(jumpOffsets);
 
     auto logger = ExecutionLogger{&computer};
     computer.execute();
@@ -70,14 +69,14 @@ auto getStepCount = [](const auto& input){
 
 
 int main(){
-    const auto input = readFile::vectorOfInts();
+    const auto jumpOffsets = readFile::vectorOfInts();
 
     //Task 1
-    const auto firstStepCount = getStepCount<JumpVariant::IncreasingJump>(input);
+    const auto firstStepCount = getStepCount<JumpVariant::IncreasingJump>(jumpOffsets);
     std::cout << "It takes " << firstStepCount << " steps to reach the exit.\n";
 
     //Task 2
-    const auto secondStepCount = getStepCount<JumpVariant::ResettingJump>(input);
+    const auto secondStepCount = getStepCount<JumpVariant::ResettingJump>(jumpOffsets);
     std::cout << "With the odd jumpts it takes " << secondStepCount << " steps to reach the exit.\n";
 
     VerifySolution::verifySolution(firstStepCount, secondStepCount);
