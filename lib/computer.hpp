@@ -45,7 +45,7 @@ namespace Computer{
 
 
 
-    template<class Register>
+    template<class Data>
     class Computer : public Subject {
 
         struct Instruction{
@@ -68,40 +68,40 @@ namespace Computer{
 
         using Instructions = std::vector<std::unique_ptr<Instruction>>;
 
-        int currentInstructionPosition{0};
-        Instructions instructions{};
-        std::unique_ptr<Register> reg{};
+        int m_currentInstructionPosition{0};
+        Instructions m_instructions{};
+        std::unique_ptr<Data> m_data{};
 
     public:
 
         int getCurrentPosition() const {
-            return currentInstructionPosition;
+            return m_currentInstructionPosition;
         }
 
         void advanceCurrentPosition(const int offset){
-            currentInstructionPosition+=offset;
+            m_currentInstructionPosition+=offset;
         }
 
-        Register* getRegisterPtr(){
-            return reg.get();
+        Data* getDataPtr(){
+            return m_data.get();
         }
 
-        const Register* getRegisterPtr() const {
-            return reg.get();
+        const Data* getDataPtr() const {
+            return m_data.get();
         }
 
         template<typename Lambda>
         auto add(Lambda&& l){
-            instructions.emplace_back(std::make_unique<Wrapper<Lambda>>(std::forward<Lambda>(l)));
+            m_instructions.emplace_back(std::make_unique<Wrapper<Lambda>>(std::forward<Lambda>(l)));
         }
 
 
         bool currentInstructionPositionIsValid() const {
-            return 0<=currentInstructionPosition && std::less{}(currentInstructionPosition, instructions.size());
+            return 0<=m_currentInstructionPosition && std::less{}(m_currentInstructionPosition, m_instructions.size());
         }
 
         Computer()
-        : currentInstructionPosition{0}, instructions{}, reg{std::make_unique<Register>()} {}
+        : m_currentInstructionPosition{0}, m_instructions{}, m_data{std::make_unique<Data>()} {}
         Computer(const Computer&) = default;
         Computer& operator=(const Computer&) = default;
         Computer(Computer&&) = default;
@@ -109,14 +109,14 @@ namespace Computer{
         virtual ~Computer() = default;
 
         auto execute(){
-            for(currentInstructionPosition = 0; currentInstructionPositionIsValid();){
-                instructions[currentInstructionPosition]->execute();
+            for(m_currentInstructionPosition = 0; currentInstructionPositionIsValid();){
+                m_instructions[m_currentInstructionPosition]->execute();
                 notifyLogger();
             }
         }
 
-        auto getRegisterView() const {
-            return std::views::all(*reg);
+        auto getDataView() const {
+            return std::views::all(*m_data);
         }
 
         /*
