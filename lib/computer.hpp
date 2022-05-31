@@ -43,15 +43,6 @@ namespace Computer{
         }
     };
 
-    // class Register{
-    //     Register() = default;
-    //     Register(const Register&) = default;
-    //     Register& operator=(const Register&) = default;
-    //     Register(Register&&) = default;
-    //     Register& operator=(Register&&) = default;
-    //     virtual ~Register() = 0;
-    // };
-
 
     struct Instruction{
         Instruction() = default;
@@ -74,7 +65,6 @@ namespace Computer{
             void execute() override { Lambda::operator()(); }
         };
 
-        // using Register = std::unordered_map<std::string, int>;
         using Instructions = std::vector<std::unique_ptr<Instruction>>;
 
         int currentInstructionPosition{0};
@@ -109,22 +99,17 @@ namespace Computer{
         auto getRegisterView() const {
             return std::views::all(*reg);
         }
+
+        /*
+        reset()
+
+        virtual resetCurrentPos
+        virtual resetInstructions
+        virtual resetData
+        */
     };
 
-    // struct RegisterValueLogger : public Logger {
-    //     Computer* computer{nullptr};
-    //     std::vector<int> maxRegisterValueAfterEachExecution{};
-    //
-    //     RegisterValueLogger(Computer* comp) : computer{comp}{
-    //         computer->addLogger(this);
-    //     }
-    //
-    //     void update() override {
-    //         maxRegisterValueAfterEachExecution.push_back(
-    //             std::ranges::max( computer->getRegisterView() | std::views::values )
-    //         );
-    //     }
-    // };
+    //ComputerFactory
 
 } //end namespace Computer
 
