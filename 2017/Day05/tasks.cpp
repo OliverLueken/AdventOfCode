@@ -22,12 +22,14 @@ struct ExecutionLogger : public Computer::Logger {
     }
 };
 
-template<size_t mode>
+enum class JumpVariant{IncreasingJump, ResettingJump};
+
+template<JumpVariant>
 auto makeJumpInstruction(const int offset, Computer_* comp);
 
 
 template<>
-auto makeJumpInstruction<0>(const int offset, Computer_* comp){
+auto makeJumpInstruction<JumpVariant::IncreasingJump>(const int offset, Computer_* comp){
     auto jump = [_offset = offset, comp] () mutable {
         comp->advanceCurrentPosition(_offset);
         ++_offset;
@@ -36,7 +38,7 @@ auto makeJumpInstruction<0>(const int offset, Computer_* comp){
 }
 
 template<>
-auto makeJumpInstruction<1>(const int offset, Computer_* comp){
+auto makeJumpInstruction<JumpVariant::ResettingJump>(const int offset, Computer_* comp){
     auto jump = [_offset = offset, comp] () mutable {
         comp->advanceCurrentPosition(_offset);
         if(_offset>=3) --_offset;
@@ -45,7 +47,7 @@ auto makeJumpInstruction<1>(const int offset, Computer_* comp){
     return jump;
 }
 
-template<size_t mode>
+template<JumpVariant mode>
 struct ComputerFactory{
     static Computer_ make(const auto& input){
         Computer_ comp{};
@@ -57,7 +59,7 @@ struct ComputerFactory{
     }
 };
 
-template<size_t mode>
+template<JumpVariant mode>
 auto getStepCount = [](const auto& input){
     auto computer = ComputerFactory<mode>::make(input);
 
@@ -71,11 +73,11 @@ int main(){
     const auto input = readFile::vectorOfInts();
 
     //Task 1
-    const auto firstStepCount = getStepCount<0>(input);
+    const auto firstStepCount = getStepCount<JumpVariant::IncreasingJump>(input);
     std::cout << "It takes " << firstStepCount << " steps to reach the exit.\n";
 
     //Task 2
-    const auto secondStepCount = getStepCount<1>(input);
+    const auto secondStepCount = getStepCount<JumpVariant::ResettingJump>(input);
     std::cout << "With the odd jumpts it takes " << secondStepCount << " steps to reach the exit.\n";
 
     VerifySolution::verifySolution(firstStepCount, secondStepCount);
