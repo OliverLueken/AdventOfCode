@@ -44,11 +44,11 @@ struct ComputerFactory{
     static auto addIf(const auto comparator, const auto _regAddress, const auto _val, Computer_* comp){
         auto _conditional = getComparison(comparator);
         auto ifLambda = [regAddress = _regAddress, conditional = _conditional, val = _val, comp](){
-            if(conditional( comp->reg->operator[](regAddress), val )){
-                ++comp->currentInstructionPosition;
+            if(conditional( comp->getRegisterPtr()->operator[](regAddress), val )){
+                comp->advanceCurrentPosition(1);
             }
             else{
-                comp->currentInstructionPosition+=2;
+                comp->advanceCurrentPosition(2);
             }
         };
         return comp->add(std::move(ifLambda));
@@ -61,8 +61,8 @@ struct ComputerFactory{
 
     static auto addRegisterIncrease(const auto _regAddress, const auto _amount, Computer_* comp){
         auto increase = [regAddress = _regAddress, amount = _amount, comp] () mutable {
-            comp->reg->operator[](regAddress)+=amount;
-            ++comp->currentInstructionPosition;
+            comp->getRegisterPtr()->operator[](regAddress)+=amount;
+            comp->advanceCurrentPosition(1);
         };
         return comp->add(std::move(increase));
     }

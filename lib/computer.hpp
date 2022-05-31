@@ -44,20 +44,21 @@ namespace Computer{
     };
 
 
-    struct Instruction{
-        Instruction() = default;
-        Instruction(const Instruction&) = default;
-        Instruction& operator=(const Instruction&) = default;
-        Instruction(Instruction&&) = default;
-        Instruction& operator=(Instruction&&) = default;
-        virtual ~Instruction() = default;
-
-        virtual void execute() = 0;
-    };
 
     template<class Register>
     class Computer : public Subject {
-    public:
+
+        struct Instruction{
+            Instruction() = default;
+            Instruction(const Instruction&) = default;
+            Instruction& operator=(const Instruction&) = default;
+            Instruction(Instruction&&) = default;
+            Instruction& operator=(Instruction&&) = default;
+            virtual ~Instruction() = default;
+
+            virtual void execute() = 0;
+        };
+
 
         template<typename Lambda>
         struct Wrapper : public Instruction, public Lambda{
@@ -70,6 +71,24 @@ namespace Computer{
         int currentInstructionPosition{0};
         Instructions instructions{};
         std::unique_ptr<Register> reg{};
+
+    public:
+
+        int getCurrentPosition() const {
+            return currentInstructionPosition;
+        }
+
+        void advanceCurrentPosition(const int offset){
+            currentInstructionPosition+=offset;
+        }
+
+        Register* getRegisterPtr(){
+            return reg.get();
+        }
+
+        const Register* getRegisterPtr() const {
+            return reg.get();
+        }
 
         template<typename Lambda>
         auto add(Lambda&& l){

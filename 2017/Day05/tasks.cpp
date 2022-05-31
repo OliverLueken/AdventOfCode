@@ -49,7 +49,7 @@ struct ExecutionLogger : public Computer::Logger {
 struct ComputerFactory{
     static void addJump(const auto offset, Computer_* comp){
         auto jump = [_offset = offset, comp] () mutable {
-            comp->currentInstructionPosition+=_offset;
+            comp->advanceCurrentPosition(_offset);
             ++_offset;
         };
         comp->add(std::move(jump));
@@ -95,7 +95,7 @@ struct ComputerFactory2{
 
     static void addOddJump(const auto offset, Computer_* comp){
         auto jump = [_offset = offset, comp] () mutable {
-            comp->currentInstructionPosition+=_offset;
+            comp->advanceCurrentPosition(_offset);
             if(_offset>=3) --_offset;
             else           ++_offset;
         };
