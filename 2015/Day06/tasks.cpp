@@ -40,15 +40,15 @@ class ComputerFactory{
     };
 
     template<typename Command>
-    void addCommand(int x_start, int x_end, int y_start, int y_end, DataComputer* computer, Command& command) const {
+    static void addCommand(int x_start, int x_end, int y_start, int y_end, DataComputer* computer, Command& command){
         return computer->add(CommandWrapper<Command>(x_start, x_end, y_start, y_end, computer, command));
     }
 
 public:
-    auto make(const auto& input){
+    static auto make(const auto& input){
         auto computer = DataComputer{};
 
-        auto parse = [computer = &computer, this](const auto& string){
+        auto parse = [computer = &computer](const auto& string){
             const auto split = Utilities::splitOnEach(string, " ,l");
 
             const auto x_start = std::stoi(split[2]);
@@ -57,13 +57,13 @@ public:
             const auto y_end   = std::stoi(split[6]);
 
             if(split[1] == "on"){
-                this->addCommand(x_start, x_end, y_start, y_end, computer, Commands::turnOnCommand);
+                addCommand(x_start, x_end, y_start, y_end, computer, Commands::turnOnCommand);
             }
             else if(split[1] == "off"){
-                this->addCommand(x_start, x_end, y_start, y_end, computer, Commands::turnOffCommand);
+                addCommand(x_start, x_end, y_start, y_end, computer, Commands::turnOffCommand);
             }
             else{ //toggle
-                this->addCommand(x_start, x_end, y_start, y_end, computer, Commands::toggleCommand);
+                addCommand(x_start, x_end, y_start, y_end, computer, Commands::toggleCommand);
             }
         };
 
@@ -72,7 +72,7 @@ public:
     }
 };
 
-struct Command1{
+struct Commands1{
     static constexpr auto turnOnCommand = [](auto& light){
         light=1;
     };
@@ -84,7 +84,7 @@ struct Command1{
     };
 };
 
-struct Command2{
+struct Commands2{
     static constexpr auto turnOnCommand = [](auto& light){
         ++light;
     };
@@ -96,8 +96,9 @@ struct Command2{
     };
 };
 
-auto getBrightness = [](const auto& instructions, auto&& factory){
-    auto computer = factory.make(instructions);
+template<typename Commands>
+auto getBrightness = [](const auto& instructions){
+    auto computer = ComputerFactory<Commands>::make(instructions);
     computer.execute();
     return Utilities::sum(computer.getDataView());
 };
@@ -106,11 +107,11 @@ int main(){
     const auto instructions = readFile::vectorOfStrings("input.txt");
 
     //Task 1
-    const auto brightnessTaskOne = getBrightness(instructions, ComputerFactory<Command1>{});
+    const auto brightnessTaskOne = getBrightness<Commands1>(instructions);
     std::cout << "There are a total of " << brightnessTaskOne << " lights lit now.\n";
 
     //Task 2
-    const auto brightnessTaskTwo = getBrightness(instructions, ComputerFactory<Command2>{});
+    const auto brightnessTaskTwo = getBrightness<Commands2>(instructions);
     std::cout << "The total brightness of the lights combine to " << brightnessTaskTwo << ".\n";
 
     VerifySolution::verifySolution(brightnessTaskOne, brightnessTaskTwo);
