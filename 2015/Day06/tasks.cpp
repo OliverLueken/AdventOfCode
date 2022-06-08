@@ -13,9 +13,40 @@ using Register = std::array<int, 1000*1000>;
 using DataComputer = Computer::Computer<Register>;
 
 class ComputerFactory{
+
     virtual void addTurnOn(int, int, int, int, DataComputer*) const = 0;
     virtual void addTurnOff(int, int, int, int, DataComputer*) const = 0;
     virtual void addToggle(int, int, int, int, DataComputer*) const = 0;
+
+protected:
+    template<typename Command>
+    class CommandWrapper{
+        int x_start{};
+        int x_end{};
+        int y_start{};
+        int y_end{};
+        DataComputer* computer{nullptr};
+        Command& command{};
+
+    public:
+        CommandWrapper(int a, int b, int c, int d, DataComputer* ptr, Command& _command)
+            : x_start{a}, x_end{b}, y_start{c}, y_end{d}, computer{ptr}, command{_command}{}
+
+        auto operator()(){
+            auto lightsPtr = computer->getDataPtr();
+            for(auto y=y_start; y<=y_end; y++){
+                for(auto x=x_start; x<=x_end; x++){
+                    command(lightsPtr->operator[](x+y*1000));
+                }
+            }
+            computer->advanceCurrentPosition(1);
+        }
+    };
+
+    template<typename Command>
+    void addCommand(int x_start, int x_end, int y_start, int y_end, DataComputer* computer, Command& command) const {
+        return computer->add(CommandWrapper<Command>(x_start, x_end, y_start, y_end, computer, command));
+    }
 
 public:
     auto make(const auto& input){
@@ -46,29 +77,6 @@ public:
 };
 
 class Factory1 : public ComputerFactory{
-    template<typename Command>
-    class CommandWrapper{
-        int x_start{};
-        int x_end{};
-        int y_start{};
-        int y_end{};
-        DataComputer* computer{nullptr};
-        Command& command{};
-
-    public:
-        CommandWrapper(int a, int b, int c, int d, DataComputer* ptr, Command& _command)
-            : x_start{a}, x_end{b}, y_start{c}, y_end{d}, computer{ptr}, command{_command}{}
-
-        auto operator()(){
-            auto lightsPtr = computer->getDataPtr();
-            for(auto y=y_start; y<=y_end; y++){
-                for(auto x=x_start; x<=x_end; x++){
-                    command(lightsPtr->operator[](x+y*1000));
-                }
-            }
-            computer->advanceCurrentPosition(1);
-        }
-    };
 
     static constexpr auto turnOnCommand = [](auto& light){
         light=1;
@@ -79,11 +87,6 @@ class Factory1 : public ComputerFactory{
     static constexpr auto toggleCommand = [](auto& light){
         light=1^light;
     };
-
-    template<typename Command>
-    void addCommand(int x_start, int x_end, int y_start, int y_end, DataComputer* computer, Command& command) const {
-        return computer->add(CommandWrapper<Command>(x_start, x_end, y_start, y_end, computer, command));
-    }
 
     void addTurnOn(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
         return addCommand(x_start, x_end, y_start, y_end, computer, turnOnCommand);
