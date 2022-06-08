@@ -12,13 +12,9 @@
 using Register = std::array<int, 1000*1000>;
 using DataComputer = Computer::Computer<Register>;
 
+template<typename Commands>
 class ComputerFactory{
 
-    virtual void addTurnOn(int, int, int, int, DataComputer*) const = 0;
-    virtual void addTurnOff(int, int, int, int, DataComputer*) const = 0;
-    virtual void addToggle(int, int, int, int, DataComputer*) const = 0;
-
-protected:
     template<typename Command>
     class CommandWrapper{
         int x_start{};
@@ -61,13 +57,13 @@ public:
             const auto y_end   = std::stoi(split[6]);
 
             if(split[1] == "on"){
-                this->addTurnOn(x_start, x_end, y_start, y_end, computer);
+                this->addCommand(x_start, x_end, y_start, y_end, computer, Commands::turnOnCommand);
             }
             else if(split[1] == "off"){
-                this->addTurnOff(x_start, x_end, y_start, y_end, computer);
+                this->addCommand(x_start, x_end, y_start, y_end, computer, Commands::turnOffCommand);
             }
             else{ //toggle
-                this->addToggle(x_start, x_end, y_start, y_end, computer);
+                this->addCommand(x_start, x_end, y_start, y_end, computer, Commands::toggleCommand);
             }
         };
 
@@ -76,8 +72,7 @@ public:
     }
 };
 
-class Factory1 : public ComputerFactory{
-
+struct Command1{
     static constexpr auto turnOnCommand = [](auto& light){
         light=1;
     };
@@ -87,21 +82,9 @@ class Factory1 : public ComputerFactory{
     static constexpr auto toggleCommand = [](auto& light){
         light=1^light;
     };
-
-    void addTurnOn(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        return addCommand(x_start, x_end, y_start, y_end, computer, turnOnCommand);
-    }
-
-    void addTurnOff(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        return addCommand(x_start, x_end, y_start, y_end, computer, turnOffCommand);
-    }
-    void addToggle(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        return addCommand(x_start, x_end, y_start, y_end, computer, toggleCommand);
-    }
 };
 
-class Factory2 : public ComputerFactory{
-
+struct Command2{
     static constexpr auto turnOnCommand = [](auto& light){
         ++light;
     };
@@ -111,19 +94,7 @@ class Factory2 : public ComputerFactory{
     static constexpr auto toggleCommand = [](auto& light){
         light+=2;
     };
-
-    void addTurnOn(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        return addCommand(x_start, x_end, y_start, y_end, computer, turnOnCommand);
-    }
-
-    void addTurnOff(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        return addCommand(x_start, x_end, y_start, y_end, computer, turnOffCommand);
-    }
-    void addToggle(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        return addCommand(x_start, x_end, y_start, y_end, computer, toggleCommand);
-    }
 };
-
 
 auto getBrightness = [](const auto& instructions, auto&& factory){
     auto computer = factory.make(instructions);
@@ -135,11 +106,11 @@ int main(){
     const auto instructions = readFile::vectorOfStrings("input.txt");
 
     //Task 1
-    const auto brightnessTaskOne = getBrightness(instructions, Factory1{});
+    const auto brightnessTaskOne = getBrightness(instructions, ComputerFactory<Command1>{});
     std::cout << "There are a total of " << brightnessTaskOne << " lights lit now.\n";
 
     //Task 2
-    const auto brightnessTaskTwo = getBrightness(instructions, Factory2{});
+    const auto brightnessTaskTwo = getBrightness(instructions, ComputerFactory<Command2>{});
     std::cout << "The total brightness of the lights combine to " << brightnessTaskTwo << ".\n";
 
     VerifySolution::verifySolution(brightnessTaskOne, brightnessTaskTwo);
