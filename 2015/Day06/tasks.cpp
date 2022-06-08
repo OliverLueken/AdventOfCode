@@ -12,37 +12,24 @@
 using Register = std::array<int, 1000*1000>;
 using DataComputer = Computer::Computer<Register>;
 
-template<typename Command>
-class OuterCommand{
-    const int x_start{};
-    const int x_end{};
-    const int y_start{};
-    const int y_end{};
-    const Command& command{};
-
-public:
-    OuterCommand(const int a, const int b, const int c, const int d, const Command& _command)
-        : x_start{a}, x_end{b}, y_start{c}, y_end{d}, command{_command}{}
-
-    auto operator()(DataComputer* computerPtr) const {
-        const auto lightsPtr = computerPtr->getDataPtr();
-        for(auto y=y_start; y<=y_end; y++){
-            for(auto x=x_start; x<=x_end; x++){
-                command(lightsPtr->at(x+1000*y));
-            }
-        }
-        computerPtr->advanceCurrentPosition(1);
-    }
-};
 
 
 template<typename Commands>
 class MyFactory : public Computer::ComputerFactory<Commands, Register>{
 
-    template<typename Command, typename... Args>
-    void addCommand(const Command& command, Args&&... args){
+    template<typename Command>
+    void addCommand(const Command& command, const int x_start, const int x_end, const int y_start, const int y_end){
+        auto outerCommand = [&command, x_start, x_end, y_start, y_end](DataComputer* _computerPtr){
+            const auto lightsPtr = _computerPtr->getDataPtr();
+            for(auto y=y_start; y<=y_end; y++){
+                for(auto x=x_start; x<=x_end; x++){
+                    command(lightsPtr->at(x+1000*y));
+                }
+            }
+            _computerPtr->advanceCurrentPosition(1);
+        };
         return Computer::ComputerFactory<Commands, Register>::addCommand(
-            OuterCommand<Command>(std::forward<Args>(args)..., command)
+            std::move(outerCommand)
         );
     }
 
