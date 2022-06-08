@@ -41,9 +41,9 @@ struct ComputerFactory{
         return std::not_equal_to<>{};
     }
 
-    static auto addIf(const auto comparator, const auto _regAddress, const auto _val, DataComputer* comp){
+    static auto addIf(const auto comparator, const auto _regAddress, const auto _val, DataComputer* _comp){
         auto _conditional = getComparison(comparator);
-        auto ifLambda = [regAddress = _regAddress, conditional = _conditional, val = _val, comp](){
+        auto ifLambda = [regAddress = _regAddress, conditional = _conditional, val = _val](DataComputer* comp){
             if(conditional( comp->getDataPtr()->operator[](regAddress), val )){
                 comp->advanceCurrentPosition(1);
             }
@@ -51,7 +51,7 @@ struct ComputerFactory{
                 comp->advanceCurrentPosition(2);
             }
         };
-        return comp->add(std::move(ifLambda));
+        return _comp->add(std::move(ifLambda));
     }
 
     static auto addRegisterModification(const auto regAddress, const auto mode, const auto amount, DataComputer* comp){
@@ -59,12 +59,12 @@ struct ComputerFactory{
         if(mode == "dec") return addRegisterDecrease(regAddress, amount, comp);
     }
 
-    static auto addRegisterIncrease(const auto _regAddress, const auto _amount, DataComputer* comp){
-        auto increase = [regAddress = _regAddress, amount = _amount, comp] () mutable {
+    static auto addRegisterIncrease(const auto _regAddress, const auto _amount, DataComputer* _comp){
+        auto increase = [regAddress = _regAddress, amount = _amount] (DataComputer* comp) mutable {
             comp->getDataPtr()->operator[](regAddress)+=amount;
             comp->advanceCurrentPosition(1);
         };
-        return comp->add(std::move(increase));
+        return _comp->add(std::move(increase));
     }
 
     static auto addRegisterDecrease(const auto _regAddress, const auto _amount, DataComputer* comp){
