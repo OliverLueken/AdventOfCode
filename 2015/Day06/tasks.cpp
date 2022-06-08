@@ -46,18 +46,38 @@ public:
 };
 
 class Factory1 : public ComputerFactory{
-    void addTurnOn(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        auto turnOn  = [x_start, x_end, y_start, y_end, computer](){
+    template<typename Command>
+    class CommandWrapper{
+        int x_start{};
+        int x_end{};
+        int y_start{};
+        int y_end{};
+        DataComputer* computer{nullptr};
+        Command& command{};
+
+    public:
+        CommandWrapper(int a, int b, int c, int d, DataComputer* ptr, Command& _command)
+            : x_start{a}, x_end{b}, y_start{c}, y_end{d}, computer{ptr}, command{_command}{}
+
+        auto operator()(){
             auto lightsPtr = computer->getDataPtr();
             for(auto y=y_start; y<=y_end; y++){
                 for(auto x=x_start; x<=x_end; x++){
-                    lightsPtr->operator[](x+y*1000)=1;
+                    command(lightsPtr->operator[](x+y*1000));
                 }
             }
             computer->advanceCurrentPosition(1);
-        };
-        return computer->add(std::move(turnOn));
+        }
+    };
+    
+    static constexpr auto turnOnCommand = [](auto& light){
+        light=1;
+    };
+
+    void addTurnOn(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
+        return computer->add(CommandWrapper<decltype(turnOnCommand)>(x_start, x_end, y_start, y_end, computer, turnOnCommand));
     }
+
     void addTurnOff(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
         auto turnOn  = [x_start, x_end, y_start, y_end, computer](){
             auto lightsPtr = computer->getDataPtr();
