@@ -54,6 +54,7 @@ class Factory1 : public ComputerFactory{
                     lightsPtr->operator[](x+y*1000)=1;
                 }
             }
+            computer->advanceCurrentPosition(1);
         };
         return computer->add(std::move(turnOn));
     }
@@ -65,6 +66,7 @@ class Factory1 : public ComputerFactory{
                     lightsPtr->operator[](x+y*1000)=0;
                 }
             }
+            computer->advanceCurrentPosition(1);
         };
         return computer->add(std::move(turnOn));
     }
@@ -76,6 +78,7 @@ class Factory1 : public ComputerFactory{
                     lightsPtr->operator[](x+y*1000)=1^lightsPtr->operator[](x+y*1000);
                 }
             }
+            computer->advanceCurrentPosition(1);
         };
         return computer->add(std::move(turnOn));
     }
@@ -90,6 +93,7 @@ class Factory2 : public ComputerFactory{
                     ++lightsPtr->operator[](x+y*1000);
                 }
             }
+            computer->advanceCurrentPosition(1);
         };
         return computer->add(std::move(turnOn));
     }
@@ -101,6 +105,7 @@ class Factory2 : public ComputerFactory{
                     if(lightsPtr->operator[](x+y*1000)>0) --lightsPtr->operator[](x+y*1000);
                 }
             }
+            computer->advanceCurrentPosition(1);
         };
         return computer->add(std::move(turnOn));
     }
@@ -112,6 +117,7 @@ class Factory2 : public ComputerFactory{
                     lightsPtr->operator[](x+y*1000)+=2;
                 }
             }
+            computer->advanceCurrentPosition(1);
         };
         return computer->add(std::move(turnOn));
     }
