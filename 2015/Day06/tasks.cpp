@@ -18,14 +18,13 @@ class OuterCommand{
     const int x_end{};
     const int y_start{};
     const int y_end{};
-    DataComputer* computerPtr{nullptr};
     const Command& command{};
 
 public:
-    OuterCommand(const int a, const int b, const int c, const int d, DataComputer* _computer, const Command& _command)
-        : x_start{a}, x_end{b}, y_start{c}, y_end{d}, computerPtr{_computer}, command{_command}{}
+    OuterCommand(const int a, const int b, const int c, const int d, const Command& _command)
+        : x_start{a}, x_end{b}, y_start{c}, y_end{d}, command{_command}{}
 
-    auto operator()() const {
+    auto operator()(DataComputer* computerPtr) const {
         const auto lightsPtr = computerPtr->getDataPtr();
         for(auto y=y_start; y<=y_end; y++){
             for(auto x=x_start; x<=x_end; x++){
@@ -36,38 +35,16 @@ public:
     }
 };
 
-template<typename Commands>
-class ComputerFactory{
-    DataComputer* computerPtr{nullptr};
 
-protected:
+template<typename Commands>
+class MyFactory : public Computer::ComputerFactory<Commands, Register>{
+
     template<typename Command, typename... Args>
     void addCommand(const Command& command, Args&&... args){
-        return computerPtr->add(
-            OuterCommand<Command>(std::forward<Args>(args)..., computerPtr, command)
+        return Computer::ComputerFactory<Commands, Register>::addCommand(
+            OuterCommand<Command>(std::forward<Args>(args)..., command)
         );
     }
-
-public:
-    auto make(const auto& input){
-        auto computer = DataComputer{};
-        computerPtr = &computer;
-
-        auto parse = [this](const auto& string){
-            makeCommand(string);
-        };
-
-        std::ranges::for_each(input, parse);
-        return computer;
-    }
-
-    virtual void makeCommand(const std::string&) = 0;
-};
-
-
-
-template<typename Commands>
-class MyFactory : public ComputerFactory<Commands>{
 
     void makeCommand(const std::string& string) override {
         const auto split = Utilities::splitOnEach(string, " ,l");

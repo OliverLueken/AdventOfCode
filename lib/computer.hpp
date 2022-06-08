@@ -43,8 +43,6 @@ namespace Computer{
         }
     };
 
-
-
     template<class Data>
     class Computer : public Subject {
 
@@ -62,8 +60,9 @@ namespace Computer{
 
         template<typename Lambda>
         struct Wrapper : public Instruction, public Lambda{
-            Wrapper(Lambda&& lambda): Lambda{std::forward<Lambda>(lambda)} {}
-            void execute() override { Lambda::operator()(); }
+            Computer* computerPtr{nullptr};
+            Wrapper(Lambda&& lambda, Computer* _computerPtr): Lambda{std::forward<Lambda>(lambda)}, computerPtr{_computerPtr} {}
+            void execute() override { Lambda::operator()(computerPtr); }
         };
 
         using Instructions = std::vector<std::unique_ptr<Instruction>>;
@@ -92,7 +91,7 @@ namespace Computer{
 
         template<typename Lambda>
         auto add(Lambda&& l){
-            m_instructions.emplace_back(std::make_unique<Wrapper<Lambda>>(std::forward<Lambda>(l)));
+            m_instructions.emplace_back(std::make_unique<Wrapper<Lambda>>(std::forward<Lambda>(l), this));
         }
 
 
@@ -106,7 +105,7 @@ namespace Computer{
         template<typename... Args>
         Computer(Args&&... args)
         : m_currentInstructionPosition{0}, m_instructions{}, m_data{std::make_unique<Data>(std::forward<Args>(args)...)} {}
-        
+
         Computer(const Computer&) = default;
         Computer& operator=(const Computer&) = default;
         Computer(Computer&&) = default;
@@ -133,7 +132,35 @@ namespace Computer{
         */
     };
 
-    //ComputerFactory
+
+    template<typename Commands, typename Register>
+    class ComputerFactory{
+        Computer<Register>* computerPtr{nullptr};
+
+    protected:
+        template<typename Command>
+        void addCommand(Command&& command){
+            return computerPtr->add(
+                std::forward<Command>(command)
+            );
+        }
+
+    public:
+        auto make(const auto& input){
+            auto computer = Computer<Register>{};
+            computerPtr = &computer;
+
+            auto parse = [this](const auto& string){
+                makeCommand(string);
+            };
+
+            std::ranges::for_each(input, parse);
+            return computer;
+        }
+
+        virtual void makeCommand(const std::string&) = 0;
+    };
+
 
 } //end namespace Computer
 
