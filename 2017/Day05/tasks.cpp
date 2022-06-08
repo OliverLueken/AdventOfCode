@@ -24,7 +24,7 @@ struct ExecutionLogger : public Computer::Logger {
 enum class JumpVariant{IncreasingJump, ResettingJump};
 
 template<JumpVariant>
-auto makeJumpInstruction(const int offset, JumpingComputer* comp);
+auto makeJumpInstruction(const int offset);
 
 template<>
 auto makeJumpInstruction<JumpVariant::IncreasingJump>(const int offset){
@@ -52,7 +52,7 @@ struct ComputerFactory{
         auto comp = JumpingComputer{};
 
         for(const auto& offset : jumpOffsets){
-            comp.add(makeJumpInstruction<mode>(offset, &comp));
+            comp.add(makeJumpInstruction<mode>(offset));
         }
         return comp;
     }
