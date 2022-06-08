@@ -133,7 +133,7 @@ namespace Computer{
     };
 
 
-    template<typename Commands, typename Register>
+    template<typename Register>
     class ComputerFactory{
         Computer<Register>* computerPtr{nullptr};
 

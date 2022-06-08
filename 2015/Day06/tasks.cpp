@@ -11,7 +11,7 @@
 
 using Register = std::array<int, 1000*1000>;
 using DataComputer = Computer::Computer<Register>;
-using Factory = Computer::ComputerFactory<Commands, Register>;
+using Factory = Computer::ComputerFactory<Register>;
 
 
 template<typename Commands>
