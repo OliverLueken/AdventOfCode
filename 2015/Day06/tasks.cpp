@@ -69,9 +69,15 @@ class Factory1 : public ComputerFactory{
             computer->advanceCurrentPosition(1);
         }
     };
-    
+
     static constexpr auto turnOnCommand = [](auto& light){
         light=1;
+    };
+    static constexpr auto turnOffCommand = [](auto& light){
+        light=0;
+    };
+    static constexpr auto toggleCommand = [](auto& light){
+        light=1^light;
     };
 
     void addTurnOn(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
@@ -79,28 +85,10 @@ class Factory1 : public ComputerFactory{
     }
 
     void addTurnOff(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        auto turnOn  = [x_start, x_end, y_start, y_end, computer](){
-            auto lightsPtr = computer->getDataPtr();
-            for(auto y=y_start; y<=y_end; y++){
-                for(auto x=x_start; x<=x_end; x++){
-                    lightsPtr->operator[](x+y*1000)=0;
-                }
-            }
-            computer->advanceCurrentPosition(1);
-        };
-        return computer->add(std::move(turnOn));
+        return computer->add(CommandWrapper<decltype(turnOffCommand)>(x_start, x_end, y_start, y_end, computer, turnOffCommand));
     }
     void addToggle(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        auto turnOn  = [x_start, x_end, y_start, y_end, computer](){
-            auto lightsPtr = computer->getDataPtr();
-            for(auto y=y_start; y<=y_end; y++){
-                for(auto x=x_start; x<=x_end; x++){
-                    lightsPtr->operator[](x+y*1000)=1^lightsPtr->operator[](x+y*1000);
-                }
-            }
-            computer->advanceCurrentPosition(1);
-        };
-        return computer->add(std::move(turnOn));
+        return computer->add(CommandWrapper<decltype(toggleCommand)>(x_start, x_end, y_start, y_end, computer, toggleCommand));
     }
 };
 
