@@ -101,41 +101,26 @@ class Factory1 : public ComputerFactory{
 };
 
 class Factory2 : public ComputerFactory{
+
+    static constexpr auto turnOnCommand = [](auto& light){
+        ++light;
+    };
+    static constexpr auto turnOffCommand = [](auto& light){
+        if(light>0) --light;
+    };
+    static constexpr auto toggleCommand = [](auto& light){
+        light+=2;
+    };
+
     void addTurnOn(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        auto turnOn  = [x_start, x_end, y_start, y_end, computer](){
-            auto lightsPtr = computer->getDataPtr();
-            for(auto y=y_start; y<=y_end; y++){
-                for(auto x=x_start; x<=x_end; x++){
-                    ++lightsPtr->operator[](x+y*1000);
-                }
-            }
-            computer->advanceCurrentPosition(1);
-        };
-        return computer->add(std::move(turnOn));
+        return addCommand(x_start, x_end, y_start, y_end, computer, turnOnCommand);
     }
+
     void addTurnOff(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        auto turnOn  = [x_start, x_end, y_start, y_end, computer](){
-            auto lightsPtr = computer->getDataPtr();
-            for(auto y=y_start; y<=y_end; y++){
-                for(auto x=x_start; x<=x_end; x++){
-                    if(lightsPtr->operator[](x+y*1000)>0) --lightsPtr->operator[](x+y*1000);
-                }
-            }
-            computer->advanceCurrentPosition(1);
-        };
-        return computer->add(std::move(turnOn));
+        return addCommand(x_start, x_end, y_start, y_end, computer, turnOffCommand);
     }
     void addToggle(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        auto turnOn  = [x_start, x_end, y_start, y_end, computer](){
-            auto lightsPtr = computer->getDataPtr();
-            for(auto y=y_start; y<=y_end; y++){
-                for(auto x=x_start; x<=x_end; x++){
-                    lightsPtr->operator[](x+y*1000)+=2;
-                }
-            }
-            computer->advanceCurrentPosition(1);
-        };
-        return computer->add(std::move(turnOn));
+        return addCommand(x_start, x_end, y_start, y_end, computer, toggleCommand);
     }
 };
 
