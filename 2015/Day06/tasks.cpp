@@ -28,7 +28,7 @@ class MyFactory : public Computer::ComputerFactory<Commands, Register>{
             }
             _computerPtr->advanceCurrentPosition(1);
         };
-        return Computer::ComputerFactory<Commands, Register>::addCommand(
+        Computer::ComputerFactory<Commands, Register>::addCommand(
             std::move(outerCommand)
         );
     }
@@ -42,13 +42,13 @@ class MyFactory : public Computer::ComputerFactory<Commands, Register>{
         const auto y_end   = std::stoi(split[6]);
 
         if(split[1] == "on"){
-            return this->addCommand(Commands::turnOnCommand, x_start, x_end, y_start, y_end);
+            addCommand(Commands::turnOnCommand, x_start, x_end, y_start, y_end);
         }
         else if(split[1] == "off"){
-            return this->addCommand(Commands::turnOffCommand, x_start, x_end, y_start, y_end);
+            addCommand(Commands::turnOffCommand, x_start, x_end, y_start, y_end);
         }
         else{ //toggle
-            return this->addCommand(Commands::toggleCommand, x_start, x_end, y_start, y_end);
+            addCommand(Commands::toggleCommand, x_start, x_end, y_start, y_end);
         }
     }
 
