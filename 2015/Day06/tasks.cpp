@@ -30,7 +30,7 @@ public:
             const auto y_end   = std::stoi(split[6]);
 
             if(split[1] == "on"){
-                this->addTurnOn(x_start, x_end, y_start, y_end, computer);;
+                this->addTurnOn(x_start, x_end, y_start, y_end, computer);
             }
             else if(split[1] == "off"){
                 this->addTurnOff(x_start, x_end, y_start, y_end, computer);
