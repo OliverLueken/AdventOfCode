@@ -77,7 +77,7 @@ namespace Computer{
             return m_currentInstructionPosition;
         }
 
-        void advanceCurrentPosition(const int offset){
+        void advanceCurrentPosition(const int offset = 1){
             m_currentInstructionPosition+=offset;
         }
 

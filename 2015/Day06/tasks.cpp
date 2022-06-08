@@ -26,7 +26,7 @@ class MyFactory : public Factory{
                     command(lightsPtr->at(x+1000*y));
                 }
             }
-            _computerPtr->advanceCurrentPosition(1);
+            _computerPtr->advanceCurrentPosition();
         };
         Factory::addCommand(
             std::move(outerCommand)
