@@ -27,8 +27,8 @@ template<JumpVariant>
 auto makeJumpInstruction(const int offset, JumpingComputer* comp);
 
 template<>
-auto makeJumpInstruction<JumpVariant::IncreasingJump>(const int offset, JumpingComputer* comp){
-    auto jump = [_offset = offset, comp] () mutable {
+auto makeJumpInstruction<JumpVariant::IncreasingJump>(const int offset, JumpingComputer* _comp){
+    auto jump = [_offset = offset] (JumpingComputer* comp) mutable {
         comp->advanceCurrentPosition(_offset);
         ++_offset;
     };
@@ -36,8 +36,8 @@ auto makeJumpInstruction<JumpVariant::IncreasingJump>(const int offset, JumpingC
 }
 
 template<>
-auto makeJumpInstruction<JumpVariant::ResettingJump>(const int offset, JumpingComputer* comp){
-    auto jump = [_offset = offset, comp] () mutable {
+auto makeJumpInstruction<JumpVariant::ResettingJump>(const int offset, JumpingComputer* _comp){
+    auto jump = [_offset = offset] (JumpingComputer* comp) mutable {
         comp->advanceCurrentPosition(_offset);
         if(_offset>=3) --_offset;
         else           ++_offset;
