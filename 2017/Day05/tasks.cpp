@@ -25,33 +25,34 @@ struct ExecutionLogger : public Computer::Logger {
 
 enum class JumpVariant{IncreasingJump, ResettingJump};
 
-template<JumpVariant>
-auto makeJumpInstruction(const int offset);
-
-template<>
-auto makeJumpInstruction<JumpVariant::IncreasingJump>(const int offset){
-    auto jump = [_offset = offset] (JumpingComputer* comp) mutable {
-        comp->advanceCurrentPosition(_offset);
-        ++_offset;
-    };
-    return jump;
-}
-
-template<>
-auto makeJumpInstruction<JumpVariant::ResettingJump>(const int offset){
-    auto jump = [_offset = offset] (JumpingComputer* comp) mutable {
-        comp->advanceCurrentPosition(_offset);
-        if(_offset>=3) --_offset;
-        else           ++_offset;
-    };
-    return jump;
-}
-
 
 template<JumpVariant mode>
 struct MyFactory : public Factory{
+
+    auto addIncreasingJumpInstruction(const int offset){
+        auto jump = [_offset = offset] (JumpingComputer* comp) mutable {
+            comp->advanceCurrentPosition(_offset);
+            ++_offset;
+        };
+        Factory::addCommand(std::move(jump));
+    }
+
+    auto addResettingJumpInstruction(const int offset){
+        auto jump = [_offset = offset] (JumpingComputer* comp) mutable {
+            comp->advanceCurrentPosition(_offset);
+            if(_offset>=3) --_offset;
+            else           ++_offset;
+        };
+        Factory::addCommand(std::move(jump));
+    }
+
     void makeCommand(const std::string& offset) override {
-        Factory::addCommand(makeJumpInstruction<mode>(std::stoi(offset)));
+        if constexpr(mode == JumpVariant::IncreasingJump){
+            addIncreasingJumpInstruction(std::stoi(offset));
+        }
+        else{
+            addResettingJumpInstruction(std::stoi(offset));
+        }
     }
 };
 
