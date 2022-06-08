@@ -21,34 +21,38 @@ class ComputerFactory{
         const int x_end{};
         const int y_start{};
         const int y_end{};
-        DataComputer* const computer{nullptr};
+        DataComputer& computer{};
         const Command& command{};
 
     public:
-        CommandWrapper(const int a, const int b, const int c, const int d, DataComputer* const ptr, const Command& _command)
-            : x_start{a}, x_end{b}, y_start{c}, y_end{d}, computer{ptr}, command{_command}{}
+        CommandWrapper(const int a, const int b, const int c, const int d, DataComputer& _computer, const Command& _command)
+            : x_start{a}, x_end{b}, y_start{c}, y_end{d}, computer{_computer}, command{_command}{}
 
         auto operator()() const {
-            const auto lightsPtr = computer->getDataPtr();
+            const auto lightsPtr = computer.getDataPtr();
             for(auto y=y_start; y<=y_end; y++){
                 for(auto x=x_start; x<=x_end; x++){
                     command(lightsPtr->at(x+1000*y));
                 }
             }
-            computer->advanceCurrentPosition(1);
+            computer.advanceCurrentPosition(1);
         }
     };
 
-    template<typename Command>
-    static void addCommand(const int x_start, const int x_end, const int y_start, const int y_end, DataComputer* const computer, const Command& command){
-        return computer->add(CommandWrapper<Command>(x_start, x_end, y_start, y_end, computer, command));
+    template<typename Command, typename... Args>
+    static void addCommand(DataComputer& computer, const Command& command, Args&&... args){
+        return computer.add(CommandWrapper<Command>(std::forward<Args>(args)..., computer, command));
     }
 
 public:
     static auto make(const auto& input){
         auto computer = DataComputer{};
 
-        auto parse = [computer = &computer](const auto& string){
+        auto addCurryCommand = [&computer]<typename... Args>(Args&&... args){
+            return addCommand(computer, std::forward<Args>(args)...);
+        };
+
+        auto parse = [addCurryCommand](const auto& string){
             const auto split = Utilities::splitOnEach(string, " ,l");
 
             const auto x_start = std::stoi(split[2]);
@@ -57,13 +61,13 @@ public:
             const auto y_end   = std::stoi(split[6]);
 
             if(split[1] == "on"){
-                addCommand(x_start, x_end, y_start, y_end, computer, Commands::turnOnCommand);
+                addCurryCommand(Commands::turnOnCommand, x_start, x_end, y_start, y_end);
             }
             else if(split[1] == "off"){
-                addCommand(x_start, x_end, y_start, y_end, computer, Commands::turnOffCommand);
+                addCurryCommand(Commands::turnOffCommand, x_start, x_end, y_start, y_end);
             }
             else{ //toggle
-                addCommand(x_start, x_end, y_start, y_end, computer, Commands::toggleCommand);
+                addCurryCommand(Commands::toggleCommand, x_start, x_end, y_start, y_end);
             }
         };
 
