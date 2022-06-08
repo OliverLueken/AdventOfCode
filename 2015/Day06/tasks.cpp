@@ -40,7 +40,7 @@ class ComputerFactory{
     };
 
     template<typename Command>
-    static void addCommand(int x_start, int x_end, int y_start, int y_end, DataComputer* computer, Command& command){
+    static void addCommand(const int x_start, const int x_end, const int y_start, const int y_end, DataComputer* const computer, const Command& command){
         return computer->add(CommandWrapper<Command>(x_start, x_end, y_start, y_end, computer, command));
     }
 
