@@ -127,7 +127,7 @@ class Factory2 : public ComputerFactory{
 auto getBrightness = [](const auto& instructions, auto&& factory){
     auto computer = factory.make(instructions);
     computer.execute();
-    return 0;
+    return Utilities::sum(computer.getDataView());
 };
 
 int main(){
