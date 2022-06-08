@@ -80,15 +80,20 @@ class Factory1 : public ComputerFactory{
         light=1^light;
     };
 
+    template<typename Command>
+    void addCommand(int x_start, int x_end, int y_start, int y_end, DataComputer* computer, Command& command) const {
+        return computer->add(CommandWrapper<Command>(x_start, x_end, y_start, y_end, computer, command));
+    }
+
     void addTurnOn(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        return computer->add(CommandWrapper<decltype(turnOnCommand)>(x_start, x_end, y_start, y_end, computer, turnOnCommand));
+        return addCommand(x_start, x_end, y_start, y_end, computer, turnOnCommand);
     }
 
     void addTurnOff(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        return computer->add(CommandWrapper<decltype(turnOffCommand)>(x_start, x_end, y_start, y_end, computer, turnOffCommand));
+        return addCommand(x_start, x_end, y_start, y_end, computer, turnOffCommand);
     }
     void addToggle(int x_start, int x_end, int y_start, int y_end, DataComputer* computer) const override {
-        return computer->add(CommandWrapper<decltype(toggleCommand)>(x_start, x_end, y_start, y_end, computer, toggleCommand));
+        return addCommand(x_start, x_end, y_start, y_end, computer, toggleCommand);
     }
 };
 
