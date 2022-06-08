@@ -17,19 +17,19 @@ class ComputerFactory{
 
     template<typename Command>
     class CommandWrapper{
-        int x_start{};
-        int x_end{};
-        int y_start{};
-        int y_end{};
-        DataComputer* computer{nullptr};
-        Command& command{};
+        const int x_start{};
+        const int x_end{};
+        const int y_start{};
+        const int y_end{};
+        DataComputer* const computer{nullptr};
+        const Command& command{};
 
     public:
-        CommandWrapper(int a, int b, int c, int d, DataComputer* ptr, Command& _command)
+        CommandWrapper(const int a, const int b, const int c, const int d, DataComputer* const ptr, const Command& _command)
             : x_start{a}, x_end{b}, y_start{c}, y_end{d}, computer{ptr}, command{_command}{}
 
-        auto operator()(){
-            auto lightsPtr = computer->getDataPtr();
+        auto operator()() const {
+            const auto lightsPtr = computer->getDataPtr();
             for(auto y=y_start; y<=y_end; y++){
                 for(auto x=x_start; x<=x_end; x++){
                     command(lightsPtr->operator[](x+y*1000));
