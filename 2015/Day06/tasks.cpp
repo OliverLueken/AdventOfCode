@@ -32,7 +32,7 @@ class ComputerFactory{
             const auto lightsPtr = computer->getDataPtr();
             for(auto y=y_start; y<=y_end; y++){
                 for(auto x=x_start; x<=x_end; x++){
-                    command(lightsPtr->operator[](x+y*1000));
+                    command(lightsPtr->at(x+1000*y));
                 }
             }
             computer->advanceCurrentPosition(1);
