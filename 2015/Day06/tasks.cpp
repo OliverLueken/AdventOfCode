@@ -11,11 +11,11 @@
 
 using Register = std::array<int, 1000*1000>;
 using DataComputer = Computer::Computer<Register>;
-
+using Factory = Computer::ComputerFactory<Commands, Register>;
 
 
 template<typename Commands>
-class MyFactory : public Computer::ComputerFactory<Commands, Register>{
+class MyFactory : public Factory{
 
     template<typename Command>
     void addCommand(const Command& command, const int x_start, const int x_end, const int y_start, const int y_end){
@@ -28,7 +28,7 @@ class MyFactory : public Computer::ComputerFactory<Commands, Register>{
             }
             _computerPtr->advanceCurrentPosition(1);
         };
-        Computer::ComputerFactory<Commands, Register>::addCommand(
+        Factory::addCommand(
             std::move(outerCommand)
         );
     }
