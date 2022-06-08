@@ -13,6 +13,8 @@
 
 using Register = std::unordered_map<std::string, int>;
 using DataComputer = Computer::Computer<Register>;
+using Factory = Computer::ComputerFactory<Register>;
+
 
 struct RegisterValueLogger : public Computer::Logger {
     DataComputer* computer{nullptr};
@@ -31,8 +33,8 @@ struct RegisterValueLogger : public Computer::Logger {
 
 
 
-struct ComputerFactory{
-    static auto getComparison(const auto comparator) -> std::function<bool(int, int)> const {
+struct MyFactory : public Factory{
+    auto getComparison(const auto comparator) -> std::function<bool(int, int)> const {
         if(comparator == "<")  return std::less<>{};
         if(comparator == "<=") return std::less_equal<>{};
         if(comparator == ">")  return std::greater<>{};
@@ -41,7 +43,7 @@ struct ComputerFactory{
         return std::not_equal_to<>{};
     }
 
-    static auto addIf(const auto comparator, const auto _regAddress, const auto _val, DataComputer* _comp){
+    auto addIf(const auto comparator, const auto _regAddress, const auto _val){
         auto _conditional = getComparison(comparator);
         auto ifLambda = [regAddress = _regAddress, conditional = _conditional, val = _val](DataComputer* comp){
             if(conditional( comp->getDataPtr()->operator[](regAddress), val )){
@@ -51,35 +53,31 @@ struct ComputerFactory{
                 comp->advanceCurrentPosition(2);
             }
         };
-        return _comp->add(std::move(ifLambda));
+        Factory::addCommand(std::move(ifLambda));
     }
 
-    static auto addRegisterModification(const auto regAddress, const auto mode, const auto amount, DataComputer* comp){
-        if(mode == "inc") return addRegisterIncrease(regAddress, amount, comp);
-        if(mode == "dec") return addRegisterDecrease(regAddress, amount, comp);
+    auto addRegisterModification(const auto regAddress, const auto mode, const auto amount){
+        if(mode == "inc") return addRegisterIncrease(regAddress, amount);
+        if(mode == "dec") return addRegisterDecrease(regAddress, amount);
     }
 
-    static auto addRegisterIncrease(const auto _regAddress, const auto _amount, DataComputer* _comp){
+    auto addRegisterIncrease(const auto _regAddress, const auto _amount){
         auto increase = [regAddress = _regAddress, amount = _amount] (DataComputer* comp) mutable {
             comp->getDataPtr()->operator[](regAddress)+=amount;
             comp->advanceCurrentPosition(1);
         };
-        return _comp->add(std::move(increase));
+        Factory::addCommand(std::move(increase));
     }
 
-    static auto addRegisterDecrease(const auto _regAddress, const auto _amount, DataComputer* comp){
-        return addRegisterIncrease(_regAddress, -1*_amount, comp);
+    auto addRegisterDecrease(const auto _regAddress, const auto _amount){
+        return addRegisterIncrease(_regAddress, -1*_amount);
     }
 
 
-    static auto make(const auto& instructions){
-        auto comp = DataComputer{};
-        for(const auto& instr : instructions){
-            auto split = Utilities::split(instr);
-            addIf(split[5], split[4], std::stoi(split[6]), &comp);
-            addRegisterModification(split[0], split[1], std::stoi(split[2]), &comp);
-        }
-        return comp;
+    void makeCommand(const std::string& instr) override {
+        auto split = Utilities::split(instr);
+        addIf(split[5], split[4], std::stoi(split[6]));
+        addRegisterModification(split[0], split[1], std::stoi(split[2]));
     }
 };
 
@@ -94,7 +92,7 @@ auto getHighestRegisterValues = [](auto& computer){
 };
 
 int main(){
-    auto computer = ComputerFactory::make(readFile::vectorOfStrings());
+    auto computer = MyFactory{}.make(readFile::vectorOfStrings());
 
     //Task 1
     const auto [maxRegisterValueAfterExecution, maxRegisterValueDuringExecution] = getHighestRegisterValues(computer);
