@@ -12,68 +12,82 @@
 using Register = std::array<int, 1000*1000>;
 using DataComputer = Computer::Computer<Register>;
 
+template<typename Command>
+class OuterCommand{
+    const int x_start{};
+    const int x_end{};
+    const int y_start{};
+    const int y_end{};
+    DataComputer* computerPtr{nullptr};
+    const Command& command{};
+
+public:
+    OuterCommand(const int a, const int b, const int c, const int d, DataComputer* _computer, const Command& _command)
+        : x_start{a}, x_end{b}, y_start{c}, y_end{d}, computerPtr{_computer}, command{_command}{}
+
+    auto operator()() const {
+        const auto lightsPtr = computerPtr->getDataPtr();
+        for(auto y=y_start; y<=y_end; y++){
+            for(auto x=x_start; x<=x_end; x++){
+                command(lightsPtr->at(x+1000*y));
+            }
+        }
+        computerPtr->advanceCurrentPosition(1);
+    }
+};
+
 template<typename Commands>
 class ComputerFactory{
+    DataComputer* computerPtr{nullptr};
 
-    template<typename Command>
-    class CommandWrapper{
-        const int x_start{};
-        const int x_end{};
-        const int y_start{};
-        const int y_end{};
-        DataComputer& computer{};
-        const Command& command{};
-
-    public:
-        CommandWrapper(const int a, const int b, const int c, const int d, DataComputer& _computer, const Command& _command)
-            : x_start{a}, x_end{b}, y_start{c}, y_end{d}, computer{_computer}, command{_command}{}
-
-        auto operator()() const {
-            const auto lightsPtr = computer.getDataPtr();
-            for(auto y=y_start; y<=y_end; y++){
-                for(auto x=x_start; x<=x_end; x++){
-                    command(lightsPtr->at(x+1000*y));
-                }
-            }
-            computer.advanceCurrentPosition(1);
-        }
-    };
-
+protected:
     template<typename Command, typename... Args>
-    static void addCommand(DataComputer& computer, const Command& command, Args&&... args){
-        return computer.add(CommandWrapper<Command>(std::forward<Args>(args)..., computer, command));
+    void addCommand(const Command& command, Args&&... args){
+        return computerPtr->add(
+            OuterCommand<Command>(std::forward<Args>(args)..., computerPtr, command)
+        );
     }
 
 public:
-    static auto make(const auto& input){
+    auto make(const auto& input){
         auto computer = DataComputer{};
+        computerPtr = &computer;
 
-        auto addCurryCommand = [&computer]<typename... Args>(Args&&... args){
-            return addCommand(computer, std::forward<Args>(args)...);
-        };
-
-        auto parse = [addCurryCommand](const auto& string){
-            const auto split = Utilities::splitOnEach(string, " ,l");
-
-            const auto x_start = std::stoi(split[2]);
-            const auto y_start = std::stoi(split[3]);
-            const auto x_end   = std::stoi(split[5]);
-            const auto y_end   = std::stoi(split[6]);
-
-            if(split[1] == "on"){
-                addCurryCommand(Commands::turnOnCommand, x_start, x_end, y_start, y_end);
-            }
-            else if(split[1] == "off"){
-                addCurryCommand(Commands::turnOffCommand, x_start, x_end, y_start, y_end);
-            }
-            else{ //toggle
-                addCurryCommand(Commands::toggleCommand, x_start, x_end, y_start, y_end);
-            }
+        auto parse = [this](const auto& string){
+            makeCommand(string);
         };
 
         std::ranges::for_each(input, parse);
         return computer;
     }
+
+    virtual void makeCommand(const std::string&) = 0;
+};
+
+
+
+template<typename Commands>
+class MyFactory : public ComputerFactory<Commands>{
+
+    void makeCommand(const std::string& string) override {
+        const auto split = Utilities::splitOnEach(string, " ,l");
+
+        const auto x_start = std::stoi(split[2]);
+        const auto y_start = std::stoi(split[3]);
+        const auto x_end   = std::stoi(split[5]);
+        const auto y_end   = std::stoi(split[6]);
+
+        if(split[1] == "on"){
+            return this->addCommand(Commands::turnOnCommand, x_start, x_end, y_start, y_end);
+        }
+        else if(split[1] == "off"){
+            return this->addCommand(Commands::turnOffCommand, x_start, x_end, y_start, y_end);
+        }
+        else{ //toggle
+            return this->addCommand(Commands::toggleCommand, x_start, x_end, y_start, y_end);
+        }
+    }
+
 };
 
 struct Commands1{
@@ -90,7 +104,7 @@ struct Commands2{
 
 template<typename Commands>
 auto getBrightness = [](const auto& instructions){
-    auto computer = ComputerFactory<Commands>::make(instructions);
+    auto computer = MyFactory<Commands>{}.make(instructions);
     computer.execute();
     return Utilities::sum(computer.getDataView());
 };
