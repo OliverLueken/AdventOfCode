@@ -8,6 +8,8 @@
 #include <memory>
 
 using JumpingComputer = Computer::Computer<int>;
+using Factory = Computer::ComputerFactory<int>;
+
 
 struct ExecutionLogger : public Computer::Logger {
     unsigned int executionCount{};
@@ -47,20 +49,15 @@ auto makeJumpInstruction<JumpVariant::ResettingJump>(const int offset){
 
 
 template<JumpVariant mode>
-struct ComputerFactory{
-    static JumpingComputer make_computer(const auto& jumpOffsets){
-        auto comp = JumpingComputer{};
-
-        for(const auto& offset : jumpOffsets){
-            comp.add(makeJumpInstruction<mode>(offset));
-        }
-        return comp;
+struct MyFactory : public Factory{
+    void makeCommand(const std::string& offset) override {
+        Factory::addCommand(makeJumpInstruction<mode>(std::stoi(offset)));
     }
 };
 
 template<JumpVariant mode>
 auto getStepCount = [](const auto& jumpOffsets){
-    auto computer = ComputerFactory<mode>::make_computer(jumpOffsets);
+    auto computer = MyFactory<mode>{}.make(jumpOffsets);
 
     auto logger = ExecutionLogger{&computer};
     computer.execute();
@@ -69,7 +66,7 @@ auto getStepCount = [](const auto& jumpOffsets){
 
 
 int main(){
-    const auto jumpOffsets = readFile::vectorOfInts();
+    const auto jumpOffsets = readFile::vectorOfStrings();
 
     //Task 1
     const auto firstStepCount = getStepCount<JumpVariant::IncreasingJump>(jumpOffsets);
