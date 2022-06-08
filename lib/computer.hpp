@@ -102,6 +102,11 @@ namespace Computer{
 
         Computer()
         : m_currentInstructionPosition{0}, m_instructions{}, m_data{std::make_unique<Data>()} {}
+
+        template<typename... Args>
+        Computer(Args&&... args)
+        : m_currentInstructionPosition{0}, m_instructions{}, m_data{std::make_unique<Data>(std::forward<Args>(args)...)} {}
+        
         Computer(const Computer&) = default;
         Computer& operator=(const Computer&) = default;
         Computer(Computer&&) = default;
