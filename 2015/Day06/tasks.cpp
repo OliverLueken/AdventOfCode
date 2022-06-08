@@ -124,8 +124,7 @@ class Factory2 : public ComputerFactory{
 };
 
 
-auto getBrightness = [](const auto& instructions){
-    auto factory = Factory1{};
+auto getBrightness = [](const auto& instructions, auto&& factory){
     auto computer = factory.make(instructions);
     computer.execute();
     return 0;
@@ -135,11 +134,11 @@ int main(){
     const auto instructions = readFile::vectorOfStrings("input.txt");
 
     //Task 1
-    const auto brightnessTaskOne = getBrightness(instructions);
+    const auto brightnessTaskOne = getBrightness(instructions, Factory1{});
     std::cout << "There are a total of " << brightnessTaskOne << " lights lit now.\n";
 
     //Task 2
-    const auto brightnessTaskTwo = getBrightness(instructions);
+    const auto brightnessTaskTwo = getBrightness(instructions, Factory2{});
     std::cout << "The total brightness of the lights combine to " << brightnessTaskTwo << ".\n";
 
     VerifySolution::verifySolution(brightnessTaskOne, brightnessTaskTwo);
