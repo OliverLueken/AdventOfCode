@@ -73,27 +73,15 @@ public:
 };
 
 struct Commands1{
-    static constexpr auto turnOnCommand = [](auto& light){
-        light=1;
-    };
-    static constexpr auto turnOffCommand = [](auto& light){
-        light=0;
-    };
-    static constexpr auto toggleCommand = [](auto& light){
-        light=1^light;
-    };
+    static constexpr auto turnOnCommand  = [](auto& light){ light=1;       };
+    static constexpr auto turnOffCommand = [](auto& light){ light=0;       };
+    static constexpr auto toggleCommand  = [](auto& light){ light=1^light; };
 };
 
 struct Commands2{
-    static constexpr auto turnOnCommand = [](auto& light){
-        ++light;
-    };
-    static constexpr auto turnOffCommand = [](auto& light){
-        if(light>0) --light;
-    };
-    static constexpr auto toggleCommand = [](auto& light){
-        light+=2;
-    };
+    static constexpr auto turnOnCommand  = [](auto& light){ ++light;             };
+    static constexpr auto turnOffCommand = [](auto& light){ if(light>0) --light; };
+    static constexpr auto toggleCommand  = [](auto& light){ light+=2;            };
 };
 
 template<typename Commands>
