@@ -80,7 +80,7 @@ struct MyFactory : public Factory{
     }
 
     void makeCommand(const std::string& instr) override {
-        const auto split = Utilities::split(row);
+        const auto split = Utilities::split(instr);
         if(split[0] == "hlf"){
             add_hlf(split[1][0]-'a');
         }
