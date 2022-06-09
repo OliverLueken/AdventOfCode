@@ -19,42 +19,42 @@ using Factory = Computer::ComputerFactory<Register>;
 
 struct MyFactory : public Factory{
 
-    auto add_hlf(unsigned int reg){
-        auto hlf = [reg](DataComputer* compPtr){
+    auto add_half(unsigned int reg){
+        auto half = [reg](DataComputer* compPtr){
             auto& r = compPtr->getDataPtr()->at(reg);
             r/=2;
             compPtr->advanceCurrentPosition();
         };
-        Factory::addCommand(std::move(hlf));
+        Factory::addCommand(std::move(half));
     }
 
-    auto add_tpl(unsigned int reg){
-        auto tpl = [reg](DataComputer* compPtr){
+    auto add_triple(unsigned int reg){
+        auto triple = [reg](DataComputer* compPtr){
             auto& r = compPtr->getDataPtr()->at(reg);
             r*=3;
             compPtr->advanceCurrentPosition();
         };
-        Factory::addCommand(std::move(tpl));
+        Factory::addCommand(std::move(triple));
     }
 
-    auto add_inc(unsigned int reg){
-        auto inc = [reg](DataComputer* compPtr){
+    auto add_increment(unsigned int reg){
+        auto increment = [reg](DataComputer* compPtr){
             auto& r = compPtr->getDataPtr()->at(reg);
             ++r;
             compPtr->advanceCurrentPosition();
         };
-        Factory::addCommand(std::move(inc));
+        Factory::addCommand(std::move(increment));
     }
 
-    auto add_jmp(int offset){
-        auto jmp = [offset](DataComputer* compPtr){
+    auto add_jump(int offset){
+        auto jump = [offset](DataComputer* compPtr){
             compPtr->advanceCurrentPosition(offset);
         };
-        Factory::addCommand(std::move(jmp));
+        Factory::addCommand(std::move(jump));
     }
 
-    auto add_jie(unsigned int reg, int offset){
-        auto jie = [reg, offset](DataComputer* compPtr){
+    auto add_jumpIfEven(unsigned int reg, int offset){
+        auto jumpIfEven = [reg, offset](DataComputer* compPtr){
             auto& r = compPtr->getDataPtr()->at(reg);
             if(r%2==0){
                 compPtr->advanceCurrentPosition(offset);
@@ -63,11 +63,11 @@ struct MyFactory : public Factory{
                 compPtr->advanceCurrentPosition();
             }
         };
-        Factory::addCommand(std::move(jie));
+        Factory::addCommand(std::move(jumpIfEven));
     }
 
-    auto add_jio(unsigned int reg, int offset){
-        auto jio = [reg, offset](DataComputer* compPtr){
+    auto add_jumpIfOne(unsigned int reg, int offset){
+        auto jumpIfOne = [reg, offset](DataComputer* compPtr){
             auto& r = compPtr->getDataPtr()->at(reg);
             if(r==1){
                 compPtr->advanceCurrentPosition(offset);
@@ -76,28 +76,28 @@ struct MyFactory : public Factory{
                 compPtr->advanceCurrentPosition();
             }
         };
-        Factory::addCommand(std::move(jio));
+        Factory::addCommand(std::move(jumpIfOne));
     }
 
     void makeCommand(const std::string& instr) override {
         const auto split = Utilities::split(instr);
         if(split[0] == "hlf"){
-            add_hlf(split[1][0]-'a');
+            add_half(split[1][0]-'a');
         }
         else if(split[0] == "tpl"){
-            add_tpl(split[1][0]-'a');
+            add_triple(split[1][0]-'a');
         }
         else if(split[0] == "inc"){
-            add_inc(split[1][0]-'a');
+            add_increment(split[1][0]-'a');
         }
         else if(split[0] == "jmp"){
-            add_jmp(std::stoi(split[1]));
+            add_jump(std::stoi(split[1]));
         }
         else if(split[0] == "jie"){
-            add_jie(split[1][0]-'a', std::stoi(split[2]));
+            add_jumpIfEven(split[1][0]-'a', std::stoi(split[2]));
         }
-        else{ //jio
-            add_jio(split[1][0]-'a', std::stoi(split[2]));
+        else{ //jumpIfOne
+            add_jumpIfOne(split[1][0]-'a', std::stoi(split[2]));
         }
     }
 };
