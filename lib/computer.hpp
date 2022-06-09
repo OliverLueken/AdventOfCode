@@ -81,12 +81,12 @@ namespace Computer{
             m_currentInstructionPosition+=offset;
         }
 
-        Data* getDataPtr(){
-            return m_data.get();
+        Data& getData(){
+            return *m_data.get();
         }
 
-        const Data* getDataPtr() const {
-            return m_data.get();
+        const Data& getData() const {
+            return *m_data.get();
         }
 
         template<typename Lambda>
@@ -106,8 +106,6 @@ namespace Computer{
         Computer(Args&&... args)
         : m_currentInstructionPosition{0}, m_instructions{}, m_data{std::make_unique<Data>(std::forward<Args>(args)...)} {}
 
-        Computer(const Computer&) = default;
-        Computer& operator=(const Computer&) = default;
         Computer(Computer&&) = default;
         Computer& operator=(Computer&&) = default;
         virtual ~Computer() = default;
@@ -123,13 +121,20 @@ namespace Computer{
             return std::views::all(*m_data);
         }
 
-        /*
-        reset()
+        void reset(){
+            resetCurrentPos();
+            resetInstructions();
+            resetData();
+        }
 
-        virtual resetCurrentPos
-        virtual resetInstructions
-        virtual resetData
-        */
+        virtual void resetCurrentPos(){
+            m_currentInstructionPosition = 0;
+        }
+        virtual void resetInstructions(){}
+        virtual void resetData(){
+            auto newData = std::make_unique<Data>();
+            std::swap(m_data, newData);
+        }
     };
 
 
