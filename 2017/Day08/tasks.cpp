@@ -46,7 +46,7 @@ struct MyFactory : public Factory{
     auto addIf(const auto comparator, const auto _regAddress, const auto _val){
         auto _conditional = getComparison(comparator);
         auto ifLambda = [regAddress = _regAddress, conditional = _conditional, val = _val](DataComputer* comp){
-            if(conditional( comp->getDataPtr()->operator[](regAddress), val )){
+            if(conditional( comp->getData()[regAddress], val )){
                 comp->advanceCurrentPosition(1);
             }
             else{
@@ -63,7 +63,7 @@ struct MyFactory : public Factory{
 
     auto addRegisterIncrease(const auto _regAddress, const auto _amount){
         auto increase = [regAddress = _regAddress, amount = _amount] (DataComputer* comp) mutable {
-            comp->getDataPtr()->operator[](regAddress)+=amount;
+            comp->getData()[regAddress]+=amount;
             comp->advanceCurrentPosition(1);
         };
         Factory::addCommand(std::move(increase));

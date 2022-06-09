@@ -20,10 +20,10 @@ class MyFactory : public Factory{
     template<typename Command>
     void addCommand(const Command& command, const int x_start, const int x_end, const int y_start, const int y_end){
         auto outerCommand = [&command, x_start, x_end, y_start, y_end](DataComputer* _computerPtr){
-            const auto lightsPtr = _computerPtr->getDataPtr();
+            auto& lights = _computerPtr->getData();
             for(auto y=y_start; y<=y_end; y++){
                 for(auto x=x_start; x<=x_end; x++){
-                    command(lightsPtr->at(x+1000*y));
+                    command(lights[x+1000*y]);
                 }
             }
             _computerPtr->advanceCurrentPosition();
