@@ -113,7 +113,7 @@ namespace Computer{
         virtual ~Computer() = default;
 
         auto execute(){
-            for(m_currentInstructionPosition = 0; currentInstructionPositionIsValid();){
+            while( currentInstructionPositionIsValid() ){
                 m_instructions[m_currentInstructionPosition]->execute();
                 notifyLogger();
             }
