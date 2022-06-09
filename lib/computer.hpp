@@ -81,12 +81,12 @@ namespace Computer{
             m_currentInstructionPosition+=offset;
         }
 
-        Data* getDataPtr(){
-            return m_data.get();
+        Data& getData(){
+            return *m_data.get();
         }
 
-        const Data* getDataPtr() const {
-            return m_data.get();
+        const Data& getData() const {
+            return *m_data.get();
         }
 
         template<typename Lambda>

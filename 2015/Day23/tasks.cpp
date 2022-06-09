@@ -21,7 +21,7 @@ struct MyFactory : public Factory{
 
     auto add_half(unsigned int reg){
         auto half = [reg](DataComputer* compPtr){
-            auto& r = compPtr->getDataPtr()->at(reg);
+            auto& r = compPtr->getData()[reg];
             r/=2;
             compPtr->advanceCurrentPosition();
         };
@@ -30,7 +30,7 @@ struct MyFactory : public Factory{
 
     auto add_triple(unsigned int reg){
         auto triple = [reg](DataComputer* compPtr){
-            auto& r = compPtr->getDataPtr()->at(reg);
+            auto& r = compPtr->getData()[reg];
             r*=3;
             compPtr->advanceCurrentPosition();
         };
@@ -39,7 +39,7 @@ struct MyFactory : public Factory{
 
     auto add_increment(unsigned int reg){
         auto increment = [reg](DataComputer* compPtr){
-            auto& r = compPtr->getDataPtr()->at(reg);
+            auto& r = compPtr->getData()[reg];
             ++r;
             compPtr->advanceCurrentPosition();
         };
@@ -55,7 +55,7 @@ struct MyFactory : public Factory{
 
     auto add_jumpIfEven(unsigned int reg, int offset){
         auto jumpIfEven = [reg, offset](DataComputer* compPtr){
-            auto& r = compPtr->getDataPtr()->at(reg);
+            auto& r = compPtr->getData()[reg];
             if(r%2==0){
                 compPtr->advanceCurrentPosition(offset);
             }
@@ -68,7 +68,7 @@ struct MyFactory : public Factory{
 
     auto add_jumpIfOne(unsigned int reg, int offset){
         auto jumpIfOne = [reg, offset](DataComputer* compPtr){
-            auto& r = compPtr->getDataPtr()->at(reg);
+            auto& r = compPtr->getData()[reg];
             if(r==1){
                 compPtr->advanceCurrentPosition(offset);
             }
@@ -108,14 +108,14 @@ int main(){
 
     //Task 1
     computer.execute();
-    const auto registerAfterExecution1 = computer.getDataPtr()->at(1);
+    const auto registerAfterExecution1 = computer.getData()[1];
     std::cout << "The value of register b at the end of the program is " << registerAfterExecution1 << ".\n";
 
     //Task 2
     computer.reset();
-    computer.getDataPtr()->at(0)=1;
+    computer.getData()[0]=1;
     computer.execute();
-    const auto registerAfterExecution2 = computer.getDataPtr()->at(1);
+    const auto registerAfterExecution2 = computer.getData()[1];
     std::cout << "With register a starting at 1, the value of the b reg is " << registerAfterExecution2 << ".\n";
 
     VerifySolution::verifySolution(registerAfterExecution1, registerAfterExecution2);
