@@ -121,13 +121,20 @@ namespace Computer{
             return std::views::all(*m_data);
         }
 
-        /*
-        reset()
+        void reset(){
+            resetCurrentPos();
+            resetInstructions();
+            resetData();
+        }
 
-        virtual resetCurrentPos
-        virtual resetInstructions
-        virtual resetData
-        */
+        virtual void resetCurrentPos(){
+            m_currentInstructionPosition = 0;
+        }
+        virtual void resetInstructions(){}
+        virtual void resetData(){
+            auto newData = std::make_unique<Data>();
+            std::swap(m_data, newData);
+        }
     };
 
 
