@@ -12,6 +12,11 @@
 #include <array>
 #include <utility>
 
+
+using Register = std::array<unsigned int, 2>;
+using DataComputer = Computer::Computer<Register>;
+using Factory = Computer::ComputerFactory<Register>;
+
 struct Instruction{
     int* pos{nullptr};
     Instruction(int* _pos) : pos{_pos}{}
