@@ -73,6 +73,18 @@ namespace Computer{
 
     public:
 
+        Computer()
+        : m_currentInstructionPosition{0}, m_instructions{}, m_data{std::make_unique<Data>()} {}
+
+        template<typename... Args>
+        Computer(Args&&... args)
+        : m_currentInstructionPosition{0}, m_instructions{}, m_data{std::make_unique<Data>(std::forward<Args>(args)...)} {}
+
+        Computer(Computer&&) = default;
+        Computer& operator=(Computer&&) = default;
+        virtual ~Computer() = default;
+
+
         int getCurrentPosition() const {
             return m_currentInstructionPosition;
         }
@@ -98,17 +110,6 @@ namespace Computer{
         bool currentInstructionPositionIsValid() const {
             return 0<=m_currentInstructionPosition && std::less{}(m_currentInstructionPosition, m_instructions.size());
         }
-
-        Computer()
-        : m_currentInstructionPosition{0}, m_instructions{}, m_data{std::make_unique<Data>()} {}
-
-        template<typename... Args>
-        Computer(Args&&... args)
-        : m_currentInstructionPosition{0}, m_instructions{}, m_data{std::make_unique<Data>(std::forward<Args>(args)...)} {}
-
-        Computer(Computer&&) = default;
-        Computer& operator=(Computer&&) = default;
-        virtual ~Computer() = default;
 
         auto execute(){
             while( currentInstructionPositionIsValid() ){
