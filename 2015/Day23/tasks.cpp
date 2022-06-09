@@ -69,7 +69,7 @@ struct MyFactory : public Factory{
     auto add_jio(unsigned int reg, int offset){
         auto jio = [reg, offset](DataComputer* compPtr){
             auto& r = compPtr->getDataPtr()->at(reg);
-            if(r%2==1){
+            if(r==1){
                 compPtr->advanceCurrentPosition(offset);
             }
             else{
