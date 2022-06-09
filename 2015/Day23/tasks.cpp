@@ -17,6 +17,73 @@ using Register = std::array<unsigned int, 2>;
 using DataComputer = Computer::Computer<Register>;
 using Factory = Computer::ComputerFactory<Register>;
 
+struct MyFactory : public Factory{
+
+    auto add_hlf(unsigned int reg){
+        auto hlf = [reg](DataComputer* compPtr){
+            auto& r = compPtr->getDataPtr()->at(reg);
+            r/=2;
+            compPtr->advanceCurrentPosition();
+        };
+        Factory::addCommand(std::move(hlf));
+    }
+
+    auto add_tpl(unsigned int reg){
+        auto tpl = [reg](DataComputer* compPtr){
+            auto& r = compPtr->getDataPtr()->at(reg);
+            r*=3;
+            compPtr->advanceCurrentPosition();
+        };
+        Factory::addCommand(std::move(tpl));
+    }
+
+    auto add_inc(unsigned int reg){
+        auto inc = [reg](DataComputer* compPtr){
+            auto& r = compPtr->getDataPtr()->at(reg);
+            ++r;
+            compPtr->advanceCurrentPosition();
+        };
+        Factory::addCommand(std::move(inc));
+    }
+
+    auto add_jmp(int offset){
+        auto jmp = [offset](DataComputer* compPtr){
+            compPtr->advanceCurrentPosition(offset);
+        };
+        Factory::addCommand(std::move(jmp));
+    }
+
+    auto add_jie(unsigned int reg, int offset){
+        auto jie = [reg, offset](DataComputer* compPtr){
+            auto& r = compPtr->getDataPtr()->at(reg);
+            if(r%2==0){
+                compPtr->advanceCurrentPosition(offset);
+            }
+            else{
+                compPtr->advanceCurrentPosition();
+            }
+        };
+        Factory::addCommand(std::move(jie));
+    }
+
+    auto add_jio(unsigned int reg, int offset){
+        auto jio = [reg, offset](DataComputer* compPtr){
+            auto& r = compPtr->getDataPtr()->at(reg);
+            if(r%2==1){
+                compPtr->advanceCurrentPosition(offset);
+            }
+            else{
+                compPtr->advanceCurrentPosition();
+            }
+        };
+        Factory::addCommand(std::move(jio));
+    }
+
+    void makeCommand(const std::string& instr) override {
+
+    }
+};
+
 struct Instruction{
     int* pos{nullptr};
     Instruction(int* _pos) : pos{_pos}{}
