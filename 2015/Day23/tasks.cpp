@@ -80,7 +80,25 @@ struct MyFactory : public Factory{
     }
 
     void makeCommand(const std::string& instr) override {
-
+        const auto split = Utilities::split(row);
+        if(split[0] == "hlf"){
+            add_hlf(split[1][0]-'a');
+        }
+        else if(split[0] == "tpl"){
+            add_tpl(split[1][0]-'a');
+        }
+        else if(split[0] == "inc"){
+            add_inc(split[1][0]-'a');
+        }
+        else if(split[0] == "jmp"){
+            add_jmp(std::stoi(split[1]));
+        }
+        else if(split[0] == "jie"){
+            add_jie(split[1][0]-'a', std::stoi(split[2]));
+        }
+        else{ //jio
+            add_jio(split[1][0]-'a', std::stoi(split[2]));
+        }
     }
 };
 
