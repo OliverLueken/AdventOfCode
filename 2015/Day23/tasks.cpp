@@ -2,6 +2,7 @@
 #include "../../lib/readFile.hpp"
 #include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
+#include "../../lib/computer.hpp"
 
 #include <iostream>
 #include <string>
@@ -77,12 +78,12 @@ struct jio : public Instruction{
     }
 };
 
-struct Computer{
+struct MyComputer{
     int pos{0};
     std::vector<std::unique_ptr<Instruction>> program{};
     std::array<unsigned int, 2> reg = {0,0};
 
-    Computer(std::vector<std::string> input){
+    MyComputer(std::vector<std::string> input){
         for(const auto& row : input){
             const auto split = Utilities::split(row);
             if(split[0] == "hlf"){
@@ -120,7 +121,7 @@ struct Computer{
 
 
 int main(){
-    Computer computer{readFile::vectorOfStrings("input.txt")};
+    MyComputer computer{readFile::vectorOfStrings("input.txt")};
 
     //Task 1
     computer.execute();
