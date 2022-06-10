@@ -108,14 +108,14 @@ int main(){
 
     //Task 1
     computer.execute();
-    const auto registerAfterExecution1 = computer.getData()[1];
+    const auto registerAfterExecution1 = computer.getData(1);
     std::cout << "The value of register b at the end of the program is " << registerAfterExecution1 << ".\n";
 
     //Task 2
     computer.reset();
-    computer.getData()[0]=1;
+    computer.getData(0)=1;
     computer.execute();
-    const auto registerAfterExecution2 = computer.getData()[1];
+    const auto registerAfterExecution2 = computer.getData(1);
     std::cout << "With register a starting at 1, the value of the b reg is " << registerAfterExecution2 << ".\n";
 
     VerifySolution::verifySolution(registerAfterExecution1, registerAfterExecution2);
