@@ -1,6 +1,7 @@
 #ifndef COMPUTER_HPP
 #define COMPUTER_HPP
 
+#include "concepts.hpp"
 
 #include <iostream>
 #include <vector>
@@ -99,6 +100,26 @@ namespace Computer{
 
         const Data& getData() const {
             return *m_data.get();
+        }
+
+        template<typename Arg>
+        auto& getData(Arg&& arg){
+            if constexpr(hasBracketOperator<Data>){
+                return m_data->operator[](std::forward<Arg>(arg));
+            }
+            else{
+                return *m_data.get();
+            }
+        }
+
+        template<typename Arg>
+        const auto& getData(Arg&& arg) const {
+            if constexpr(hasBracketOperator<Data>){
+                return m_data->operator[](std::forward<Arg>(arg));
+            }
+            else{
+                return *m_data.get();
+            }
         }
 
         template<typename Lambda>
