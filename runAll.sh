@@ -1,14 +1,16 @@
 #!/bin/bash
 
-for year in 2015 2016 2020 2021
+for path in $(find -type d -path "./20*/Day*" | sort)
 do
-    for day in $(seq -f "%02g" 1 25)
-    do
-        echo "Running year $year day $day:"
-        cd $year/Day$day
-        /usr/bin/time ./tasks.out
-        cd ../..
-        echo ""
-    done
-    echo ""
+    cd $path
+    if test -f ./tasks.out; then
+        if [[ ( $path = './2015/Day04' ) || ( $path = './2016/Day05' ) || ( $path = './2016/Day14' ) ]]; then #excluding long running tasks
+            echo ""
+        else
+            echo "Running $path:"
+            /usr/bin/time ./tasks.out
+            echo ""
+        fi
+    fi
+    cd ../..
 done
