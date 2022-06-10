@@ -21,7 +21,7 @@ struct MyFactory : public Factory{
 
     auto add_half(unsigned int reg){
         auto half = [reg](DataComputer* compPtr){
-            auto& r = compPtr->getData()[reg];
+            auto& r = compPtr->getData(reg);
             r/=2;
             compPtr->advanceCurrentPosition();
         };
@@ -30,7 +30,7 @@ struct MyFactory : public Factory{
 
     auto add_triple(unsigned int reg){
         auto triple = [reg](DataComputer* compPtr){
-            auto& r = compPtr->getData()[reg];
+            auto& r = compPtr->getData(reg);
             r*=3;
             compPtr->advanceCurrentPosition();
         };
@@ -39,7 +39,7 @@ struct MyFactory : public Factory{
 
     auto add_increment(unsigned int reg){
         auto increment = [reg](DataComputer* compPtr){
-            auto& r = compPtr->getData()[reg];
+            auto& r = compPtr->getData(reg);
             ++r;
             compPtr->advanceCurrentPosition();
         };
@@ -55,7 +55,7 @@ struct MyFactory : public Factory{
 
     auto add_jumpIfEven(unsigned int reg, int offset){
         auto jumpIfEven = [reg, offset](DataComputer* compPtr){
-            auto& r = compPtr->getData()[reg];
+            auto& r = compPtr->getData(reg);
             if(r%2==0){
                 compPtr->advanceCurrentPosition(offset);
             }
@@ -68,7 +68,7 @@ struct MyFactory : public Factory{
 
     auto add_jumpIfOne(unsigned int reg, int offset){
         auto jumpIfOne = [reg, offset](DataComputer* compPtr){
-            auto& r = compPtr->getData()[reg];
+            auto& r = compPtr->getData(reg);
             if(r==1){
                 compPtr->advanceCurrentPosition(offset);
             }
