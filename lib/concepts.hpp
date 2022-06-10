@@ -19,5 +19,7 @@ concept Container = requires (T c){c.begin();};
 template<typename T>
 concept Printable = requires (T x){ std::cout << x; };
 
+template<typename T>
+concept hasBracketOperator = requires (const T x){ x[0]; };
 
 #endif
