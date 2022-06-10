@@ -22,19 +22,23 @@ namespace Matrix{
         std::vector<T> matrix{};
 
         constexpr void checkRowBound(const size_t i) const {
-            if(i>=_n) throw std::out_of_range("Row index too large. Got "
-                                            + std::to_string(i)
-                                            + ", expected index in intervall [0,"
-                                            + std::to_string(_n)
-                                            + ")\n" );
+            if(i>=_n) throw std::out_of_range(
+                "Row index too large. Got "
+                + std::to_string(i)
+                + ", expected index in intervall [0,"
+                + std::to_string(_n)
+                + ")\n"
+            );
         }
 
         constexpr void checkColBound(const size_t j) const {
-            if(j>=_m) throw std::out_of_range("Column index too large. Got "
-                                            + std::to_string(j)
-                                            + ", expected index in intervall [0,"
-                                            + std::to_string(_m)
-                                            + ")\n" );
+            if(j>=_m) throw std::out_of_range(
+                "Column index too large. Got "
+                + std::to_string(j)
+                + ", expected index in intervall [0,"
+                + std::to_string(_m)
+                + ")\n"
+            );
         }
 
         constexpr void checkBounds(const size_t i, const size_t j) const {
