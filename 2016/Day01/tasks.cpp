@@ -23,6 +23,10 @@ auto infNorm(const auto& z){
     return std::abs(z.real()) + std::abs(z.imag());
 }
 
+struct MyFactory : public Factory{
+
+};
+
 auto followInstruction = [](const auto& instruction, auto& facing, auto& currentPosition){
     using namespace std::complex_literals;
 
