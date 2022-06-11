@@ -20,6 +20,14 @@ struct Data{
 using DataComputer = Computer::Computer<Data>;
 using Factory = Computer::ComputerFactory<Data>;
 
+struct PositionLogger : Computer::Logger{
+    std::unordered_set<std::complex<int>> visitedPlaces{0};
+
+    void update() override{
+        
+    }
+};
+
 auto infNorm(const auto& z){
     return std::abs(z.real()) + std::abs(z.imag());
 }
