@@ -22,6 +22,7 @@ using Factory = Computer::ComputerFactory<Data>;
 
 struct PositionLogger : Computer::Logger{
     DataComputer* compPtr{nullptr};
+    std::complex<int> lastPosition{0};
     std::unordered_set<std::complex<int>> visitedPlaces{0};
 
     PositionLogger(DataComputer* _compPtr) : compPtr{_compPtr}{
@@ -29,7 +30,17 @@ struct PositionLogger : Computer::Logger{
     }
 
     void update() override{
-        
+        auto& currentPosition = compPtr->getData().currentPosition;
+        const auto& facing = compPtr->getData().facing;
+        while(lastPosition != currentPosition){
+            lastPosition+=facing;
+            const auto inserted = visitedPlaces.insert(lastPosition).second;
+            if(!inserted){
+                currentPosition = lastPosition;
+                compPtr->terminate();
+                return;
+            }
+        }
     }
 };
 
