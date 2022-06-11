@@ -83,23 +83,10 @@ auto distanceToDestination = [](const auto& instructions){
 
 
 auto distanceToFirstPlaceVisitedTwice = [](const auto& instructions){
-    using namespace std::complex_literals;
-    std::unordered_set<std::complex<int>> visitedPlaces{0};
-
-    std::complex<int> facing{1i};
-    std::complex<int> currentPosition{0}, nextPosition{0};
-    for(const auto& instruction : instructions){
-        nextPosition = currentPosition;
-        followInstruction(instruction, facing, nextPosition);
-        while(currentPosition != nextPosition){
-            currentPosition+=facing;
-            const auto inserted = visitedPlaces.insert(currentPosition).second;
-            if(!inserted){
-                return infNorm(currentPosition);
-            }
-        }
-    }
-    return 0;
+    auto computer = MyFactory{}.make(instructions);
+    auto positionLogger = PositionLogger{&computer};
+    computer.execute();
+    return infNorm(computer.getData().currentPosition);
 };
 
 int main(){
