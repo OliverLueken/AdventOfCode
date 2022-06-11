@@ -52,14 +52,9 @@ auto followInstruction = [](const auto& instruction, auto& facing, auto& current
 };
 
 auto distanceToDestination = [](const auto& instructions){
-    using namespace std::complex_literals;
-
-    std::complex<int> facing{1i};
-    std::complex<int> currentPosition{0};
-    for(const auto& instruction : instructions){
-        followInstruction(instruction, facing, currentPosition);
-    }
-    return infNorm(currentPosition);
+    auto computer = MyFactory{}.make(instructions);
+    computer.execute();
+    return infNorm(computer.getData().currentPosition);
 };
 
 
