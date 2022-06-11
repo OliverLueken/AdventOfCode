@@ -25,7 +25,15 @@ auto infNorm(const auto& z){
 }
 
 struct MyFactory : public Factory{
-
+    auto addTurnAndMove(const auto turnDirection, const auto numberOfBlocksToWalk){
+        auto turnAndMove = [turnDirection, numberOfBlocksToWalk](DataComputer* compPtr){
+            auto& facing = compPtr->getData().facing;
+            facing*= turnDirection;
+            compPtr->getData().currentPosition += facing*numberOfBlocksToWalk;
+            compPtr->advanceCurrentPosition();
+        };
+        Factory::addCommand(std::move(turnAndMove));
+    }
 };
 
 auto followInstruction = [](const auto& instruction, auto& facing, auto& currentPosition){
