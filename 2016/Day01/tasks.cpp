@@ -11,6 +11,14 @@
 #include <unordered_set>
 
 
+
+struct Data = {
+    std::complex<int> facing{1i};
+    std::complex<int> currentPosition{0};
+};
+using DataComputer = Computer::Computer<Data>;
+using Factory = Computer::ComputerFactory<Data>;
+
 auto infNorm(const auto& z){
     return std::abs(z.real()) + std::abs(z.imag());
 }
