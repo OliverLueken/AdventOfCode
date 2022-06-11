@@ -132,6 +132,10 @@ namespace Computer{
             return 0<=m_currentInstructionPosition && std::less{}(m_currentInstructionPosition, m_instructions.size());
         }
 
+        void terminate(){
+            m_currentInstructionPosition=-1;
+        }
+
         auto execute(){
             while( currentInstructionPositionIsValid() ){
                 m_instructions[m_currentInstructionPosition]->execute();
