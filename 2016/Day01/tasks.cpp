@@ -21,7 +21,12 @@ using DataComputer = Computer::Computer<Data>;
 using Factory = Computer::ComputerFactory<Data>;
 
 struct PositionLogger : Computer::Logger{
+    DataComputer* compPtr{nullptr};
     std::unordered_set<std::complex<int>> visitedPlaces{0};
+
+    PositionLogger(DataComputer* _compPtr) : compPtr{_compPtr}{
+        compPtr->addLogger(this);
+    }
 
     void update() override{
         
