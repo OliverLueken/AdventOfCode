@@ -34,6 +34,11 @@ struct MyFactory : public Factory{
         };
         Factory::addCommand(std::move(turnAndMove));
     }
+    void makeCommand(const std::string& instr) override {
+        const auto turnDirection = instr[0]=='L' ? 1i : -1i;
+        const auto numberOfBlocksToWalk = std::stoi(instr.substr(1));
+        addTurnAndMove(turnDirection, numberOfBlocksToWalk);
+    }
 };
 
 auto followInstruction = [](const auto& instruction, auto& facing, auto& currentPosition){
