@@ -2,6 +2,7 @@
 #include "../../lib/readFile.hpp"
 #include "../../lib/verifySolution.hpp"
 #include "../../lib/utilities.hpp"
+#include "../../lib/computer.hpp"
 
 #include <iostream>
 #include <string>
