@@ -12,7 +12,8 @@
 
 
 
-struct Data = {
+using namespace std::complex_literals;
+struct Data{
     std::complex<int> facing{1i};
     std::complex<int> currentPosition{0};
 };
