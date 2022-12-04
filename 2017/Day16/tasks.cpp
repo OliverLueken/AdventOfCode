@@ -12,11 +12,11 @@
 
 
 auto parseInput = [](const auto& input){
-    std::vector<> parsed;
-    for(const auto& row : input){
+    //std::vector<> parsed;
+    //for(const auto& row : input){
 
-    }
-    return parsed;
+    //}
+    //return parsed;
 };
 
 auto getResult = [](const auto& parsedInput){
@@ -30,11 +30,11 @@ auto getResult2 = [](const auto& parsedInput){
 };
 
 int main(){
-    const auto parsedInput = parseInput(readFile::string());
+    //const auto parsedInput = parseInput(readFile::string());
 
-    //Task 1
-    const auto result = getResult(parsedInput);
-    std::cout << "Task 1: " << result << ".\n";
+    // //Task 1
+    //const auto result = getResult(parsedInput);
+    //std::cout << "Task 1: " << result << ".\n";
 
     // //Task 2
     // const auto result2 = getResult2(parsedInput);
