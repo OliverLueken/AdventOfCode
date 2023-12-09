@@ -40,9 +40,7 @@ int main(){
     const auto parsedInput = parseInput(readFile::vectorOfStrings("input.txt", '\n', true));
 
     auto sumOfCalories = std::vector<int>{};
-    std::ranges::transform(parsedInput, std::back_inserter(sumOfCalories), [](const auto& vec){
-        return sum = Utilities::sum(vec);
-    });
+    std::ranges::transform(parsedInput, std::back_inserter(sumOfCalories), Utilities::sum);
     
     //Task 1
     const auto result = getResult(sumOfCalories);
